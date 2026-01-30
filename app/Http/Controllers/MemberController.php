@@ -1,9 +1,11 @@
-<?php
+<?php 
 
 namespace App\Http\Controllers;
 
 use App\Models\Member;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Validator;
 
 class MemberController extends Controller
 {
@@ -20,27 +22,37 @@ class MemberController extends Controller
 
     public function store(Request $request)
     {
-        $request->validate([
-            'full_name' => 'required',
-            'address' => 'required',
-            'phone' => 'required',
-            'dependents.*.full_name' => 'nullable|string',
+        $validated = $request->validate([
+            'name'      => 'required|string|max:255',
+            'phone'     => 'nullable|string|max:50',
+            'email'     => 'nullable|email|max:255',
+            'indigent'  => 'nullable|boolean',
+            'birthday'  => 'nullable|date',
+            'dependents.*.full_name' => 'nullable|string|max:255',
         ]);
 
-        $member = Member::create($request->only([
-            'full_name', 'address', 'phone', 'email'
-        ]));
+        $member = Member::create([
+            'name'     => $validated['name'],
+            'phone'    => $validated['phone'] ?? null,
+            'email'    => $validated['email'] ?? null,
+            'indigent' => $request->boolean('indigent'),
+            'birthday' => $validated['birthday'] ?? null,
+        ]);
 
-        if ($request->dependents) {
+        if ($request->filled('dependents')) {
             foreach ($request->dependents as $dependent) {
                 if (!empty($dependent['full_name'])) {
-                    $member->dependents()->create($dependent);
+                    $member->dependents()->create([
+                        'full_name' => $dependent['full_name'],
+                        'relationship' => $dependent['relationship'] ?? null,
+                    ]);
                 }
             }
         }
 
-        return redirect()->route('members.index')
-            ->with('success', 'Member added successfully');
+        return redirect()
+            ->route('members.index')
+            ->with('success', 'Member created successfully.');
     }
 
     public function show(Member $member)
@@ -57,28 +69,115 @@ class MemberController extends Controller
 
     public function update(Request $request, Member $member)
     {
-        $member->update($request->only([
-            'full_name', 'address', 'phone', 'email'
-        ]));
+        $validated = $request->validate([
+            'name'      => 'required|string|max:255',
+            'phone'     => 'nullable|string|max:50',
+            'email'     => 'nullable|email|max:255',
+            'indigent'  => 'nullable|boolean',
+            'birthday'  => 'nullable|date',
+            'dependents.*.full_name' => 'nullable|string|max:255',
+        ]);
+
+        $member->update([
+            'name'     => $validated['name'],
+            'phone'    => $validated['phone'] ?? null,
+            'email'    => $validated['email'] ?? null,
+            'indigent' => $request->boolean('indigent'),
+            'birthday' => $validated['birthday'] ?? null,
+        ]);
 
         // Reset dependents
         $member->dependents()->delete();
 
-        if ($request->dependents) {
+        if ($request->filled('dependents')) {
             foreach ($request->dependents as $dependent) {
                 if (!empty($dependent['full_name'])) {
-                    $member->dependents()->create($dependent);
+                    $member->dependents()->create([
+                        'full_name' => $dependent['full_name'],
+                        'relationship' => $dependent['relationship'] ?? null,
+                    ]);
                 }
             }
         }
 
-        return redirect()->route('members.index')
-            ->with('success', 'Member updated');
+        return redirect()
+            ->route('members.index')
+            ->with('success', 'Member updated successfully.');
     }
 
     public function destroy(Member $member)
     {
         $member->delete();
-        return back()->with('success', 'Member deleted');
+
+        return redirect()
+            ->route('members.index')
+            ->with('success', 'Member deleted.');
+    }
+
+    /**
+     * CSV IMPORT
+     */
+    public function import(Request $request)
+    {
+        $request->validate([
+            'csv_file' => 'required|file|mimes:csv,txt',
+        ]);
+
+        $rows = array_map('str_getcsv', file($request->file('csv_file')->getRealPath()));
+        $header = array_map('trim', array_shift($rows));
+
+        DB::beginTransaction();
+
+        try {
+            foreach ($rows as $row) {
+                if (count(array_filter($row)) === 0) continue;
+
+                $data = array_combine($header, $row);
+
+                $validator = Validator::make($data, [
+                    'name'      => 'required|string|max:255',
+                    'phone'     => 'nullable|string',
+                    'email'     => 'nullable|email',
+                    'indigent'  => 'nullable|boolean',
+                    'birthday'  => 'nullable|date',
+                ]);
+
+                if ($validator->fails()) {
+                    continue;
+                }
+
+                $member = Member::create([
+                    'name'     => $data['name'],
+                    'phone'    => $data['phone'] ?? null,
+                    'email'    => $data['email'] ?? null,
+                    'indigent' => filter_var($data['indigent'] ?? false, FILTER_VALIDATE_BOOLEAN),
+                    'birthday' => $data['birthday'] ?? null,
+                ]);
+
+                if (!empty($data['dependent_names'])) {
+                    foreach (explode('|', $data['dependent_names']) as $depName) {
+                        $depName = trim($depName);
+                        if ($depName) {
+                            $member->dependents()->create([
+                                'full_name' => $depName,
+                            ]);
+                        }
+                    }
+                }
+            }
+
+            DB::commit();
+
+            return redirect()
+                ->route('members.index')
+                ->with('success', 'Members imported successfully.');
+
+        } catch (\Exception $e) {
+            DB::rollBack();
+
+            return back()->withErrors([
+                'csv_file' => 'Import failed: ' . $e->getMessage()
+            ]);
+        }
     }
 }

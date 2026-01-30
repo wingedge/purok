@@ -6,14 +6,27 @@ use Illuminate\Database\Eloquent\Model;
 class Member extends Model
 {
     protected $fillable = [
-        'full_name',
+        'name',
         'address',
         'phone',
         'email',
+        'birthday',
+        'indigent'
     ];
+
+    protected $casts = [
+        'birthday' => 'date',
+        'indigent' => 'boolean',
+    ];
+
 
     public function dependents()
     {
         return $this->hasMany(Dependent::class);
+    }
+
+    public function isIndigent(): bool
+    {
+        return $this->indigent;
     }
 }

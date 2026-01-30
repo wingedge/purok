@@ -13,10 +13,11 @@ return new class extends Migration
     {
         Schema::create('members', function (Blueprint $table) {
             $table->id();
-            $table->string('full_name');
-            $table->text('address');
-            $table->string('phone');
+            $table->string('name');            
+            $table->string('phone')->nullable();
             $table->string('email')->nullable();
+            $table->boolean('indigent')->default(false);
+            $table->date('birthday')->nullable();
             $table->timestamps();
         });
 

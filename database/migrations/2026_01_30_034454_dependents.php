@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('dependents', function (Blueprint $table) {
             $table->id();
             $table->foreignId('member_id')->constrained()->cascadeOnDelete();
-            $table->string('full_name');
+            $table->string('name');
             $table->string('relationship')->nullable();
             $table->timestamps();
         });

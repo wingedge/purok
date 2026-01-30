@@ -20,6 +20,7 @@ Route::middleware('auth')->group(function () {
 
 Route::middleware(['auth'])->group(function () {
     Route::resource('members', MemberController::class);
+    Route::post('members/import', [MemberController::class, 'import'])->name('members.import');
 });
 
 
