@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\ExpenseController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\MemberController;
 use App\Http\Controllers\ProfileController;
@@ -21,6 +22,7 @@ Route::middleware('auth')->group(function () {
 Route::middleware(['auth'])->group(function () {
     Route::resource('members', MemberController::class);
     Route::post('members/import', [MemberController::class, 'import'])->name('members.import');
+    Route::resource('expenses', ExpenseController::class);
 });
 
 

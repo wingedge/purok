@@ -16,9 +16,14 @@
                 </div>
             @endif
 
-            @if(session('errors'))
-                <div class="bg-green-100 text-green-800 p-3 rounded mb-4">
-                    {{ session('errors') }}
+            {{-- Validation Errors --}}
+            @if ($errors->any())
+                <div class="bg-red-100 text-red-800 p-3 rounded mb-4">
+                    <ul class="list-disc list-inside">
+                        @foreach ($errors->all() as $error)
+                            <li>{{ $error }}</li>
+                        @endforeach
+                    </ul>
                 </div>
             @endif
                         
