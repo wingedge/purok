@@ -11,7 +11,7 @@ class MemberController extends Controller
 {
     public function index()
     {
-        $members = Member::withCount('dependents')->paginate(10);
+        $members = Member::withCount('dependents')->paginate(20);
         return view('members.index', compact('members'));
     }
 
@@ -28,7 +28,8 @@ class MemberController extends Controller
             'email'     => 'nullable|email|max:255',
             'indigent'  => 'nullable|boolean',
             'birthday'  => 'nullable|date',
-            'dependents.*.full_name' => 'nullable|string|max:255',
+            'dependents.*.name' => 'nullable|string|max:255',
+            'dependents.*.relationship' => 'nullable|string|max:255',
         ]);
 
         $member = Member::create([
@@ -39,14 +40,12 @@ class MemberController extends Controller
             'birthday' => $validated['birthday'] ?? null,
         ]);
 
-        if ($request->filled('dependents')) {
-            foreach ($request->dependents as $dependent) {
-                if (!empty($dependent['full_name'])) {
-                    $member->dependents()->create([
-                        'full_name' => $dependent['full_name'],
-                        'relationship' => $dependent['relationship'] ?? null,
-                    ]);
-                }
+        foreach ($request->dependents ?? [] as $dep) {
+            if (!empty($dep['name'])) {
+                $member->dependents()->create([
+                    'name' => $dep['name'],
+                    'relationship' => $dep['relationship'] ?? null,
+                ]);
             }
         }
 
@@ -75,7 +74,8 @@ class MemberController extends Controller
             'email'     => 'nullable|email|max:255',
             'indigent'  => 'nullable|boolean',
             'birthday'  => 'nullable|date',
-            'dependents.*.full_name' => 'nullable|string|max:255',
+            'dependents.*.name' => 'nullable|string|max:255',
+            'dependents.*.relationship' => 'nullable|string|max:255',
         ]);
 
         $member->update([
@@ -88,15 +88,12 @@ class MemberController extends Controller
 
         // Reset dependents
         $member->dependents()->delete();
-
-        if ($request->filled('dependents')) {
-            foreach ($request->dependents as $dependent) {
-                if (!empty($dependent['full_name'])) {
-                    $member->dependents()->create([
-                        'full_name' => $dependent['full_name'],
-                        'relationship' => $dependent['relationship'] ?? null,
-                    ]);
-                }
+        foreach ($request->dependents ?? [] as $dep) {
+            if (!empty($dep['name'])) {
+                $member->dependents()->create([
+                    'name' => $dep['name'],
+                    'relationship' => $dep['relationship'] ?? null,
+                ]);
             }
         }
 
@@ -134,12 +131,25 @@ class MemberController extends Controller
 
                 $data = array_combine($header, $row);
 
+                // Normalize empty values
+                foreach ($data as $key => $value) {
+                    $value = trim($value);
+                    $data[$key] = $value === '' ? null : $value;
+                }
+
+                // Normalize indigent
+                $data['indigent'] = in_array(
+                    strtolower($data['indigent'] ?? ''),
+                    ['yes', '1', 'true'],
+                    true
+                );
+
                 $validator = Validator::make($data, [
-                    'name'      => 'required|string|max:255',
-                    'phone'     => 'nullable|string',
-                    'email'     => 'nullable|email',
-                    'indigent'  => 'nullable|boolean',
-                    'birthday'  => 'nullable|date',
+                    'name'     => 'required|string|max:255',
+                    'phone'    => 'nullable|string',
+                    'email'    => 'nullable|email',
+                    'birthday' => 'nullable|date',
+                    'indigent' => 'boolean',
                 ]);
 
                 if ($validator->fails()) {
@@ -148,10 +158,10 @@ class MemberController extends Controller
 
                 $member = Member::create([
                     'name'     => $data['name'],
-                    'phone'    => $data['phone'] ?? null,
-                    'email'    => $data['email'] ?? null,
-                    'indigent' => filter_var($data['indigent'] ?? false, FILTER_VALIDATE_BOOLEAN),
-                    'birthday' => $data['birthday'] ?? null,
+                    'phone'    => $data['phone'],
+                    'email'    => $data['email'],
+                    'birthday' => $data['birthday'],
+                    'indigent' => $data['indigent'],
                 ]);
 
                 if (!empty($data['dependent_names'])) {
@@ -159,7 +169,7 @@ class MemberController extends Controller
                         $depName = trim($depName);
                         if ($depName) {
                             $member->dependents()->create([
-                                'full_name' => $depName,
+                                'name' => $depName,
                             ]);
                         }
                     }
@@ -180,4 +190,5 @@ class MemberController extends Controller
             ]);
         }
     }
+
 }

@@ -50,25 +50,48 @@
                        {{ old('indigent', $member->indigent) ? 'checked' : '' }}>
                 <label class="text-sm text-gray-700">Indigent</label>
             </div>
-
+           
+            {{-- Dependents --}}
             <hr>
 
-            {{-- Dependents --}}
-            <h3 class="font-semibold text-gray-700">Dependents</h3>
+            <div x-data="{
+                dependents: {{ $member->dependents->map(fn($d) => ['name' => $d->name, 'relationship' => $d->relationship])->toJson() ?: '[{name: \"\", relationship: \"\"}]' }}
+            }">
+                <div class="flex justify-between items-center mb-2">
+                    <h3 class="font-semibold text-gray-700">Dependents</h3>
 
-            @foreach($member->dependents as $index => $dependent)
-                <div class="grid grid-cols-2 gap-2">
-                    <input name="dependents[{{ $index }}][full_name]"
-                           class="border px-2 py-1"
-                           value="{{ $dependent->full_name }}"
-                           placeholder="Dependent Name">
-
-                    <input name="dependents[{{ $index }}][relationship]"
-                           class="border px-2 py-1"
-                           value="{{ $dependent->relationship }}"
-                           placeholder="Relationship">
+                    <button type="button"
+                            @click="dependents.push({ name: '', relationship: '' })"
+                            class="text-sm bg-blue-600 text-white px-3 py-1 rounded">
+                        + Add
+                    </button>
                 </div>
-            @endforeach
+
+                <template x-for="(dependent, index) in dependents" :key="index">
+                    <div class="flex space-x-2 mb-2">
+                        <input type="text"
+                            class="border px-3 py-2 rounded w-1/2"
+                            :name="`dependents[${index}][name]`"
+                            x-model="dependent.name"
+                            placeholder="Dependent name">
+
+                        <input type="text"
+                            class="border px-3 py-2 rounded w-1/2"
+                            :name="`dependents[${index}][relationship]`"
+                            x-model="dependent.relationship"
+                            placeholder="Relationship">
+
+                        <button type="button"
+                                @click="dependents.splice(index, 1)"
+                                x-show="dependents.length > 1"
+                                class="bg-red-500 text-white px-3 rounded">
+                            ✕
+                        </button>
+                    </div>
+                </template>
+            </div>
+
+
 
             {{-- Actions --}}
             <div class="flex justify-end space-x-3">

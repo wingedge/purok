@@ -39,7 +39,7 @@
                         <ul class="mt-2 space-y-2">
                             @foreach($member->dependents as $dependent)
                                 <li class="flex justify-between bg-gray-50 p-3 rounded">
-                                    <span>{{ $dependent->full_name }}</span>
+                                    <span>{{ $dependent->name }}</span>
                                     <span class="text-gray-500">
                                         {{ $dependent->relationship ?? '—' }}
                                     </span>

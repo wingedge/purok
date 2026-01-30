@@ -8,12 +8,23 @@
     
 
     <div class="py-6">
-        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">            
+        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">      
+            
+            @if(session('success'))
+                <div class="bg-green-100 text-green-800 p-3 rounded mb-4">
+                    {{ session('success') }}
+                </div>
+            @endif
+
+            @if(session('errors'))
+                <div class="bg-green-100 text-green-800 p-3 rounded mb-4">
+                    {{ session('errors') }}
+                </div>
+            @endif
             
             <div class="flex flex-col sm:flex-row sm:items-center space-y-4 sm:space-y-0 sm:space-x-4 mb-6 bg-white p-4 rounded shadow border border-gray-100">
-                
-                <a href="{{ route('members.create') }}"
-                class="inline-block bg-blue-600 text-white px-4 py-2 rounded text-center whitespace-nowrap">
+
+                <a href="{{ route('members.create') }}" class="inline-block bg-blue-600 text-white px-4 py-2 rounded text-center whitespace-nowrap">
                     Add Member
                 </a>
 
@@ -40,16 +51,18 @@
                     <thead class="bg-gray-50">
                         <tr>
                             <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Name</th>
-                            <th class="px-6 py-3">Phone</th>
-                            <th class="px-6 py-3">Dependents</th>
-                            <th class="px-6 py-3">Actions</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Birthday</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Is Indigent</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Dependents</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Actions</th>
                         </tr>
                     </thead>
                     <tbody class="divide-y divide-gray-200">
                         @foreach($members as $member)
                         <tr>
-                            <td class="px-6 py-4">{{ $member->full_name }}</td>
-                            <td class="px-6 py-4">{{ $member->phone }}</td>
+                            <td class="px-6 py-4">{{ $member->name }}</td>
+                            <td class="px-6 py-4">{{ $member->birthday?->format('M d, Y') ?? '—' }}</td>
+                            <td class="px-6 py-4">{{ $member->isIndigent }}</td>
                             <td class="px-6 py-4">{{ $member->dependents_count }}</td>
                             <td class="px-6 py-4 space-x-2">
                                 <a href="{{ route('members.show', $member) }}" class="text-blue-600">View</a>
@@ -59,6 +72,10 @@
                         @endforeach
                     </tbody>
                 </table>
+            </div>
+
+            <div class="mt-6">
+                {{ $members->links() }}
             </div>
 
         </div>

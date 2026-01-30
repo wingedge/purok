@@ -6,13 +6,13 @@ use Illuminate\Database\Eloquent\Model;
 class Member extends Model
 {
     protected $fillable = [
-        'name',
-        'address',
+        'name',        
         'phone',
         'email',
         'birthday',
         'indigent'
     ];
+    
 
     protected $casts = [
         'birthday' => 'date',
@@ -28,5 +28,10 @@ class Member extends Model
     public function isIndigent(): bool
     {
         return $this->indigent;
+    }
+
+    public function getIsIndigentAttribute(): string
+    {
+        return $this->indigent ? 'Yes' : 'No';
     }
 }

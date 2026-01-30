@@ -8,7 +8,7 @@ class Dependent extends Model
 {
     protected $fillable = [
         'member_id',
-        'full_name',
+        'name',
         'relationship',
     ];
 
