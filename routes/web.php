@@ -1,9 +1,10 @@
 <?php
 
-use App\Http\Controllers\ExpenseController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\MemberController;
+use App\Http\Controllers\ExpenseController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\ContributionController;
 
 Route::get('/', function () {
     return view('welcome');
@@ -23,6 +24,9 @@ Route::middleware(['auth'])->group(function () {
     Route::resource('members', MemberController::class);
     Route::post('members/import', [MemberController::class, 'import'])->name('members.import');
     Route::resource('expenses', ExpenseController::class);
+    Route::get('/contributions', [ContributionController::class, 'index'])->name('contributions.index');
+    Route::post('/contributions', [ContributionController::class, 'store'])->name('contributions.store');
+    Route::delete('/contributions', [ContributionController::class, 'destroy'])->name('contributions.destroy');
 });
 
 

@@ -13,10 +13,8 @@ return new class extends Migration
     {
         Schema::create('contributions', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('member_id')->constrained()->cascadeOnDelete();
-            $table->date('week_start_date');
-            $table->decimal('amount', 10, 2);
-            $table->string('payment_method');
+            $table->foreignId('member_id')->constrained()->cascadeOnDelete();           
+            $table->decimal('amount', 10, 2);          
             $table->text('remarks')->nullable();
             $table->timestamps();
         });

@@ -34,4 +34,10 @@ class Member extends Model
     {
         return $this->indigent ? 'Yes' : 'No';
     }
+
+    public function contributions()
+    {
+        return $this->hasMany(Contribution::class);
+    }
+
 }
