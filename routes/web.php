@@ -3,8 +3,10 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\IncomeController;
 use App\Http\Controllers\MemberController;
+use App\Http\Controllers\RentalController;
 use App\Http\Controllers\ExpenseController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\InventoryController;
 use App\Http\Controllers\ContributionController;
 
 Route::get('/', function () {
@@ -29,6 +31,9 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/contributions', [ContributionController::class, 'index'])->name('contributions.index');
     Route::post('/contributions', [ContributionController::class, 'store'])->name('contributions.store');
     Route::delete('/contributions', [ContributionController::class, 'destroy'])->name('contributions.destroy');
+
+    Route::resource('inventories', InventoryController::class);
+    Route::resource('rentals', RentalController::class);
 });
 
 
