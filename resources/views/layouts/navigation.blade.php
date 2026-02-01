@@ -30,8 +30,11 @@
                     <x-nav-link href="{{ route('inventories.index') }}" :active="request()->routeIs('inventories.*')">
                         {{ __('Inventory') }}
                     </x-nav-link>
-                     <x-nav-link href="{{ route('rentals.index') }}" :active="request()->routeIs('rentals.*')">
+                    <x-nav-link href="{{ route('rentals.index') }}" :active="request()->routeIs('rentals.*')">
                         {{ __('Rentals') }}
+                    </x-nav-link>
+                    <x-nav-link href="{{ route('reports.cashflow') }}" :active="request()->routeIs('reports.*')">
+                        {{ __('Report : Cashflow') }}
                     </x-nav-link>
                 </div>
             </div>

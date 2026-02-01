@@ -6,16 +6,18 @@ use App\Http\Controllers\MemberController;
 use App\Http\Controllers\RentalController;
 use App\Http\Controllers\ExpenseController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\InventoryController;
 use App\Http\Controllers\ContributionController;
+use App\Http\Controllers\Reports\CashFlowController;
 
 Route::get('/', function () {
     return view('welcome');
 });
 
-Route::get('/dashboard', function () {
-    return view('dashboard');
-})->middleware(['auth', 'verified'])->name('dashboard');
+// Route::get('/dashboard', function () {
+//     return view('dashboard');
+// })->middleware(['auth', 'verified'])->name('dashboard');
 
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
@@ -35,6 +37,17 @@ Route::middleware(['auth'])->group(function () {
     Route::resource('inventories', InventoryController::class);
     Route::resource('rentals', RentalController::class);
 });
+
+Route::get('/dashboard', [DashboardController::class, 'index'])
+    ->middleware(['auth'])
+    ->name('dashboard');
+
+
+
+Route::get('/reports/cashflow', [CashFlowController::class, 'index'])
+    ->middleware('auth')
+    ->name('reports.cashflow');
+
 
 
 require __DIR__.'/auth.php';
