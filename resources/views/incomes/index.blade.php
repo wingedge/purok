@@ -1,7 +1,7 @@
 <x-app-layout>
     <x-slot name="header">
         <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-            Purok Expenses
+            Incomes and Donations
         </h2>
     </x-slot>
 
@@ -27,7 +27,9 @@
                 </div>
             @endif
                         
-            <div class="bg-white shadow rounded p-4 sm:p-0">                
+            <div class="bg-white shadow rounded p-4 sm:p-0">
+
+                
 
                 <div class="bg-white shadow rounded overflow-hidden">
                     <table class="min-w-full divide-y divide-gray-200">
@@ -41,18 +43,18 @@
                         </tr>
                     </thead>
                     <tbody class="bg-white divide-y divide-gray-200">
-                        @foreach ($expenses as $expense)
+                        @foreach ($incomes as $income)
                             <tr>
-                                <td class="px-6 py-4">{{ $expense->date->format('M d, Y') }}</td>
-                                <td class="px-6 py-4">{{ $expense->category }}</td>
-                                <td class="px-6 py-4">{{ $expense->description }}</td>
-                                <td class="px-6 py-4">{{ number_format($expense->amount, 2) }}</td>                                
+                                <td class="px-6 py-4">{{ $income->date->format('M d, Y') }}</td>
+                                <td class="px-6 py-4">{{ $income->category }}</td>
+                                <td class="px-6 py-4">{{ $income->description }}</td>
+                                <td class="px-6 py-4">{{ number_format($income->amount, 2) }}</td>                                
                                 <td class="px-6 py-4 space-x-2">
-                                    <a href="{{ route('expenses.edit', $expense) }}" class="text-yellow-600">Edit</a>
-                                    <form action="{{ route('expenses.destroy', $expense) }}" method="POST" class="inline">
+                                    <a href="{{ route('incomes.edit', $income) }}" class="text-yellow-600">Edit</a>
+                                    <form action="{{ route('incomes.destroy', $income) }}" method="POST" class="inline">
                                         @csrf
                                         @method('DELETE')
-                                        <button class="text-red-600" onclick="return confirm('Delete this expense?')">Delete</button>
+                                        <button class="text-red-600" onclick="return confirm('Delete this income?')">Delete</button>
                                     </form>
                                 </td>
                             </tr>
@@ -64,12 +66,12 @@
             </div>
 
             <div class="mt-6 p-4">
-                {{ $expenses->links() }}
+                {{ $incomes->links() }}
             </div>
 
             <div class="mt-6 flex flex-col space-y-4 bg-white p-4 rounded shadow sm:flex-row sm:items-center sm:space-y-0 sm:space-x-4">
-                <a href="{{ route('expenses.create') }}" class="w-full sm:w-auto bg-blue-600 text-white px-4 py-3 rounded text-center font-medium">
-                    + Add Expense
+                <a href="{{ route('incomes.create') }}" class="w-full sm:w-auto bg-blue-600 text-white px-4 py-3 rounded text-center font-medium">
+                    + Add income
                 </a>               
             </div>
 

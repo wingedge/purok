@@ -1,7 +1,7 @@
 <x-app-layout>
     <x-slot name="header">
         <h2 class="font-semibold text-xl text-gray-800">
-            Add Expenses
+            Add Income / Donation
         </h2>
     </x-slot>
 
@@ -24,7 +24,7 @@
             </div>
         @endif
 
-        <form method="POST" action="{{ route('expenses.store') }}">
+        <form method="POST" action="{{ route('incomes.store') }}">
             @csrf
 
             <div class="mb-4">
@@ -33,11 +33,16 @@
                     class="border px-3 py-2 rounded w-full">
             </div>
 
-            <div class="mb-4">
-                <label class="block text-gray-700">Category</label>
-                <input type="text" name="category" value="{{ old('category') }}"
-                    class="border px-3 py-2 rounded w-full">
-            </div>
+            <select name="source" class="border px-3 py-2 rounded w-full">
+                <option value="">-- Not Specified --</option>
+
+                @foreach ($sources as $source)
+                    <option value="{{ $source }}"
+                        {{ old('source', $income->source ?? '') === $source ? 'selected' : '' }}>
+                        {{ $source }}
+                    </option>
+                @endforeach
+            </select>
 
             <div class="mb-4">
                 <label class="block text-gray-700">Description</label>
@@ -51,7 +56,7 @@
             </div>
 
             <button type="submit" class="bg-blue-600 text-white px-4 py-2 rounded">
-                Add Expense
+                Add Income
             </button>
         </form>
 

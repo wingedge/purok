@@ -44,7 +44,7 @@ class ExpenseController extends Controller
 
     public function edit(Expense $expense)
     {
-        return view('expenses.edit', compact('expense'));
+        return view('expenses.update', compact('expense'));
     }
 
     public function update(Request $request, Expense $expense)

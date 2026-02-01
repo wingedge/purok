@@ -1,6 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\IncomeController;
 use App\Http\Controllers\MemberController;
 use App\Http\Controllers\ExpenseController;
 use App\Http\Controllers\ProfileController;
@@ -24,6 +25,7 @@ Route::middleware(['auth'])->group(function () {
     Route::resource('members', MemberController::class);
     Route::post('members/import', [MemberController::class, 'import'])->name('members.import');
     Route::resource('expenses', ExpenseController::class);
+    Route::resource('incomes', IncomeController::class);
     Route::get('/contributions', [ContributionController::class, 'index'])->name('contributions.index');
     Route::post('/contributions', [ContributionController::class, 'store'])->name('contributions.store');
     Route::delete('/contributions', [ContributionController::class, 'destroy'])->name('contributions.destroy');

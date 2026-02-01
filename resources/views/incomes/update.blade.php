@@ -1,7 +1,7 @@
 <x-app-layout>
     <x-slot name="header">
         <h2 class="font-semibold text-xl text-gray-800">
-            Add Expenses
+            Update 
         </h2>
     </x-slot>
 
@@ -24,37 +24,44 @@
             </div>
         @endif
 
-        <form method="POST" action="{{ route('expenses.store') }}">
+        <form method="POST" action="{{ $income->exists ? route('incomes.update', $income) : route('incomes.store') }}">
             @csrf
+            @if($income->exists)
+                @method('PUT')
+            @endif
 
             <div class="mb-4">
                 <label class="block text-gray-700">Date</label>
-                <input type="date" name="date" value="{{ old('date') }}"
+                <input type="date" name="date" value="{{ old('date', $income->date?->format('Y-m-d')) }}"
                     class="border px-3 py-2 rounded w-full">
             </div>
 
-            <div class="mb-4">
-                <label class="block text-gray-700">Category</label>
-                <input type="text" name="category" value="{{ old('category') }}"
-                    class="border px-3 py-2 rounded w-full">
-            </div>
+            <select name="source" class="border px-3 py-2 rounded w-full">
+                <option value="">-- Not Specified --</option>
+
+                @foreach ($sources as $source)
+                    <option value="{{ $source }}"
+                        {{ old('source', $income->source ?? '') === $source ? 'selected' : '' }}>
+                        {{ $source }}
+                    </option>
+                @endforeach
+            </select>
 
             <div class="mb-4">
                 <label class="block text-gray-700">Description</label>
-                <textarea name="description" class="border px-3 py-2 rounded w-full">{{ old('description') }}</textarea>
+                <textarea name="description" class="border px-3 py-2 rounded w-full">{{ old('description', $income->description) }}</textarea>
             </div>
 
             <div class="mb-4">
                 <label class="block text-gray-700">Amount</label>
-                <input type="number" step="0.01" name="amount" value="{{ old('amount') }}"
+                <input type="number" step="0.01" name="amount" value="{{ old('amount', $income->amount) }}"
                     class="border px-3 py-2 rounded w-full">
             </div>
 
             <button type="submit" class="bg-blue-600 text-white px-4 py-2 rounded">
-                Add Expense
+                {{ $income->exists ? 'Update income' : 'Add income' }}
             </button>
         </form>
-
 
     </div>
 </x-app-layout>
