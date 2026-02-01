@@ -33,8 +33,8 @@
                     <x-nav-link href="{{ route('rentals.index') }}" :active="request()->routeIs('rentals.*')">
                         {{ __('Rentals') }}
                     </x-nav-link>
-                    <x-nav-link href="{{ route('reports.cashflow') }}" :active="request()->routeIs('reports.*')">
-                        {{ __('Report : Cashflow') }}
+                    <x-nav-link href="{{ route('reports.index') }}" :active="request()->routeIs('reports.*')">
+                        {{ __('Reports') }}
                     </x-nav-link>
                 </div>
             </div>
@@ -90,6 +90,27 @@
         <div class="pt-2 pb-3 space-y-1">
             <x-responsive-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')">
                 {{ __('Dashboard') }}
+            </x-responsive-nav-link>
+            <x-responsive-nav-link href="{{ route('members.index') }}" :active="request()->routeIs('members.*')">
+                {{ __('Members') }}
+            </x-responsive-nav-link>
+            <x-responsive-nav-link href="{{ route('expenses.index') }}" :active="request()->routeIs('expenses.*')">
+                {{ __('Expense') }}
+            </x-responsive-nav-link>
+            <x-responsive-nav-link href="{{ route('contributions.index') }}" :active="request()->routeIs('contributions.*')">
+                {{ __('Member Contributions') }}
+            </x-responsive-nav-link>
+            <x-responsive-nav-link href="{{ route('incomes.index') }}" :active="request()->routeIs('incomes.*')">
+                {{ __('Income') }}
+            </x-responsive-nav-link>
+            <x-responsive-nav-link href="{{ route('inventories.index') }}" :active="request()->routeIs('inventories.*')">
+                {{ __('Inventory') }}
+            </x-responsive-nav-link>
+            <x-responsive-nav-link href="{{ route('rentals.index') }}" :active="request()->routeIs('rentals.*')">
+                {{ __('Rentals') }}
+            </x-responsive-nav-link>
+            <x-responsive-nav-link href="{{ route('reports.index') }}" :active="request()->routeIs('reports.*')">
+                {{ __('Reports') }}
             </x-responsive-nav-link>
         </div>
 

@@ -39,6 +39,27 @@
             </div>
 
             {{-- Cash Flow Table --}}
+            <div class="flex justify-end mb-4 print:hidden">
+                <button onclick="window.print()"
+                        class="bg-gray-800 text-white px-4 py-2 rounded">
+                    Print
+                </button>
+            </div>
+
+            <div class="hidden print:block mb-6 text-center">
+                <h1 class="text-2xl font-bold">Cash Flow Statement</h1>
+                <p class="text-sm text-gray-600">
+                    Period:
+                    {{ $month
+                        ? \Carbon\Carbon::create()->month($month)->format('F') . ' ' . $year
+                        : $year
+                    }}
+                </p>
+                <hr class="mt-4">
+            </div>
+
+
+
             <div class="bg-white shadow rounded overflow-hidden">
                 <table class="min-w-full">
                     <tbody class="divide-y divide-gray-200">

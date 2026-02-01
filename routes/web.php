@@ -44,10 +44,9 @@ Route::get('/dashboard', [DashboardController::class, 'index'])
 
 
 
-Route::get('/reports/cashflow', [CashFlowController::class, 'index'])
-    ->middleware('auth')
-    ->name('reports.cashflow');
-
-
+Route::middleware(['auth'])->prefix('reports')->name('reports.')->group(function () {
+        Route::get('/', function () {return view('reports.index');})->name('index');
+        Route::get('/cashflow', [CashFlowController::class, 'index'])->name('cashflow');
+});
 
 require __DIR__.'/auth.php';

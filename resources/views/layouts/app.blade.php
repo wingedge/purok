@@ -13,6 +13,60 @@
 
         <!-- Scripts -->
         @vite(['resources/css/app.css', 'resources/js/app.js'])
+
+        <style>
+            @media print {
+
+                /* Hide navigation, buttons, filters */
+                nav,
+                header,
+                .print-hidden,
+                button,
+                form {
+                    display: none !important;
+                }
+
+                /* Remove layout padding */
+                body {
+                    background: white !important;
+                }
+
+                main {
+                    padding: 0 !important;
+                }
+
+                /* Full width content */
+                .max-w-5xl,
+                .max-w-7xl {
+                    max-width: 100% !important;
+                }
+
+                /* Table styling */
+                table {
+                    width: 100%;
+                    border-collapse: collapse;
+                }
+
+                td {
+                    padding: 8px 12px;
+                    border-bottom: 1px solid #ddd;
+                }
+
+                .bg-gray-50,
+                .bg-gray-100 {
+                    background: #f5f5f5 !important;
+                    -webkit-print-color-adjust: exact;
+                }
+
+                /* Ensure colors print */
+                * {
+                    -webkit-print-color-adjust: exact;
+                    print-color-adjust: exact;
+                }
+            }
+        </style>
+
+
     </head>
     <body class="font-sans antialiased">
         <div class="min-h-screen bg-gray-100">
