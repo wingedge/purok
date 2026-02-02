@@ -46,39 +46,57 @@ class ContributionController extends Controller
         return view('contributions.index', compact('members', 'weeks', 'month', 'currentYear'));
     }
 
+    private function getContributionAmount()
+    {
+        return 10.00; 
+    }
+
     public function store(Request $request)
     {
+        // 1. Remove 'amount' from the validation
         $request->validate([
-            'member_id'  => 'required|exists:members,id',
+            'member_id' => 'required|exists:members,id',
             'week_start' => 'required|date',
-            'amount'     => 'required|numeric|min:0',
         ]);
 
-        Contribution::updateOrCreate(
+        // 2. Define the amount here (Internal control)
+        $amount = $this->getContributionAmount();
+
+        // 3. Save to database
+        $contribution = Contribution::updateOrCreate(
             [
-                'member_id'  => $request->member_id,
+                'member_id' => $request->member_id,
                 'week_start' => $request->week_start,
             ],
             [
-                'amount'     => $request->amount,                
+                'amount' => $amount,                
             ]
         );
 
-        return response()->json(['status' => 'success', 'message' => 'Saved']);
+        // 4. Return the amount so the JavaScript knows how much to add to the total
+        return response()->json([
+            'success' => true, 
+            'amount' => $amount
+        ]);
     }
 
     public function destroy(Request $request)
     {
-        $request->validate([
-            'member_id'  => 'required|exists:members,id',
-            'week_start' => 'required|date',
-        ]);
-
-        Contribution::where('member_id', $request->member_id)
+        $contribution = Contribution::where('member_id', $request->member_id)
             ->where('week_start', $request->week_start)
-            ->delete();
+            ->first();
 
-        return response()->json(['status' => 'success', 'message' => 'Removed']);
+        if ($contribution) {
+            $amountDeleted = $contribution->amount;
+            $contribution->delete();
+
+            return response()->json([
+                'success' => true,
+                'amount' => $amountDeleted
+            ]);
+        }
+
+        return response()->json(['success' => false], 404);
     }
     
 }

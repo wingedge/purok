@@ -112,33 +112,61 @@
             try {
                 const response = await fetch(url, {
                     method: 'POST',
-                    headers: { 'Content-Type': 'application/json', 'X-CSRF-TOKEN': '{{ csrf_token() }}' },
-                    body: JSON.stringify({ member_id: memberId, week_start: weekStart, amount: 100, _method: method })
+                    headers: { 
+                        'Content-Type': 'application/json', 
+                        'Accept': 'application/json', // Force Laravel to send JSON errors
+                        'X-CSRF-TOKEN': '{{ csrf_token() }}' 
+                    },
+                    body: JSON.stringify({ 
+                        member_id: memberId, 
+                        week_start: weekStart, 
+                        _method: method 
+                    })
                 });
 
-                if (response.ok) {
+                // Check if the response is valid JSON
+                const contentType = response.headers.get("content-type");
+                if (!response.ok || !contentType || !contentType.includes("application/json")) {
+                    const errorText = await response.text();
+                    console.error("Server Error Response:", errorText);
+                    alert("Server error. Check the console for details.");
+                    return;
+                }
+
+                const data = await response.json();
+
+                if (data.success) {
+                    // Use the exact amount sent by the Controller
+                    const serverAmount = parseFloat(data.amount); 
+
                     if (isChecked) {
+                        // Turn Gray (Unchecked)
                         button.querySelector('svg').classList.replace('opacity-100', 'opacity-0');
                         button.className = "toggle-btn w-9 h-9 sm:w-8 sm:h-8 flex items-center justify-center rounded-md border bg-gray-50 text-transparent border-gray-200 hover:border-blue-300 transition-all";
-                        updateTotal(totalCell, -100);
+                        updateTotal(totalCell, -serverAmount);
                     } else {
+                        // Turn Green (Checked)
                         button.querySelector('svg').classList.replace('opacity-0', 'opacity-100');
                         button.className = "toggle-btn w-9 h-9 sm:w-8 sm:h-8 flex items-center justify-center rounded-md border bg-green-500 text-white border-green-600 transition-all";
-                        updateTotal(totalCell, 100);
+                        updateTotal(totalCell, serverAmount);
                     }
                 }
             } catch (error) {
-                console.error(error);
+                console.error("Network or Parsing Error:", error);
             } finally {
                 button.disabled = false;
             }
         }
 
         function updateTotal(cell, change) {
-            // Strips the $ and commas to do math, then puts them back
-            let current = parseFloat(cell.innerText.replace(/[PHP,]/g, ''));
+            // 1. Remove commas and any non-numeric characters except the decimal point
+            let text = cell.innerText.replace(/,/g, '').replace(/[^\d.-]/g, '');
+            let current = parseFloat(text) || 0;
+            
             const newTotal = current + change;
-            cell.innerText = 'PHP' + newTotal.toLocaleString(undefined, {
+            
+            // 2. Format back to standard number with commas
+            cell.innerText = newTotal.toLocaleString(undefined, {
                 minimumFractionDigits: 2,
                 maximumFractionDigits: 2
             });
