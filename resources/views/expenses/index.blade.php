@@ -1,24 +1,22 @@
 <x-app-layout>
     <x-slot name="header">
         <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-            Purok Expenses
+            {{ __('Purok Expenses') }}
         </h2>
     </x-slot>
 
-    
-
     <div class="py-6">
-        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">      
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">      
             
+            {{-- Status Messages --}}
             @if(session('success'))
-                <div class="bg-green-100 text-green-800 p-3 rounded mb-4">
+                <div class="bg-green-100 border-l-4 border-green-500 text-green-800 p-4 rounded mb-4 shadow-sm">
                     {{ session('success') }}
                 </div>
             @endif
 
-            {{-- Validation Errors --}}
             @if ($errors->any())
-                <div class="bg-red-100 text-red-800 p-3 rounded mb-4">
+                <div class="bg-red-100 border-l-4 border-red-500 text-red-800 p-4 rounded mb-4 shadow-sm">
                     <ul class="list-disc list-inside">
                         @foreach ($errors->all() as $error)
                             <li>{{ $error }}</li>
@@ -26,51 +24,81 @@
                     </ul>
                 </div>
             @endif
-                        
-            <div class="bg-white shadow rounded p-4 sm:p-0">                
 
-                <div class="bg-white shadow rounded overflow-hidden">
-                    <table class="min-w-full divide-y divide-gray-200">
+            {{-- Action Button --}}
+            <div class="mb-6">
+                <a href="{{ route('expenses.create') }}" class="inline-flex items-center justify-center w-full sm:w-auto bg-rose-600 hover:bg-rose-700 text-white px-6 py-3 rounded-lg font-bold transition shadow-lg">
+                    <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
+                    Add Expense
+                </a>
+            </div>
+
+            {{-- Mobile View: Stacked Cards --}}
+            <div class="grid grid-cols-1 gap-4 lg:hidden">
+                @forelse ($expenses as $expense)
+                    <div class="bg-white p-4 rounded-xl shadow-sm border border-gray-100">
+                        <div class="flex justify-between items-start mb-2">
+                            <div>
+                                <p class="text-xs font-semibold uppercase text-gray-400 tracking-wider">{{ $expense->date->format('M d, Y') }}</p>
+                                <p class="text-lg font-bold text-gray-900">{{ $expense->category }}</p>
+                            </div>
+                            <div class="text-right">
+                                <p class="text-lg font-black text-rose-600">₱{{ number_format($expense->amount, 2) }}</p>
+                            </div>
+                        </div>
+                        <p class="text-sm text-gray-600 mb-4 italic">"{{ $expense->description }}"</p>
+                        
+                        <div class="flex border-t pt-3 mt-3 space-x-4">
+                            <a href="{{ route('expenses.edit', $expense) }}" class="flex-1 text-center py-2 text-sm font-medium text-yellow-700 bg-yellow-50 rounded-lg">Edit</a>
+                            <form action="{{ route('expenses.destroy', $expense) }}" method="POST" class="flex-1">
+                                @csrf
+                                @method('DELETE')
+                                <button class="w-full text-center py-2 text-sm font-medium text-red-700 bg-red-50 rounded-lg" onclick="return confirm('Delete this expense?')">Delete</button>
+                            </form>
+                        </div>
+                    </div>
+                @empty
+                    <div class="text-center py-8 bg-gray-50 rounded-xl border-2 border-dashed">
+                        <p class="text-gray-500">No expenses recorded yet.</p>
+                    </div>
+                @endforelse
+            </div>
+
+            {{-- Desktop View: Table --}}
+            <div class="hidden lg:block bg-white shadow-sm rounded-xl overflow-hidden border border-gray-200">
+                <table class="min-w-full divide-y divide-gray-200">
                     <thead class="bg-gray-50">
                         <tr>
-                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Date</th>
-                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Category</th>
-                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Description</th>
-                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Amount</th>                            
-                            <th class="px-6 py-3"></th>
+                            <th class="px-6 py-4 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Date</th>
+                            <th class="px-6 py-4 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Category</th>
+                            <th class="px-6 py-4 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Description</th>
+                            <th class="px-6 py-4 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Amount</th>                             
+                            <th class="px-6 py-4 text-right">Actions</th>
                         </tr>
                     </thead>
                     <tbody class="bg-white divide-y divide-gray-200">
                         @foreach ($expenses as $expense)
-                            <tr>
-                                <td class="px-6 py-4">{{ $expense->date->format('M d, Y') }}</td>
-                                <td class="px-6 py-4">{{ $expense->category }}</td>
-                                <td class="px-6 py-4">{{ $expense->description }}</td>
-                                <td class="px-6 py-4">{{ number_format($expense->amount, 2) }}</td>                                
-                                <td class="px-6 py-4 space-x-2">
-                                    <a href="{{ route('expenses.edit', $expense) }}" class="text-yellow-600">Edit</a>
+                            <tr class="hover:bg-rose-50/30 transition-colors">
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-700">{{ $expense->date->format('M d, Y') }}</td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{{ $expense->category }}</td>
+                                <td class="px-6 py-4 text-sm text-gray-600">{{ $expense->description }}</td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm font-bold text-rose-600">{{ number_format($expense->amount, 2) }}</td>                                
+                                <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium space-x-3">
+                                    <a href="{{ route('expenses.edit', $expense) }}" class="text-indigo-600 hover:text-indigo-900">Edit</a>
                                     <form action="{{ route('expenses.destroy', $expense) }}" method="POST" class="inline">
                                         @csrf
                                         @method('DELETE')
-                                        <button class="text-red-600" onclick="return confirm('Delete this expense?')">Delete</button>
+                                        <button class="text-red-600 hover:text-red-900" onclick="return confirm('Delete this expense?')">Delete</button>
                                     </form>
                                 </td>
                             </tr>
                         @endforeach
                     </tbody>
                 </table>
-                </div>
-        
             </div>
 
-            <div class="mt-6 p-4">
+            <div class="mt-8">
                 {{ $expenses->links() }}
-            </div>
-
-            <div class="mt-6 flex flex-col space-y-4 bg-white p-4 rounded shadow sm:flex-row sm:items-center sm:space-y-0 sm:space-x-4">
-                <a href="{{ route('expenses.create') }}" class="w-full sm:w-auto bg-blue-600 text-white px-4 py-3 rounded text-center font-medium">
-                    + Add Expense
-                </a>               
             </div>
 
         </div>

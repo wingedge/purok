@@ -1,108 +1,135 @@
 <x-app-layout>
     <x-slot name="header">
         <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-            Members
+            {{ __('Members') }}
         </h2>
     </x-slot>
 
-    
-
     <div class="py-6">
-        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">      
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">      
             
+            {{-- Success Message --}}
             @if(session('success'))
-                <div class="bg-green-100 text-green-800 p-3 rounded mb-4">
+                <div class="bg-green-100 border-l-4 border-green-500 text-green-800 p-4 rounded mb-4 shadow-sm">
                     {{ session('success') }}
                 </div>
             @endif
 
-            {{-- Validation Errors --}}
-            @if ($errors->any())
-                <div class="bg-red-100 text-red-800 p-3 rounded mb-4">
-                    <ul class="list-disc list-inside">
-                        @foreach ($errors->all() as $error)
-                            <li>{{ $error }}</li>
-                        @endforeach
-                    </ul>
-                </div>
-            @endif
-                        
-            <div class="bg-white shadow rounded p-4 sm:p-0">
+            {{-- Action Buttons --}}
+            <div class="mb-6 flex flex-col sm:flex-row sm:items-center sm:justify-between space-y-4 sm:space-y-0">
+                <a href="{{ route('members.create') }}" class="inline-flex items-center justify-center bg-indigo-600 hover:bg-indigo-700 text-white px-6 py-3 rounded-lg font-bold transition shadow-lg">
+                    <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z"></path></svg>
+                    Add Member
+                </a>
 
-                <div class="grid grid-cols-1 gap-4 sm:hidden">
-                    @foreach($members as $member)
-                    <div class="bg-white p-4 rounded-lg shadow space-y-3 border-l-4 border-blue-600">
-                        <div class="flex items-center justify-between">
-                            <div class="text-sm font-bold text-gray-900">{{ $member->name }}</div>
-                            <div class="text-xs font-semibold uppercase px-2 py-1 rounded {{ $member->indigent ? 'bg-red-100 text-red-700' : '' }}">
-                                {{ $member->indigent ? 'Indigent' : '' }}
+                {{-- Optional: Keep the Import Button clean if you uncomment it --}}
+                {{-- <div class="flex items-center">
+                    <button class="text-sm font-medium text-gray-600 hover:text-indigo-600 underline">Import from CSV</button>
+                </div> --}}
+            </div>
+
+            {{-- Mobile View: Stacked Cards --}}
+            <div class="grid grid-cols-1 gap-4 sm:hidden">
+                @forelse($members as $member)
+                    <div class="bg-white p-5 rounded-xl shadow-sm border border-gray-100 relative overflow-hidden">
+                        {{-- Indigent Indicator Stripe --}}
+                        @if($member->indigent)
+                            <div class="absolute top-0 left-0 w-1 h-full bg-red-500"></div>
+                        @endif
+
+                        <div class="flex items-start justify-between">
+                            <div class="flex items-center">
+                                <div class="h-10 w-10 rounded-full bg-gray-200 flex items-center justify-center text-gray-500 font-bold">
+                                    {{ substr($member->name, 0, 1) }}
+                                </div>
+                                <div class="ml-3">
+                                    <div class="text-base font-bold text-gray-900">{{ $member->name }}</div>
+                                    <p class="text-xs text-gray-500 uppercase tracking-wider">Dependents: {{ $member->dependents_count }}</p>
+                                </div>
+                            </div>
+                            @if($member->indigent)
+                                <span class="bg-red-100 text-red-700 text-[10px] font-black px-2 py-1 rounded uppercase tracking-tighter">Indigent</span>
+                            @endif
+                        </div>
+                        
+                        <div class="mt-4 grid grid-cols-2 gap-2 text-sm">
+                            <div class="bg-gray-50 p-2 rounded">
+                                <p class="text-[10px] text-gray-400 uppercase font-bold">Birthday</p>
+                                <p class="text-gray-700">{{ $member->birthday?->format('M d, Y') ?? '—' }}</p>
+                            </div>
+                            <div class="bg-gray-50 p-2 rounded text-right">
+                                <p class="text-[10px] text-gray-400 uppercase font-bold">Age</p>
+                                <p class="text-gray-700">{{ $member->birthday ? $member->birthday->age : '—' }}</p>
                             </div>
                         </div>
-                        
-                        <div class="text-sm text-gray-600">
-                            <p><strong>Birthday:</strong> {{ $member->birthday?->format('M d, Y') ?? '—' }}</p>
-                            <p><strong>Dependents:</strong> {{ $member->dependents_count }}</p>
-                        </div>
 
-                        <div class="flex justify-end space-x-3 pt-2 border-t border-gray-100">
-                            <a href="{{ route('members.show', $member) }}" class="text-blue-600 text-sm font-medium">View</a>
-                            <a href="{{ route('members.edit', $member) }}" class="text-yellow-600 text-sm font-medium">Edit</a>
+                        <div class="flex justify-end space-x-3 mt-4 pt-3 border-t border-gray-50">
+                            <a href="{{ route('members.show', $member) }}" class="text-indigo-600 text-sm font-bold px-3 py-1">View</a>
+                            <a href="{{ route('members.edit', $member) }}" class="text-yellow-600 text-sm font-bold px-3 py-1 border border-yellow-100 rounded-lg bg-yellow-50">Edit</a>
                         </div>
                     </div>
-                    @endforeach
-                </div>
+                @empty
+                    <div class="bg-white p-8 text-center rounded-xl border-2 border-dashed border-gray-200 text-gray-500">
+                        No members found in the records.
+                    </div>
+                @endforelse
+            </div>
 
-                <div class="hidden sm:block bg-white shadow rounded overflow-hidden">
-                    <table class="min-w-full divide-y divide-gray-200">
-                        <thead class="bg-gray-50">
+            {{-- Desktop View: Table --}}
+            <div class="hidden sm:block bg-white shadow-sm rounded-xl overflow-hidden border border-gray-200">
+                <table class="min-w-full divide-y divide-gray-200">
+                    <thead class="bg-gray-50">
                         <tr>
-                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Name</th>
-                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Birthday</th>
-                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Is Indigent</th>
-                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Dependents</th>
-                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Actions</th>
+                            <th class="px-6 py-4 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">Name</th>
+                            <th class="px-6 py-4 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">Birthday</th>
+                            <th class="px-6 py-4 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">Status</th>
+                            <th class="px-6 py-4 text-left text-xs font-bold text-gray-500 uppercase tracking-wider text-center">Dependents</th>
+                            <th class="px-6 py-4 text-right text-xs font-bold text-gray-500 uppercase tracking-wider tracking-widest">Actions</th>
                         </tr>
                     </thead>
-                    <tbody class="divide-y divide-gray-200">
+                    <tbody class="bg-white divide-y divide-gray-200">
                         @foreach($members as $member)
-                        <tr>
-                            <td class="px-6 py-4">{{ $member->name }}</td>
-                            <td class="px-6 py-4">{{ $member->birthday?->format('M d, Y') ?? '—' }}</td>
-                            <td class="px-6 py-4">{{ $member->indigent ? 'Indigent' : 'No' }}</td>
-                            <td class="px-6 py-4">{{ $member->dependents_count }}</td>
-                            <td class="px-6 py-4 space-x-2">
-                                <a href="{{ route('members.show', $member) }}" class="text-blue-600">View</a>
-                                <a href="{{ route('members.edit', $member) }}" class="text-yellow-600">Edit</a>
+                        <tr class="hover:bg-indigo-50/30 transition-colors">
+                            <td class="px-6 py-4 whitespace-nowrap">
+                                <div class="flex items-center">
+                                    <div class="h-8 w-8 rounded-full bg-indigo-100 flex items-center justify-center text-indigo-700 font-bold text-xs">
+                                        {{ substr($member->name, 0, 1) }}
+                                    </div>
+                                    <div class="ml-3 font-semibold text-gray-900">{{ $member->name }}</div>
+                                </div>
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600">
+                                {{ $member->birthday?->format('M d, Y') ?? '—' }}
+                                <span class="text-xs text-gray-400 ml-1">({{ $member->birthday ? $member->birthday->age : '?' }})</span>
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap">
+                                @if($member->indigent)
+                                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-bold bg-red-100 text-red-800">
+                                        Indigent
+                                    </span>
+                                @else
+                                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-600">
+                                        Regular
+                                    </span>
+                                @endif
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600 text-center font-medium">
+                                {{ $member->dependents_count }}
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium space-x-3">
+                                <a href="{{ route('members.show', $member) }}" class="text-indigo-600 hover:text-indigo-900">View</a>
+                                <a href="{{ route('members.edit', $member) }}" class="text-yellow-600 hover:text-yellow-900">Edit</a>
                             </td>
                         </tr>
                         @endforeach
                     </tbody>
-                    </table>
-                </div>
-        
+                </table>
             </div>
 
-            <div class="mt-6 p-4">
+            {{-- Pagination --}}
+            <div class="mt-8">
                 {{ $members->links() }}
             </div>
-
-            <div class="mt-6 flex flex-col space-y-4 bg-white p-4 rounded shadow sm:flex-row sm:items-center sm:space-y-0 sm:space-x-4">
-                <a href="{{ route('members.create') }}" class="w-full sm:w-auto bg-blue-600 text-white px-4 py-3 rounded text-center font-medium">
-                    + Add Member
-                </a>
-
-                <form method="POST" action="{{ route('members.import') }}" enctype="multipart/form-data" 
-                    class="flex flex-col w-full sm:flex-row sm:items-center border-t pt-4 sm:border-t-0 sm:pt-0">
-                    @csrf
-                    <input type="file" name="csv_file" accept=".csv" required 
-                        class="block w-full text-sm text-gray-500 mb-2 sm:mb-0 file:mr-4 file:py-2 file:px-4 file:rounded file:border-0 file:bg-blue-50 file:text-blue-700">
-                    
-                    <button class="w-full sm:w-auto bg-green-600 text-white px-4 py-3 rounded hover:bg-green-700">
-                        Import CSV
-                    </button>
-                </form>
-            </div>
-
         </div>
     </div>
 </x-app-layout>
