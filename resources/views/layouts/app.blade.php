@@ -78,11 +78,7 @@
                         <div class="flex flex-col md:flex-row md:items-center md:justify-between space-y-2 md:space-y-0">
                             
                             <div>
-                                <div class="flex items-center space-x-2">
-                                    {{-- Optional: Small dynamic icon based on current time --}}
-                                    <span class="text-indigo-600">
-                                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h7"></path></svg>
-                                    </span>
+                                <div class="flex items-center">                                                                        
                                     <h1 class="text-2xl font-extrabold text-gray-900 tracking-tight">
                                         {{ $header }}
                                     </h1>
@@ -92,10 +88,7 @@
                                 </p>
                             </div>
 
-                            <div class="hidden md:block text-right">
-                                <span class="text-sm text-gray-400">Welcome back,</span>
-                                <span class="block text-sm font-bold text-gray-700">{{ Auth::user()->name }}</span>
-                            </div>
+                            
 
                         </div>
                     </div>
