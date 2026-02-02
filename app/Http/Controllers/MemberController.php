@@ -9,9 +9,19 @@ use Illuminate\Support\Facades\Validator;
 
 class MemberController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $members = Member::withCount('dependents')->paginate(20);
+        $search = $request->input('search');
+
+        $members = Member::query()
+            ->withCount('dependents') // Assuming you have a dependents relationship
+            ->when($search, function ($query, $search) {
+                return $query->where('name', 'like', "%{$search}%");
+            })
+            ->orderBy('name', 'asc')
+            ->paginate(10)
+            ->withQueryString(); // This keeps the search term in pagination links
+
         return view('members.index', compact('members'));
     }
 

@@ -43,6 +43,26 @@
                         Import CSV
                     </button>
                 </form> --}}
+
+                {{-- Search Form --}}
+                <form method="GET" action="{{ route('members.index') }}" class="flex w-full md:max-w-sm gap-2">
+                    <div class="relative flex-1">
+                        <span class="absolute inset-y-0 left-0 pl-3 flex items-center text-gray-400">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
+                        </span>
+                        <input type="text" name="search" value="{{ request('search') }}" 
+                            placeholder="Search name..." 
+                            class="block w-full pl-10 pr-3 py-3 border-gray-300 focus:ring-indigo-500 focus:border-indigo-500 rounded-lg shadow-sm text-sm">
+                    </div>
+                    <button type="submit" class="px-4 py-2 bg-gray-800 text-white rounded-lg hover:bg-gray-700 transition">
+                        Search
+                    </button>
+                    @if(request('search'))
+                        <a href="{{ route('members.index') }}" class="px-4 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 transition flex items-center">
+                            Clear
+                        </a>
+                    @endif
+                </form>
             </div>
 
             {{-- Mobile View: Stacked Cards --}}
