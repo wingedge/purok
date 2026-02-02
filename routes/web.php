@@ -9,6 +9,7 @@ use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\InventoryController;
 use App\Http\Controllers\ContributionController;
+use App\Http\Controllers\PurokCertificateController;
 use App\Http\Controllers\Reports\CashFlowController;
 
 Route::get('/', function () {
@@ -26,6 +27,7 @@ Route::middleware('auth')->group(function () {
 });
 
 Route::middleware(['auth'])->group(function () {
+    Route::get('/members/search', [PurokCertificateController::class, 'searchMembers'])->name('members.search');
     Route::resource('members', MemberController::class);
     Route::post('members/import', [MemberController::class, 'import'])->name('members.import');
     Route::resource('expenses', ExpenseController::class);
@@ -48,5 +50,11 @@ Route::middleware(['auth'])->prefix('reports')->name('reports.')->group(function
         Route::get('/', function () {return view('reports.index');})->name('index');
         Route::get('/cashflow', [CashFlowController::class, 'index'])->name('cashflow');
 });
+
+Route::middleware(['auth', 'verified'])->group(function () {
+    Route::resource('purok_certificates', PurokCertificateController::class); 
+});
+
+
 
 require __DIR__.'/auth.php';

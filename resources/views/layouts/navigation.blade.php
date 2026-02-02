@@ -16,7 +16,7 @@
                     <div class="hidden sm:flex sm:items-center">
                         <x-dropdown align="left" width="48">
                             <x-slot name="trigger">
-                                <button class="inline-flex items-center px-3 py-2 text-sm font-medium leading-4 text-gray-500 transition duration-150 ease-in-out bg-white hover:text-gray-700 focus:outline-none {{ request()->routeIs('members.*') || request()->routeIs('contributions.*') ? 'text-indigo-600 border-b-2 border-indigo-400' : '' }}">
+                                <button class="inline-flex items-center px-3 py-2 text-sm font-medium leading-4 text-gray-500 transition duration-150 ease-in-out bg-white hover:text-gray-700 focus:outline-none {{ request()->routeIs('members.*') || request()->routeIs('purok_certificates.*') || request()->routeIs('contributions.*') ? 'text-indigo-600 border-b-2 border-indigo-400' : '' }}">
                                     <div>Community</div>
                                     <div class="ms-1">
                                         <svg class="w-4 h-4 fill-current" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"><path d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" /></svg>
@@ -26,6 +26,7 @@
                             <x-slot name="content">
                                 <x-dropdown-link :href="route('members.index')">Members List</x-dropdown-link>
                                 <x-dropdown-link :href="route('contributions.index')">Member Contributions</x-dropdown-link>
+                                <x-dropdown-link :href="route('purok_certificates.index')">Purok Certificate Log</x-dropdown-link>
                             </x-slot>
                         </x-dropdown>
                     </div>
@@ -108,7 +109,8 @@
             <div class="px-4 py-2 text-xs font-bold text-gray-400 uppercase tracking-widest">Community</div>
             <x-responsive-nav-link href="{{ route('members.index') }}" :active="request()->routeIs('members.*')">Members</x-responsive-nav-link>
             <x-responsive-nav-link href="{{ route('contributions.index') }}" :active="request()->routeIs('contributions.*')">Contributions</x-responsive-nav-link>
-            
+            <x-responsive-nav-link href="{{ route('purok_certificates.index') }}" :active="request()->routeIs('purok_certificates.*')">Purok Certificates Log</x-responsive-nav-link>
+
             <div class="px-4 py-2 text-xs font-bold text-gray-400 uppercase tracking-widest mt-2">Finances</div>
             <x-responsive-nav-link href="{{ route('incomes.index') }}" :active="request()->routeIs('incomes.*')">Incomes</x-responsive-nav-link>
             <x-responsive-nav-link href="{{ route('expenses.index') }}" :active="request()->routeIs('expenses.*')">Expenses</x-responsive-nav-link>
