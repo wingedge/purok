@@ -8,9 +8,9 @@
                     </a>
                 </div>
                 
-                <h1 class="text-5xl font-extrabold mb-6 tracking-tight">Welcome Back</h1>
+                <h1 class="text-5xl font-extrabold mb-6 tracking-tight">Purok Kasadpan</h1>
                 <p class="text-xl text-indigo-100 leading-relaxed">
-                    Purok management system.
+                    Digitizing Local Governance.
                 </p>
             </div>
         </div>

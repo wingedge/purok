@@ -2,13 +2,14 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
+use DB;
+use Carbon\Carbon;
 use App\Models\Income;
+use App\Models\Member;
+use App\Models\Rental;
 use App\Models\Expense;
 use App\Models\Contribution;
-use App\Models\Rental;
-use Carbon\Carbon;
-use DB;
+use Illuminate\Http\Request;
 
 class DashboardController extends Controller
 {
@@ -24,6 +25,8 @@ class DashboardController extends Controller
                 $query->whereMonth('created_at', $month);
             }
         };
+
+        $totalMembers = Member::count();
 
         // Incomes
         $totalIncomes = Income::whereYear('date', $year)
@@ -58,7 +61,8 @@ class DashboardController extends Controller
             'totalExpenses',
             'contributorsCount',
             'totalRentals',
-            'totalFunds'
+            'totalFunds',
+            'totalMembers'
         ));
     }
 }
