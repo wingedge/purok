@@ -15,14 +15,14 @@
 
         <div class="flex items-center justify-between mb-4 px-2">
             <form method="GET" class="flex items-center gap-2">
-                <select name="month" class="border-gray-300 rounded text-xs py-1 shadow-sm focus:ring-blue-500">
+                <select name="month" class="border-gray-300 rounded py-1 shadow-sm focus:ring-blue-500">
                     @foreach(range(1, 12) as $m)
                         <option value="{{ $currentYear }}-{{ str_pad($m, 2, '0', STR_PAD_LEFT) }}" @selected($selectedMonth == $m)>
                             {{ \Carbon\Carbon::create()->month($m)->format('M') }}
                         </option>
                     @endforeach
                 </select>
-                <button class="bg-blue-600 text-white px-3 py-1 rounded text-xs font-bold uppercase tracking-wider">
+                <button class="bg-blue-600 text-white px-3 py-1 rounded font-bold uppercase tracking-wider">
                     Go
                 </button>
             </form>
@@ -54,7 +54,7 @@
                                 @foreach($members as $member)
                                 <tr class="hover:bg-blue-50/30 transition-colors">
                                     <td class="sticky left-0 z-10 bg-white border-r px-3 py-2 shadow-[1px_0_3px_rgba(0,0,0,0.05)] sm:min-w-[150px]">
-                                        <div class="text-xs font-bold text-gray-800 truncate max-w-[100px] sm:max-w-none">
+                                        <div class="text-xs font-bold text-gray-800 truncate max-w-[130px] sm:max-w-none">
                                             {{ $member->name }}
                                         </div>
                                         <div class="flex items-center gap-1">

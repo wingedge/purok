@@ -19,7 +19,7 @@ class MemberController extends Controller
                 return $query->where('name', 'like', "%{$search}%");
             })
             ->orderBy('name', 'asc')
-            ->paginate(10)
+            ->paginate(15)
             ->withQueryString(); // This keeps the search term in pagination links
 
         return view('members.index', compact('members'));

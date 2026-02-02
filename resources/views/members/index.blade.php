@@ -92,7 +92,7 @@
                         <div class="mt-4 grid grid-cols-2 gap-2 text-sm">
                             <div class="bg-gray-50 p-2 rounded">
                                 <p class="text-[10px] text-gray-400 uppercase font-bold">Birthday</p>
-                                <p class="text-gray-700">{{ $member->birthday?->format('M d, Y') ?? '—' }}</p>
+                                <p class="text-gray-700">{{ $member->birthday?->format('M d') ?? '—' }}</p>
                             </div>
                             <div class="bg-gray-50 p-2 rounded text-right">
                                 <p class="text-[10px] text-gray-400 uppercase font-bold">Age</p>
@@ -118,8 +118,7 @@
                     <thead class="bg-gray-50">
                         <tr>
                             <th class="px-6 py-4 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">Name</th>
-                            <th class="px-6 py-4 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">Birthday</th>
-                            <th class="px-6 py-4 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">Status</th>
+                            <th class="px-6 py-4 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">Age</th>                            
                             <th class="px-6 py-4 text-left text-xs font-bold text-gray-500 uppercase tracking-wider text-center">Dependents</th>
                             <th class="px-6 py-4 text-right text-xs font-bold text-gray-500 uppercase tracking-wider tracking-widest">Actions</th>
                         </tr>
@@ -132,24 +131,18 @@
                                     <div class="h-8 w-8 rounded-full bg-indigo-100 flex items-center justify-center text-indigo-700 font-bold text-xs">
                                         {{ substr($member->name, 0, 1) }}
                                     </div>
-                                    <div class="ml-3 font-semibold text-gray-900">{{ $member->name }}</div>
+                                    <div class="ml-3 mr-3 font-semibold text-gray-900">{{ $member->name }}</div>
+                                    @if($member->indigent)
+                                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-bold bg-red-100 text-red-800">
+                                            Indigent
+                                        </span>                                        
+                                    @endif
                                 </div>
                             </td>
                             <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600">
-                                {{ $member->birthday?->format('M d, Y') ?? '—' }}
-                                <span class="text-xs text-gray-400 ml-1">({{ $member->birthday ? $member->birthday->age : '?' }})</span>
-                            </td>
-                            <td class="px-6 py-4 whitespace-nowrap">
-                                @if($member->indigent)
-                                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-bold bg-red-100 text-red-800">
-                                        Indigent
-                                    </span>
-                                @else
-                                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-600">
-                                        Regular
-                                    </span>
-                                @endif
-                            </td>
+                                {{ $member->birthday ? $member->birthday->age : '—' }}
+                                {{-- <span class="text-xs text-gray-400 ml-1">({{ $member->birthday ? $member->birthday->age : '?' }})</span> --}}
+                            </td>                            
                             <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600 text-center font-medium">
                                 {{ $member->dependents_count }}
                             </td>

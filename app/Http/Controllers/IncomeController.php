@@ -18,12 +18,13 @@ class IncomeController extends Controller
     private function sources(): array
     {
         return [
-            'Rentals - chairs / table rental',
+            'Rentals - Chairs / Table rental',
             'Donation / Fund Drive',
             'Commission / Incentive',
             'Government Aid',
             'Penalties',
             'Misc',
+            'Cash on Hand',
         ];
     }
 

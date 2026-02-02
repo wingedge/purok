@@ -66,7 +66,7 @@
                     <thead class="bg-gray-50">
                         <tr>
                             <th class="px-6 py-4 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Date</th>
-                            <th class="px-6 py-4 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Category</th>
+                            <th class="px-6 py-4 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Source</th>
                             <th class="px-6 py-4 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Description</th>
                             <th class="px-6 py-4 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Amount</th>                             
                             <th class="px-6 py-4 text-right">Actions</th>
@@ -76,7 +76,7 @@
                         @foreach ($incomes as $income)
                             <tr class="hover:bg-gray-50 transition-colors">
                                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-700">{{ $income->date->format('M d, Y') }}</td>
-                                <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{{ $income->category }}</td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{{ $income->source }}</td>
                                 <td class="px-6 py-4 text-sm text-gray-600">{{ $income->description }}</td>
                                 <td class="px-6 py-4 whitespace-nowrap text-sm font-bold text-indigo-600">{{ number_format($income->amount, 2) }}</td>                                
                                 <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium space-x-3">

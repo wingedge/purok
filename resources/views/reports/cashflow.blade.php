@@ -89,7 +89,7 @@
                             <td class="px-4 py-2 font-bold text-gray-700 uppercase text-xs" colspan="2">A. Cash Inflows</td>
                         </tr>
                         <tr>
-                            <td class="px-4 py-2 text-gray-600">General Incomes</td>
+                            <td class="px-4 py-2 text-gray-600">Cash on Hand / Incomes / Rentals / Donations / Funding</td>
                             <td class="px-4 py-2 text-right font-semibold">₱{{ number_format($incomeTotal, 2) }}</td>
                         </tr>
                         <tr>
@@ -100,7 +100,7 @@
                             <td class="px-4 py-2 font-bold text-gray-700 uppercase text-xs" colspan="2">B. Cash Outflows</td>
                         </tr>
                         <tr>
-                            <td class="px-4 py-2 text-gray-600">Operating Expenses</td>
+                            <td class="px-4 py-2 text-gray-600">Purok Expenses</td>
                             <td class="px-4 py-2 text-right font-semibold text-rose-600">({{ number_format($expenseTotal, 2) }})</td>
                         </tr>
                         <tr class="bg-gray-900 text-white font-bold">
@@ -142,7 +142,7 @@
             </p>
 
             {{-- Developer Signature / System Stamp --}}
-            <div class="mt-8 pt-4 border-t border-gray-100 flex justify-between items-center opacity-60">
+            <div class="mt-8 pt-4 border-t border-gray-100 flex justify-between items-center opacity-60 print:hidden">
                 <div class="text-[8px] text-gray-400 uppercase tracking-widest font-semibold">
                     System Architecture by: <span class="text-gray-600">Francis Moreno</span>
                 </div>

@@ -32,23 +32,32 @@ class ContributionController extends Controller
         }
 
         // 2. Fetch Members with two types of contribution data
-        $members = Member::with(['contributions' => function ($q) use ($weeks) {
-                // Only load contributions for the visible grid weeks (saves memory)
-                $q->whereIn('week_start', collect($weeks)->map->toDateString());
-            }])
-            ->withSum(['contributions as year_total' => function ($q) use ($currentYear) {
-                // Calculate the total for the entire selected year
-                $q->whereYear('week_start', $currentYear);
-            }], 'amount')
-            ->orderBy('name')
-            ->get();
+        $members = Member::query()
+        ->where('indigent', false) // <--- Add this line to filter out indigent members
+        ->with(['contributions' => function ($q) use ($weeks) {
+            // Only load contributions for the visible grid weeks (saves memory)
+            $q->whereIn('week_start', collect($weeks)->map->toDateString());
+        }])
+        ->withSum(['contributions as year_total' => function ($q) use ($currentYear) {
+            // Calculate the total for the entire selected year
+            $q->whereYear('week_start', $currentYear);
+        }], 'amount')
+        ->orderBy('name')
+        ->get();
 
         return view('contributions.index', compact('members', 'weeks', 'month', 'currentYear'));
     }
 
-    private function getContributionAmount()
+    // private function getContributionAmount()
+    // {
+    //     return 10.00; 
+    // }
+
+    private function getContributionAmount($memberId)
     {
-        return 10.00; 
+        $member = Member::find($memberId);
+        // If indigent is true, maybe they only pay 0 or 50?
+        return $member->indigent ? 0.00 : 10.00;
     }
 
     public function store(Request $request)
@@ -60,7 +69,7 @@ class ContributionController extends Controller
         ]);
 
         // 2. Define the amount here (Internal control)
-        $amount = $this->getContributionAmount();
+        $amount = $this->getContributionAmount($request->member_id);
 
         // 3. Save to database
         $contribution = Contribution::updateOrCreate(
