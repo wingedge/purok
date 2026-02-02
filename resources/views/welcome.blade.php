@@ -1,74 +1,57 @@
 <x-guest-layout>
-    <div class="flex min-h-screen">
-        <div class="hidden lg:flex w-1/2 bg-indigo-700 items-center justify-center p-12 text-white">
-            <div class="max-w-xl text-center"> 
-                <div class="mb-10 flex justify-center">
-                    <a href="/">
-                        <x-application-logo class="w-64 h-auto drop-shadow-2xl" />
-                    </a>
-                </div>
-                
-                <h1 class="text-5xl font-extrabold mb-6 tracking-tight">Purok Kasadpan</h1>
-                <p class="text-xl text-indigo-100 leading-relaxed">
-                    Digitizing Local Governance.
+    <div class="flex flex-col lg:flex-row min-h-screen h-full">
+        
+        <div class="w-full lg:w-1/2 bg-indigo-700 flex items-center justify-center p-12 lg:p-20 text-white relative overflow-hidden">
+            {{-- Subtle decoration so it doesn't look flat --}}
+            <div class="absolute -top-24 -left-24 w-64 h-64 bg-indigo-600 rounded-full opacity-50 blur-3xl"></div>
+            
+            <div class="max-w-md text-center lg:text-left relative z-10">
+                <x-application-logo class="w-20 h-auto text-white fill-current mb-8 mx-auto lg:mx-0" />
+                <h1 class="text-5xl lg:text-6xl font-black leading-tight tracking-tighter mb-6">
+                    Purok <br class="hidden lg:block"/><span class="text-indigo-300">Kasadpan</span>
+                </h1>
+                <p class="text-lg text-indigo-100 font-light leading-relaxed">
+                    Digital records, transparent finances, and better community management for our citizens.
                 </p>
             </div>
         </div>
 
-        <div class="w-full lg:w-1/2 flex items-center justify-center p-8 bg-white dark:bg-gray-900">
-            <div class="w-full max-w-md">
-                <div class="lg:hidden mb-12 flex justify-center">
-                    <a href="/">
-                        <x-application-logo class="w-32 h-auto" />
-                    </a>
+        <div class="w-full lg:w-1/2 bg-white flex items-center justify-center p-8 lg:p-20">
+            <div class="w-full max-w-sm space-y-10">
+                <div class="text-center lg:text-left">
+                    <h2 class="text-3xl font-extrabold text-gray-900 tracking-tight">Portal Access</h2>
+                    <p class="text-gray-500 mt-2 font-medium">Choose an option below to continue.</p>
                 </div>
 
-                <h2 class="text-3xl font-extrabold text-gray-900 dark:text-white mb-2">Sign In</h2>
-                <p class="text-sm text-gray-600 dark:text-gray-400 mb-8">Please enter your details.</p>
+                <div class="space-y-4">
+                    <a href="{{ route('login') }}" class="group flex items-center p-4 bg-white border-2 border-gray-100 rounded-2xl hover:border-indigo-600 hover:bg-indigo-50 transition-all duration-300">
+                        <div class="p-3 bg-indigo-100 text-indigo-600 rounded-xl group-hover:bg-indigo-600 group-hover:text-white transition-colors">
+                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1" /></svg>
+                        </div>
+                        <div class="ms-4 text-left">
+                            <p class="text-base font-bold text-gray-900">Sign In</p>
+                            <p class="text-xs text-gray-500">Access administrator dashboard</p>
+                        </div>
+                    </a>
 
-                <x-auth-session-status class="mb-4" :status="session('status')" />
+                    @if (Route::has('register'))
+                    <a href="{{ route('register') }}" class="group flex items-center p-4 bg-white border-2 border-gray-100 rounded-2xl hover:border-indigo-600 hover:bg-indigo-50 transition-all duration-300">
+                        <div class="p-3 bg-gray-100 text-gray-600 rounded-xl group-hover:bg-indigo-600 group-hover:text-white transition-colors">
+                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z" /></svg>
+                        </div>
+                        <div class="ms-4 text-left">
+                            <p class="text-base font-bold text-gray-900">Register</p>
+                            <p class="text-xs text-gray-500">Create a new officer account</p>
+                        </div>
+                    </a>
+                    @endif
+                </div>
 
-                <form method="POST" action="{{ route('login') }}">
-                    @csrf
-
-                    <div>
-                        <x-input-label for="email" :value="__('Email')" />
-                        <x-text-input id="email" class="block mt-1 w-full" type="email" name="email" :value="old('email')" required autofocus autocomplete="username" />
-                        <x-input-error :messages="$errors->get('email')" class="mt-2" />
-                    </div>
-
-                    <div class="mt-4">
-                        <x-input-label for="password" :value="__('Password')" />
-                        <x-text-input id="password" class="block mt-1 w-full" type="password" name="password" required autocomplete="current-password" />
-                        <x-input-error :messages="$errors->get('password')" class="mt-2" />
-                    </div>
-
-                    <div class="block mt-4">
-                        <label for="remember_me" class="inline-flex items-center">
-                            <input id="remember_me" type="checkbox" class="rounded dark:bg-gray-900 border-gray-300 dark:border-gray-700 text-indigo-600 shadow-sm focus:ring-indigo-500 dark:focus:ring-indigo-600 dark:focus:ring-offset-gray-800" name="remember">
-                            <span class="ms-2 text-sm text-gray-600 dark:text-gray-400">{{ __('Remember me') }}</span>
-                        </label>
-                    </div>
-
-                    <div class="flex items-center justify-between mt-6">
-                        @if (Route::has('password.request'))
-                            <a class="underline text-sm text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 dark:focus:ring-offset-gray-800" href="{{ route('password.request') }}">
-                                {{ __('Forgot your password?') }}
-                            </a>
-                        @endif
-
-                        <x-primary-button class="ms-3 px-8">
-                            {{ __('Log in') }}
-                        </x-primary-button>
-                    </div>
-                </form>
-
-                {{-- @if (Route::has('register'))
-                    <div class="mt-8 text-center text-sm text-gray-600 dark:text-gray-400">
-                        Don't have an account? 
-                        <a href="{{ route('register') }}" class="font-semibold text-indigo-600 hover:text-indigo-500 underline">Create one for free</a>
-                    </div>
-                @endif --}}
+                <div class="pt-8 text-center lg:text-left">
+                    <p class="text-[10px] text-gray-400 font-bold uppercase tracking-widest">
+                        System Architecture by [Your Name]
+                    </p>
+                </div>
             </div>
         </div>
     </div>

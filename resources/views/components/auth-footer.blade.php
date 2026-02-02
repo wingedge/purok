@@ -1,0 +1,1 @@
+<p class="mt-8 text-[10px] text-gray-400 font-bold uppercase tracking-[0.3em]">© 2026 Kasadpan Digital</p>
