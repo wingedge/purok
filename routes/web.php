@@ -38,6 +38,7 @@ Route::middleware(['auth'])->group(function () {
 
     Route::resource('inventories', InventoryController::class);
     Route::resource('rentals', RentalController::class);
+    Route::patch('/rentals/{rental}/return', [RentalController::class, 'returnItem'])->name('rentals.return');
 });
 
 Route::get('/dashboard', [DashboardController::class, 'index'])

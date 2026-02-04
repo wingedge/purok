@@ -57,6 +57,7 @@
                         </div>
 
                         <div class="flex space-x-3 pt-3 border-t border-gray-50">
+                            
                             <a href="{{ route('rentals.edit', $rental) }}" class="flex-1 text-center py-2 text-sm font-semibold text-yellow-700 bg-yellow-50 rounded-lg">Edit</a>
                             <form action="{{ route('rentals.destroy', $rental) }}" method="POST" class="flex-1">
                                 @csrf
@@ -64,6 +65,15 @@
                                 <button class="w-full text-center py-2 text-sm font-semibold text-red-700 bg-red-50 rounded-lg" onclick="return confirm('Delete this rental?')">Delete</button>
                             </form>
                         </div>
+                        @if($rental->status === 'rented')
+                            <form action="{{ route('rentals.return', $rental) }}" method="POST" class="w-full mt-2">
+                                @csrf
+                                @method('PATCH')
+                                <button type="submit" class="w-full py-2 bg-green-600 text-white rounded-lg text-sm font-bold shadow-sm">
+                                    Quick Return
+                                </button>
+                            </form>
+                        @endif
                     </div>
                 @empty
                     <div class="text-center py-10 bg-white rounded-xl border-2 border-dashed border-gray-200 text-gray-500">
@@ -116,6 +126,17 @@
                                     </span>
                                 </td>
                                 <td class="px-6 py-4 text-right text-sm font-medium space-x-3">
+                                    @if($rental->status === 'rented')
+                                        <form action="{{ route('rentals.return', $rental) }}" method="POST" class="inline">
+                                            @csrf
+                                            @method('PATCH')
+                                            <button type="submit" 
+                                                    class="text-green-600 hover:text-green-900 font-medium" 
+                                                    onclick="return confirm('Confirm return of this item?')">
+                                                Mark Returned
+                                            </button>
+                                        </form>
+                                    @endif
                                     <a href="{{ route('rentals.edit', $rental) }}" class="text-indigo-600 hover:text-indigo-900">Edit</a>
                                     <form action="{{ route('rentals.destroy', $rental) }}" method="POST" class="inline">
                                         @csrf

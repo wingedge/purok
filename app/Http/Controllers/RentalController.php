@@ -155,4 +155,25 @@ class RentalController extends Controller
             return back()->withErrors('Error during deletion: ' . $e->getMessage());
         }
     }
+
+    public function returnItem(Rental $rental)
+    {
+        // Prevent double-returning
+        if ($rental->status === 'returned') {
+            return back()->with('error', 'This item has already been returned.');
+        }
+
+        DB::transaction(function () use ($rental) {
+            // 1. Restore Inventory
+            $rental->inventory->increment('available_quantity', $rental->quantity);
+
+            // 2. Update Rental Status
+            $rental->update([
+                'status' => 'returned',
+                'return_date' => now()
+            ]);
+        });
+
+        return back()->with('success', 'Item marked as returned and inventory updated.');
+    }
 }
