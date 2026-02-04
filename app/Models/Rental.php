@@ -24,6 +24,11 @@ class Rental extends Model
         'return_date' => 'date',
     ];
 
+    public function income()
+    {
+        return $this->hasOne(Income::class);
+    }
+
     public function inventory()
     {
         return $this->belongsTo(Inventory::class);

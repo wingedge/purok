@@ -14,11 +14,17 @@ class Income extends Model
         'date',
         'source',
         'description',
-        'amount',       
+        'amount',  
+        'rental_id',     
     ];
 
     protected $casts = [
         'date' => 'date',
         'amount' => 'decimal:2',
     ];
+
+    public function rental()
+    {
+        return $this->belongsTo(Rental::class);
+    }
 }

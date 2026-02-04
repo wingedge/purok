@@ -28,22 +28,25 @@
                 @forelse ($inventories as $inventory)
                     <div class="bg-white p-5 rounded-xl shadow-sm border border-gray-100">
                         <div class="flex justify-between items-start mb-4">
-                            <h3 class="text-lg font-bold text-gray-900">{{ $inventory->item_name }}</h3>
-                            <span class="px-2.5 py-0.5 rounded-full text-xs font-medium {{ $inventory->available_quantity > 0 ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800' }}">
-                                {{ $inventory->available_quantity > 0 ? 'In Stock' : 'Out of Stock' }}
+                            <div>
+                                <h3 class="text-lg font-bold text-gray-900">{{ $inventory->item_name }}</h3>
+                                <p class="text-xs text-gray-400">Total Stock: {{ $inventory->total_quantity }}</p>
+                            </div>
+                            <span class="px-2.5 py-0.5 rounded-full text-xs font-bold {{ $inventory->available_quantity > 0 ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800' }}">
+                                {{ $inventory->available_quantity > 0 ? '● In Stock' : '● Out of Stock' }}
                             </span>
                         </div>
                         
-                        <div class="grid grid-cols-2 gap-4 mb-4 bg-gray-50 p-3 rounded-lg">
-                            <div>
-                                <p class="text-xs text-gray-500 uppercase tracking-wider">Total</p>
-                                <p class="text-sm font-semibold text-gray-700">{{ $inventory->total_quantity }} units</p>
+                        <div class="grid grid-cols-2 gap-4 mb-4">
+                            <div class="bg-blue-50 p-3 rounded-lg border border-blue-100">
+                                <p class="text-[10px] text-blue-500 uppercase font-bold">Ready to Rent</p>
+                                <p class="text-xl font-black text-blue-700">{{ $inventory->available_quantity }}</p>
                             </div>
-                            <div>
-                                <p class="text-xs text-gray-500 uppercase tracking-wider">Available</p>
-                                <p class="text-sm font-bold text-blue-600">{{ $inventory->available_quantity }} units</p>
+                            <div class="bg-orange-50 p-3 rounded-lg border border-orange-100">
+                                <p class="text-[10px] text-orange-500 uppercase font-bold">Out with Client</p>
+                                <p class="text-xl font-black text-orange-700">{{ $inventory->total_quantity - $inventory->available_quantity }}</p>
                             </div>
-                        </div>
+                        </div>                       
 
                         <div class="flex space-x-3">
                             <a href="{{ route('inventories.edit', $inventory) }}" class="flex-1 text-center py-2 text-sm font-medium text-yellow-700 bg-yellow-50 rounded-lg border border-yellow-100">
@@ -68,34 +71,46 @@
             {{-- Desktop View: Table (Hidden on mobile) --}}
             <div class="hidden lg:block bg-white shadow-sm rounded-xl overflow-hidden border border-gray-200">
                 <table class="min-w-full divide-y divide-gray-200">
-                    <thead class="bg-gray-50">
-                        <tr>
-                            <th class="px-6 py-4 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Item Name</th>
-                            <th class="px-6 py-4 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Total Qty</th>
-                            <th class="px-6 py-4 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Available Qty</th>                             
-                            <th class="px-6 py-4 text-right">Actions</th>
-                        </tr>
-                    </thead>
                     <tbody class="bg-white divide-y divide-gray-200">
                         @foreach ($inventories as $inventory)
+                            @php
+                                $rentedCount = $inventory->total_quantity - $inventory->available_quantity;
+                                $percentage = $inventory->total_quantity > 0 
+                                    ? ($inventory->available_quantity / $inventory->total_quantity) * 100 
+                                    : 0;
+                            @endphp
                             <tr class="hover:bg-gray-50 transition-colors">
                                 <td class="px-6 py-4 whitespace-nowrap">
                                     <div class="text-sm font-bold text-gray-900">{{ $inventory->item_name }}</div>
-                                </td>
-                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600">
-                                    {{ $inventory->total_quantity }}
+                                    <div class="text-xs text-gray-400 font-normal">ID: #{{ str_pad($inventory->id, 4, '0', STR_PAD_LEFT) }}</div>
                                 </td>
                                 <td class="px-6 py-4 whitespace-nowrap">
-                                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-bold {{ $inventory->available_quantity > 0 ? 'bg-blue-100 text-blue-800' : 'bg-red-100 text-red-800' }}">
-                                        {{ $inventory->available_quantity }}
-                                    </span>
+                                    <div class="flex items-center">
+                                        <span class="text-sm text-gray-600 mr-2">{{ $inventory->total_quantity }}</span>
+                                        <div class="w-24 bg-gray-200 rounded-full h-1.5 hidden xl:block">
+                                            <div class="bg-indigo-600 h-1.5 rounded-full" style="width: {{ 100 - $percentage }}%"></div>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td class="px-6 py-4 whitespace-nowrap">
+                                    <div class="flex flex-col">
+                                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-bold 
+                                            {{ $inventory->available_quantity <= ($inventory->total_quantity * 0.1) ? 'bg-red-100 text-red-800' : 'bg-blue-100 text-blue-800' }}">
+                                            {{ $inventory->available_quantity }} Available
+                                        </span>
+                                        @if($rentedCount > 0)
+                                            <span class="text-[10px] text-orange-600 font-bold mt-1 uppercase tracking-tight">
+                                                {{ $rentedCount }} Currently Rented
+                                            </span>
+                                        @endif
+                                    </div>
                                 </td>                                
                                 <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium space-x-3">
-                                    <a href="{{ route('inventories.edit', $inventory) }}" class="text-yellow-600 hover:text-yellow-900">Edit</a>
+                                    <a href="{{ route('inventories.edit', $inventory) }}" class="text-indigo-600 hover:text-indigo-900 bg-indigo-50 px-3 py-1 rounded">Edit</a>
                                     <form action="{{ route('inventories.destroy', $inventory) }}" method="POST" class="inline">
                                         @csrf
                                         @method('DELETE')
-                                        <button class="text-red-600 hover:text-red-900" onclick="return confirm('Delete this item?')">Delete</button>
+                                        <button class="text-red-600 hover:text-red-900 px-3 py-1 rounded hover:bg-red-50" onclick="return confirm('Delete this item?')">Delete</button>
                                     </form>
                                 </td>
                             </tr>

@@ -30,9 +30,13 @@
                         <div class="flex justify-between items-start mb-3">
                             <div>
                                 <h3 class="text-lg font-bold text-gray-900">{{ $rental->inventory->item_name }}</h3>
-                                <p class="text-sm text-indigo-600 font-medium">Qty: {{ $rental->quantity }}</p>
+                                <div class="flex items-center space-x-2">
+                                    <p class="text-sm text-indigo-600 font-bold">Qty: {{ $rental->quantity }}</p>
+                                    <span class="text-gray-300">|</span>
+                                    <p class="text-sm font-bold text-gray-800">₱{{ number_format($rental->income->amount ?? 0, 2) }}</p>
+                                </div>
                             </div>
-                            <span class="px-3 py-1 rounded-full text-xs font-bold tracking-wide uppercase
+                            <span class="px-3 py-1 rounded-full text-xs font-bold uppercase
                                 {{ $rental->status === 'rented' ? 'bg-amber-100 text-amber-800' : 'bg-green-100 text-green-800' }}">
                                 {{ $rental->status }}
                             </span>
@@ -73,9 +77,9 @@
                 <table class="min-w-full divide-y divide-gray-200">
                     <thead class="bg-gray-50">
                         <tr>
-                            <th class="px-6 py-4 text-left text-xs font-bold text-gray-500 uppercase">Item</th>
+                            <th class="px-6 py-4 text-left text-xs font-bold text-gray-500 uppercase">Item Details</th>
                             <th class="px-6 py-4 text-left text-xs font-bold text-gray-500 uppercase">Renter</th>
-                            <th class="px-6 py-4 text-left text-xs font-bold text-gray-500 uppercase">Qty</th>
+                            <th class="px-6 py-4 text-left text-xs font-bold text-gray-500 uppercase">Payment</th>
                             <th class="px-6 py-4 text-left text-xs font-bold text-gray-500 uppercase">Rent Date</th>
                             <th class="px-6 py-4 text-left text-xs font-bold text-gray-500 uppercase">Status</th>
                             <th class="px-6 py-4"></th>
@@ -84,16 +88,30 @@
                     <tbody class="divide-y divide-gray-200 bg-white">
                         @foreach($rentals as $rental)
                             <tr class="hover:bg-gray-50 transition-colors">
-                                <td class="px-6 py-4 font-semibold text-gray-900">{{ $rental->inventory->item_name }}</td>
+                                <td class="px-6 py-4">
+                                    <div class="font-semibold text-gray-900">{{ $rental->inventory->item_name }}</div>
+                                    <div class="text-xs text-indigo-600 font-bold">Qty: {{ $rental->quantity }}</div>
+                                </td>
                                 <td class="px-6 py-4">
                                     <div class="text-sm font-medium text-gray-900">{{ $rental->renter_name }}</div>
                                     <div class="text-xs text-gray-500">{{ $rental->renter_contact }}</div>
                                 </td>
-                                <td class="px-6 py-4 text-sm text-gray-600">{{ $rental->quantity }}</td>
-                                <td class="px-6 py-4 text-sm text-gray-600">{{ $rental->rent_date->format('M d, Y') }}</td>
                                 <td class="px-6 py-4">
-                                    <span class="px-3 py-1 rounded-full text-xs font-bold tracking-tight
+                                    {{-- Show the linked income amount --}}
+                                    <span class="text-sm font-bold text-gray-700">
+                                        ₱{{ number_format($rental->income->amount ?? 0, 2) }}
+                                    </span>
+                                </td>
+                                <td class="px-6 py-4 text-sm text-gray-600">
+                                    {{ $rental->rent_date->format('M d, Y') }}
+                                    @if($rental->status === 'returned' && $rental->return_date)
+                                        <div class="text-[10px] text-green-600 uppercase font-bold">Returned: {{ $rental->return_date->format('M d') }}</div>
+                                    @endif
+                                </td>
+                                <td class="px-6 py-4">
+                                    <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-bold tracking-tight
                                         {{ $rental->status === 'rented' ? 'bg-amber-100 text-amber-800' : 'bg-green-100 text-green-800' }}">
+                                        <span class="w-2 h-2 mr-2 rounded-full {{ $rental->status === 'rented' ? 'bg-amber-500' : 'bg-green-500' }}"></span>
                                         {{ ucfirst($rental->status) }}
                                     </span>
                                 </td>
@@ -102,7 +120,7 @@
                                     <form action="{{ route('rentals.destroy', $rental) }}" method="POST" class="inline">
                                         @csrf
                                         @method('DELETE')
-                                        <button class="text-red-600 hover:text-red-900 font-medium" onclick="return confirm('Delete this rental?')">Delete</button>
+                                        <button class="text-red-600 hover:text-red-900 font-medium" onclick="return confirm('Delete this rental and the linked income record?')">Delete</button>
                                     </form>
                                 </td>
                             </tr>
