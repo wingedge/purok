@@ -31,6 +31,7 @@
                             <div>
                                 <h3 class="text-lg font-bold text-gray-900">{{ $inventory->item_name }}</h3>
                                 <p class="text-xs text-gray-400">Total Stock: {{ $inventory->total_quantity }}</p>
+                                <p class="text-xs text-gray-400">Rental Rate: {{ $inventory->rental_rate }}</p>
                             </div>
                             <span class="px-2.5 py-0.5 rounded-full text-xs font-bold {{ $inventory->available_quantity > 0 ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800' }}">
                                 {{ $inventory->available_quantity > 0 ? '● In Stock' : '● Out of Stock' }}
@@ -71,6 +72,16 @@
             {{-- Desktop View: Table (Hidden on mobile) --}}
             <div class="hidden lg:block bg-white shadow-sm rounded-xl overflow-hidden border border-gray-200">
                 <table class="min-w-full divide-y divide-gray-200">
+                    <thead class="bg-gray-50">
+                        <tr>
+                            <th class="px-6 py-4 text-left text-xs font-bold text-gray-500 uppercase">Item Details</th>
+                            <th class="px-6 py-4 text-left text-xs font-bold text-gray-500 uppercase">Quantity</th>
+                            <th class="px-6 py-4 text-left text-xs font-bold text-gray-500 uppercase">Availability</th>
+                            <th class="px-6 py-4 text-left text-xs font-bold text-gray-500 uppercase">Rental Rate</th>
+                            <th class="px-6 py-4 text-left text-xs font-bold text-gray-500 uppercase">Action</th>
+                            <th class="px-6 py-4"></th>
+                        </tr>
+                    </thead>
                     <tbody class="bg-white divide-y divide-gray-200">
                         @foreach ($inventories as $inventory)
                             @php
@@ -93,18 +104,30 @@
                                     </div>
                                 </td>
                                 <td class="px-6 py-4 whitespace-nowrap">
-                                    <div class="flex flex-row">
-                                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-bold 
-                                            {{ $inventory->available_quantity <= ($inventory->total_quantity * 0.1) ? 'bg-red-100 text-red-800' : 'bg-blue-100 text-blue-800' }}">
+                                    <div class="flex flex-wrap gap-2 items-center">
+                                        {{-- Available Badge --}}
+                                        <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-bold shadow-sm
+                                            {{ $inventory->available_quantity <= ($inventory->total_quantity * 0.1) 
+                                                ? 'bg-red-100 text-red-700 border border-red-200' 
+                                                : 'bg-blue-100 text-blue-700 border border-blue-200' }}">
+                                            <span class="w-1.5 h-1.5 rounded-full mr-1.5 {{ $inventory->available_quantity <= ($inventory->total_quantity * 0.1) ? 'bg-red-500' : 'bg-blue-500' }}"></span>
                                             {{ $inventory->available_quantity }} Available
                                         </span>
+
+                                        {{-- Rented Badge --}}
                                         @if($rentedCount > 0)
-                                            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-bold bg-dark-100">
-                                                {{ $rentedCount }} Currently Rented
+                                            <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-bold bg-gray-100 text-gray-700 border border-gray-200 shadow-sm">
+                                                <svg class="w-3 h-3 mr-1 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                                                {{ $rentedCount }} Rented
                                             </span>
                                         @endif
                                     </div>
-                                </td>                                
+                                </td>
+                                <td class="px-6 py-4 whitespace-nowrap">
+                                    <span class="text-sm font-bold text-gray-700">
+                                        ₱{{ number_format($inventory->rental_rate ?? 0, 2) }}
+                                    </span>
+                                </td>                               
                                 <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium space-x-3">
                                     <a href="{{ route('inventories.edit', $inventory) }}" class="text-indigo-600 hover:text-indigo-900 bg-indigo-50 px-3 py-1 rounded">Edit</a>
                                     <form action="{{ route('inventories.destroy', $inventory) }}" method="POST" class="inline">

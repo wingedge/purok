@@ -27,3 +27,13 @@
            value="{{ old('available_quantity', $inventory->available_quantity ?? '') }}"
            class="mt-1 block w-full rounded border-gray-300 focus:border-blue-500 focus:ring-blue-500">
 </div>
+
+<div>
+    <label class="block text-sm font-medium text-gray-700">
+        Rental Rate
+    </label>
+    <input type="number"
+           name="rental_rate"
+           value="{{ old('rental_rate', $inventory->rental_rate ?? '') }}"
+           class="mt-1 block w-full rounded border-gray-300 focus:border-blue-500 focus:ring-blue-500">
+</div>

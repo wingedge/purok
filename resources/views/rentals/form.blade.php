@@ -7,8 +7,9 @@
         @foreach($inventories as $inventory)
             <option value="{{ $inventory->id }}" 
                     data-stock="{{ $inventory->available_quantity }}"
+                    data-rate="{{ $inventory->rental_rate }}"
                 @selected(old('inventory_id', $rental->inventory_id ?? '') == $inventory->id)>
-                {{ $inventory->item_name }} (Available: {{ $inventory->available_quantity }})
+                {{ $inventory->item_name }} (₱{{ $inventory->rental_rate }}/unit) (Available: {{ $inventory->available_quantity }})
             </option>
         @endforeach
     </select>
@@ -116,5 +117,19 @@
 
         // Run on page load (for validation errors/old input)
         updateMaxQuantity();
+
+        function calculateTotal() {
+            const selectedOption = itemSelect.options[itemSelect.selectedIndex];
+            if (selectedOption && selectedOption.value) {
+                const rate = parseFloat(selectedOption.getAttribute('data-rate')) || 0;
+                const qty = parseInt(quantityInput.value) || 0;
+                
+                // Auto-calculate the total
+                amountInput.value = (rate * qty).toFixed(2);
+            }
+        }
+
+        itemSelect.addEventListener('change', calculateTotal);
+        quantityInput.addEventListener('input', calculateTotal);
     });
 </script>

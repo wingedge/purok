@@ -23,6 +23,7 @@ class InventoryController extends Controller
             'item_name' => 'required|string|max:255',
             'total_quantity' => 'required|integer|min:0',
             'available_quantity' => 'required|integer|min:0',
+            'rental_rate' => 'required|numeric|min:0',
         ]);
 
         Inventory::create($validated);
@@ -48,6 +49,7 @@ class InventoryController extends Controller
             'item_name' => 'required|string|max:255',
             'total_quantity' => 'required|integer|min:0',
             'available_quantity' => 'required|integer|min:0',
+            'rental_rate' => 'required|numeric|min:0',
         ]);
 
         $inventory->update($validated);

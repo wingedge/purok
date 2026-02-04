@@ -13,5 +13,6 @@ class Inventory extends Model
         'item_name',
         'total_quantity',
         'available_quantity',
+        'rental_rate',
     ];
 }
