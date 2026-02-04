@@ -39,11 +39,11 @@
                         
                         <div class="grid grid-cols-2 gap-4 mb-4">
                             <div class="bg-blue-50 p-3 rounded-lg border border-blue-100">
-                                <p class="text-[10px] text-blue-500 uppercase font-bold">Ready to Rent</p>
+                                <p class="text-[10px] text-blue-500 uppercase font-bold">Available</p>
                                 <p class="text-xl font-black text-blue-700">{{ $inventory->available_quantity }}</p>
                             </div>
                             <div class="bg-orange-50 p-3 rounded-lg border border-orange-100">
-                                <p class="text-[10px] text-orange-500 uppercase font-bold">Out with Client</p>
+                                <p class="text-[10px] text-orange-500 uppercase font-bold">Rented</p>
                                 <p class="text-xl font-black text-orange-700">{{ $inventory->total_quantity - $inventory->available_quantity }}</p>
                             </div>
                         </div>                       
@@ -93,13 +93,13 @@
                                     </div>
                                 </td>
                                 <td class="px-6 py-4 whitespace-nowrap">
-                                    <div class="flex flex-col">
+                                    <div class="flex flex-row">
                                         <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-bold 
                                             {{ $inventory->available_quantity <= ($inventory->total_quantity * 0.1) ? 'bg-red-100 text-red-800' : 'bg-blue-100 text-blue-800' }}">
                                             {{ $inventory->available_quantity }} Available
                                         </span>
                                         @if($rentedCount > 0)
-                                            <span class="text-[10px] text-orange-600 font-bold mt-1 uppercase tracking-tight">
+                                            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-bold bg-dark-100">
                                                 {{ $rentedCount }} Currently Rented
                                             </span>
                                         @endif
