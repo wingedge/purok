@@ -68,6 +68,7 @@
         type="number" 
         step="0.01" 
         name="amount" 
+        id="amount"
         value="{{ old('amount', $rental->amount ?? '') }}" 
         class="border-gray-300 rounded shadow-sm" 
         {{ isset($rental) && $rental->status === 'returned' ? 'readonly' : 'required' }}
@@ -92,6 +93,7 @@
         const itemSelect = document.getElementById('inventory_id');
         const quantityInput = document.getElementById('quantity');
         const stockDisplay = document.getElementById('stock-display');
+        const amountInput = document.getElementById('amount'); // Add id="amount" to your input
 
         function updateMaxQuantity() {
             // Get the selected option
