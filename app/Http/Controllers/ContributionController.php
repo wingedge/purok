@@ -9,44 +9,93 @@ use Illuminate\Http\Request;
 
 class ContributionController extends Controller
 {
+
     public function index(Request $request)
     {
-        $month = $request->get('month', now()->format('Y-m'));
-        $currentYear = \Carbon\Carbon::parse($month)->year;
+        $viewType = $request->get('view_type', 'month');
+        $search = $request->get('search');
+        
+        // Default to current year and current month
+        $selectedYear = $request->get('year', now()->year);
+        $selectedMonth = $request->get('month', now()->month);
 
-        $start = \Carbon\Carbon::parse($month)->startOfMonth();
-        $end   = \Carbon\Carbon::parse($month)->endOfMonth();
-
-        // Generate Sunday inside the month
-        $cursor = $start->copy()->startOfWeek(\Carbon\Carbon::SUNDAY);
-
-        // Ensure first Sunday is inside the month
-        if ($cursor->month !== $start->month) {
-            $cursor->addWeek();
+        // 1. Determine Date Range
+        if ($viewType === 'year') {
+            $start = \Carbon\Carbon::create($selectedYear, 1, 1)->startOfYear();
+            $end = $start->copy()->endOfYear();
+        } else {
+            $start = \Carbon\Carbon::create($selectedYear, $selectedMonth, 1)->startOfMonth();
+            $end = $start->copy()->endOfMonth();
         }
 
+        // 2. Generate Sundays
         $weeks = [];
+        $cursor = $start->copy()->startOfWeek(\Carbon\Carbon::SUNDAY);
+        if ($cursor->lt($start)) $cursor->addWeek();
+
         while ($cursor->lte($end)) {
             $weeks[] = $cursor->copy();
             $cursor->addWeek();
         }
 
-        // 2. Fetch Members with two types of contribution data
+        // 3. Query Members
         $members = Member::query()
-        ->where('indigent', false) // <--- Add this line to filter out indigent members
-        ->with(['contributions' => function ($q) use ($weeks) {
-            // Only load contributions for the visible grid weeks (saves memory)
-            $q->whereIn('week_start', collect($weeks)->map->toDateString());
-        }])
-        ->withSum(['contributions as year_total' => function ($q) use ($currentYear) {
-            // Calculate the total for the entire selected year
-            $q->whereYear('week_start', $currentYear);
-        }], 'amount')
-        ->orderBy('name')
-        ->get();
+            ->where('indigent', false)
+            ->when($search, function($q) use ($search) {
+                $q->where('name', 'like', "%{$search}%");
+            })
+            ->with(['contributions' => function ($q) use ($weeks) {
+                $q->whereIn('week_start', collect($weeks)->map->toDateString());
+            }])
+            ->withSum(['contributions as year_total' => function ($q) use ($selectedYear) {
+                $q->whereYear('week_start', $selectedYear);
+            }], 'amount')
+            ->orderBy('name')
+            ->get();
 
-        return view('contributions.index', compact('members', 'weeks', 'month', 'currentYear'));
+        return view('contributions.index', compact(
+            'members', 'weeks', 'selectedYear', 'selectedMonth', 'viewType', 'search'
+        ));
     }
+
+    // public function index(Request $request)
+    // {
+    //     $month = $request->get('month', now()->format('Y-m'));
+    //     $currentYear = \Carbon\Carbon::parse($month)->year;
+
+    //     $start = \Carbon\Carbon::parse($month)->startOfMonth();
+    //     $end   = \Carbon\Carbon::parse($month)->endOfMonth();
+
+    //     // Generate Sunday inside the month
+    //     $cursor = $start->copy()->startOfWeek(\Carbon\Carbon::SUNDAY);
+
+    //     // Ensure first Sunday is inside the month
+    //     if ($cursor->month !== $start->month) {
+    //         $cursor->addWeek();
+    //     }
+
+    //     $weeks = [];
+    //     while ($cursor->lte($end)) {
+    //         $weeks[] = $cursor->copy();
+    //         $cursor->addWeek();
+    //     }
+
+    //     // 2. Fetch Members with two types of contribution data
+    //     $members = Member::query()
+    //     ->where('indigent', false) // <--- Add this line to filter out indigent members
+    //     ->with(['contributions' => function ($q) use ($weeks) {
+    //         // Only load contributions for the visible grid weeks (saves memory)
+    //         $q->whereIn('week_start', collect($weeks)->map->toDateString());
+    //     }])
+    //     ->withSum(['contributions as year_total' => function ($q) use ($currentYear) {
+    //         // Calculate the total for the entire selected year
+    //         $q->whereYear('week_start', $currentYear);
+    //     }], 'amount')
+    //     ->orderBy('name')
+    //     ->get();
+
+    //     return view('contributions.index', compact('members', 'weeks', 'month', 'currentYear'));
+    // }
 
     // private function getContributionAmount()
     // {

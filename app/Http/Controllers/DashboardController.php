@@ -17,6 +17,7 @@ class DashboardController extends Controller
     {
         $year  = $request->get('year', now()->year);
         $month = $request->get('month'); // optional
+        
 
         $dateFilter = function ($query) use ($year, $month) {
             $query->whereYear('created_at', $year);
@@ -36,6 +37,14 @@ class DashboardController extends Controller
         // Contributions
         $totalContributions = Contribution::where($dateFilter)->sum('amount');
 
+        // 1. Total contributions for the current calendar year (2026)
+        $thisYearContributions = Contribution::whereYear('created_at', $year)
+            ->sum('amount');
+
+        // 2. Total contributions for the last 7 days
+        $recentContributions = Contribution::where('created_at', '>=', now()->subDays(7))
+            ->sum('amount');
+
         // Expenses
         $totalExpenses = Expense::whereYear('date', $year)
             ->when($month, fn($q) => $q->whereMonth('date', $month))
@@ -54,15 +63,17 @@ class DashboardController extends Controller
         $totalFunds = ($totalIncomes + $totalContributions) - $totalExpenses;
 
         return view('dashboard', compact(
-            'year',
-            'month',
+            'thisYearContributions',
+            'recentContributions',
             'totalIncomes',
             'totalContributions',
             'totalExpenses',
             'contributorsCount',
             'totalRentals',
             'totalFunds',
-            'totalMembers'
+            'totalMembers',
+            'year',
+            'month'
         ));
     }
 }

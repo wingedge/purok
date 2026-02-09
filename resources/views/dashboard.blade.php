@@ -78,6 +78,26 @@
                         {{ $contributorsCount }}
                     </p>
                 </div>
+                <div class="bg-white p-6 rounded shadow">                    
+                    <p class="text-sm text-gray-500">
+                        Total Contributions ({{ $year }})
+                    </p>
+                    <p class="text-xl font-semibold">
+                        {{ number_format($thisYearContributions, 2) }}
+                    </p>
+                </div>
+                
+                
+                @if($year == now()->year)
+                    <div class="bg-white p-6 rounded shadow">                        
+                        <p class="text-sm text-gray-500">
+                            Contributions Collected on the last 7 Days
+                        </p>
+                        <p class="text-xl font-semibold">
+                            {{ number_format($recentContributions, 2) }}
+                        </p>                    
+                    </div>
+                @endif
 
                 <div class="bg-white p-6 rounded shadow">
                     <p class="text-sm text-gray-500">Total Rentals</p>
