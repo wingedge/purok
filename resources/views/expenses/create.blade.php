@@ -35,9 +35,19 @@
 
             <div class="mb-4">
                 <label class="block text-gray-700">Category</label>
-                <input type="text" name="category" value="{{ old('category') }}"
-                    class="border px-3 py-2 rounded w-full">
+                <select name="category" class="border px-3 py-2 rounded w-full">
+                    <option value="Misc">-- Not Specified --</option>
+
+                    @foreach ($categories as $category)
+                        <option value="{{ $category }}"
+                            {{ old('category', $expense->category ?? '') === $category ? 'selected' : '' }}>
+                            {{ $category }}
+                        </option>
+                    @endforeach
+                </select>
             </div>
+
+            
 
             <div class="mb-4">
                 <label class="block text-gray-700">Description</label>

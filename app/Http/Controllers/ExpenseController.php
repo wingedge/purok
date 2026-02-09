@@ -17,8 +17,21 @@ class ExpenseController extends Controller
     }
 
     public function create()
+    {        
+        return view('expenses.create',[
+            'categories' => $this->categories()
+        ]);
+    }
+
+    private function categories(): array
     {
-        return view('expenses.create');
+        return [         
+            'Operating Expenses	Supplies, Utility Bills, Communication',
+            'Community Services	Health Programs, Feeding, Cleanup Drives',
+            'Social Benefits, Burial Aid, Emergency Medical Assistance',
+            'Activities, Peace & Security	Patrol Supplies, Volunteers Meals',
+            'Special Projects, Fiesta/Christmas Events, Minor Repairs',
+        ];
     }
 
     public function store(Request $request)
@@ -44,7 +57,11 @@ class ExpenseController extends Controller
 
     public function edit(Expense $expense)
     {
-        return view('expenses.update', compact('expense'));
+        return view('expenses.update',[
+            'expense' => $expense,
+            'categories' => $this->categories()
+        ]);
+        //return view('expenses.update', compact('expense'));
     }
 
     public function update(Request $request, Expense $expense)
