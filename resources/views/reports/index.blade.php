@@ -18,6 +18,14 @@
                     </p>
                 </a>
 
+                <a href="{{ route('reports.contributions') }}"
+                   class="bg-white p-6 rounded shadow hover:bg-gray-50 transition">
+                    <h3 class="text-lg font-semibold">Member Contributions</h3>
+                    <p class="text-sm text-gray-500">
+                        View member contributions
+                    </p>
+                </a>
+
                 {{-- Future reports --}}
                 {{--
                 <a href="{{ route('reports.income') }}" class="bg-white p-6 rounded shadow">

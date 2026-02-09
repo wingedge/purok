@@ -50,6 +50,7 @@ Route::get('/dashboard', [DashboardController::class, 'index'])
 Route::middleware(['auth'])->prefix('reports')->name('reports.')->group(function () {
         Route::get('/', function () {return view('reports.index');})->name('index');
         Route::get('/cashflow', [CashFlowController::class, 'index'])->name('cashflow');
+        Route::get('/contributions', [CashFlowController::class, 'contributions'])->name('contributions');
 });
 
 Route::middleware(['auth', 'verified'])->group(function () {
