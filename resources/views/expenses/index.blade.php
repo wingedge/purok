@@ -40,13 +40,13 @@
                         <div class="flex justify-between items-start mb-2">
                             <div>
                                 <p class="text-xs font-semibold uppercase text-gray-400 tracking-wider">{{ $expense->date->format('M d, Y') }}</p>
-                                <p class="text-lg font-bold text-gray-900">{{ $expense->category }}</p>
+                                <p class="text-lg font-bold text-gray-900">{{ $expense->description }}</p>
                             </div>
                             <div class="text-right">
                                 <p class="text-lg font-black text-rose-600">₱{{ number_format($expense->amount, 2) }}</p>
                             </div>
                         </div>
-                        <p class="text-sm text-gray-600 mb-4 italic">"{{ $expense->description }}"</p>
+                        <p class="text-sm text-gray-600 mb-4 italic">" {{ $expense->category }}"</p>
                         
                         <div class="flex border-t pt-3 mt-3 space-x-4">
                             <a href="{{ route('expenses.edit', $expense) }}" class="flex-1 text-center py-2 text-sm font-medium text-yellow-700 bg-yellow-50 rounded-lg">Edit</a>
@@ -70,8 +70,8 @@
                     <thead class="bg-gray-50">
                         <tr>
                             <th class="px-6 py-4 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Date</th>
-                            <th class="px-6 py-4 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Category</th>
                             <th class="px-6 py-4 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Description</th>
+                            <th class="px-6 py-4 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Category</th>
                             <th class="px-6 py-4 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Amount</th>                             
                             <th class="px-6 py-4 text-right">Actions</th>
                         </tr>
@@ -80,8 +80,8 @@
                         @foreach ($expenses as $expense)
                             <tr class="hover:bg-rose-50/30 transition-colors">
                                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-700">{{ $expense->date->format('M d, Y') }}</td>
-                                <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{{ $expense->category }}</td>
-                                <td class="px-6 py-4 text-sm text-gray-600">{{ $expense->description }}</td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{{ $expense->description }}</td>
+                                <td class="px-6 py-4 text-sm text-gray-600">{{ $expense->category }}</td>
                                 <td class="px-6 py-4 whitespace-nowrap text-sm font-bold text-rose-600">{{ number_format($expense->amount, 2) }}</td>                                
                                 <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium space-x-3">
                                     <a href="{{ route('expenses.edit', $expense) }}" class="text-indigo-600 hover:text-indigo-900">Edit</a>
