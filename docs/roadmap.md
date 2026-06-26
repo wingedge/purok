@@ -4,7 +4,7 @@ This roadmap separates what is already working in the current app from what stil
 
 ## Current Status Summary
 
-Purok currently has a working Laravel MVC foundation with authenticated CRUD screens for members, contributions, finances, inventory, rentals, certificate logs, dashboard summaries, and reports. The app has not yet been migrated to the target Livewire/Filament architecture described in `AGENTS.md`.
+Purok currently has a working Laravel MVC foundation with authenticated CRUD screens for members, contributions, finances, inventory, rentals, certificate logs, dashboard summaries, and reports. Filament 4 has been introduced for the back office, and the first resource now covers members and dependents. The member-facing portal is not implemented yet.
 
 ## Done
 
@@ -14,15 +14,18 @@ Purok currently has a working Laravel MVC foundation with authenticated CRUD scr
 - Breeze-style authentication is present.
 - User registration, login, logout, password reset, email verification, password update, and profile update/delete routes exist.
 - TailwindCSS, Alpine.js, and Vite are configured.
+- Filament 4 is installed.
+- Filament admin panel is available at `/admin`.
 - Main authenticated layout and navigation are implemented.
 - Basic auth/profile tests exist.
 
 ### Users And Roles
 
 - `users` table exists.
-- `role` column exists with `admin`, `treasurer`, and `staff`.
+- `role` column exists with `admin`, `treasurer`, `staff`, and `member`.
 - `member_id` column links users to member records for future member portal accounts.
 - `User` model has role helper methods.
+- `User` controls Filament panel access through `canAccessPanel`.
 - Database seeder creates two admin users.
 
 ### Members And Dependents
@@ -40,6 +43,9 @@ Purok currently has a working Laravel MVC foundation with authenticated CRUD scr
 - CSV member/dependent export is extracted to `App\Actions\Exports\ExportMembers`.
 - CSV member/dependent export has focused feature tests.
 - Member deletion cascades to dependents through database constraints.
+- Filament `MemberResource` is implemented for back-office list/create/edit workflows.
+- Filament `DependentsRelationManager` is implemented for dependent management from the member edit screen.
+- Filament member resource access has focused feature tests.
 
 ### Contributions
 
@@ -103,8 +109,9 @@ Purok currently has a working Laravel MVC foundation with authenticated CRUD scr
 - Laravel 13 upgrade is not done.
 - PHP 8.3+ requirement is not enforced in `composer.json`.
 - Livewire 4 is not installed or used.
-- Filament 4 is not installed or used.
-- Filament Resources are not implemented.
+- Filament 4 is installed and used for the admin panel.
+- The first Filament Resource is implemented for members and dependents.
+- Remaining back-office Filament Resources are not implemented.
 - Livewire member self-service screens are not implemented.
 
 ### Architecture Refactor
@@ -123,9 +130,11 @@ Purok currently has a working Laravel MVC foundation with authenticated CRUD scr
 ### Authorization
 
 - Initial role-based route access is implemented with gates and route middleware.
+- Filament panel access is restricted to admin, treasurer, and staff users.
 - Full policies are not implemented for members, finances, rentals, certificates, or reports.
 - Staff/treasurer/admin permissions are documented in `docs/features/authorization.md` and partially enforced in code.
-- Member login permissions are not implemented beyond regular user authentication.
+- Member-role users are blocked from Filament admin access.
+- Member portal permissions are not implemented beyond regular user authentication and the account link.
 
 ### Member Portal
 
@@ -133,6 +142,8 @@ Purok currently has a working Laravel MVC foundation with authenticated CRUD scr
 - Members cannot update their own profile.
 - Members cannot manage dependents from a self-service portal.
 - Users can be linked to member records.
+- The `member` role exists for member-facing accounts.
+- Member-role users cannot access the Filament admin panel.
 - Member account invitation/claiming flow is not implemented.
 
 ### Imports
@@ -192,6 +203,7 @@ Current gaps:
 
 - No feature tests exist for member CRUD.
 - Authorization tests exist for the first role-protected route boundaries.
+- Filament member resource access tests exist.
 - Member/dependent import tests exist.
 - Member/dependent export tests exist.
 - Contribution amount and accounting-period tests exist.
@@ -211,9 +223,9 @@ Current gaps:
 
 ## Suggested Next Steps
 
-1. Decide and execute the Filament installation/migration path for back-office resources.
-2. Build Filament resources for members and dependents first.
-3. Add member-facing routes and policies using `users.member_id`.
-4. Build member profile/dependent self-service screens.
+1. Build member-facing routes, middleware, and policies using `users.member_id`.
+2. Add Actions for member self-service profile and dependent updates.
+3. Build the member profile/dependent self-service screens.
+4. Continue migrating back-office resources to Filament, starting with finance or inventory.
 5. Continue import/export work for expenses, incomes, and rentals.
 6. Add more `docs/features/` documents as each feature area is refactored.

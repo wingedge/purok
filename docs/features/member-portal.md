@@ -9,8 +9,10 @@ Members should be able to log in, view their own information, update their own p
 ## Current State
 
 - `users.member_id` links a user account to one member record.
+- `users.role` supports a `member` role for member-facing accounts.
 - Back-office roles still use the existing `role` column.
 - Back-office users may have no linked member record.
+- Member-role users cannot access the Filament admin panel.
 - Member-facing routes, screens, and policies are not implemented yet.
 
 ## Target Flow
@@ -48,7 +50,6 @@ Not allowed:
 
 ## Open Decisions
 
-- Whether member accounts should use the existing `role` column or a separate role/guard.
 - Whether members can update email on the member record, user account, or both.
 - Whether dependent changes require staff approval.
 - Whether members can view contribution history or only current balance/status.

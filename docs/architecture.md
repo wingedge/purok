@@ -6,11 +6,13 @@ This document describes the current structure and request flow of the Purok Lara
 
 - Laravel 12 application with Laravel Breeze-style authentication.
 - PHP requirement in `composer.json`: `^8.2`.
+- Filament 4 is installed and exposes a back-office panel at `/admin`.
+- Livewire 3 is installed as part of the Filament 4 dependency tree.
 - Blade views with TailwindCSS, Alpine.js, and Vite.
 - Eloquent models and migrations for community, finance, certificate, inventory, and rental records.
 - Sanctum is installed, but there are no custom API endpoints in active use.
 
-`AGENTS.md` lists the intended target stack as Laravel 13, PHP 8.3+, Livewire 4, Filament 4, TailwindCSS, and MySQL. The current codebase has not yet moved to Livewire or Filament.
+`AGENTS.md` lists the intended target stack as Laravel 13, PHP 8.3+, Livewire 4, Filament 4, TailwindCSS, and MySQL. Filament 4 has now been introduced for the back office, but Laravel, PHP, and Livewire still need later target-stack alignment.
 
 ## Application Shape
 
@@ -21,7 +23,9 @@ The app currently follows classic Laravel MVC:
 - Models define fillable fields, casts, and relationships.
 - Blade templates render forms, tables, dashboards, reports, and navigation.
 - The first Action/DTO extraction exists for member imports.
-- Services, Repositories, Livewire components, and Filament Resources are not implemented yet.
+- The first Filament Resource exists for back-office member management.
+- Services are starting to be introduced for domain rules.
+- Repositories and member-facing Livewire components are not implemented yet.
 
 The main authenticated navigation is grouped into:
 
@@ -36,6 +40,7 @@ Feature contracts live under `docs/features/`. Current contracts:
 
 - `docs/features/authorization.md`
 - `docs/features/import-export.md`
+- `docs/features/member-portal.md`
 
 ## Authentication And Users
 
@@ -43,9 +48,10 @@ Authentication is generated from Laravel Breeze patterns:
 
 - Guest routes handle register, login, forgot password, and password reset.
 - Authenticated routes handle logout, password confirmation, email verification, password update, and profile management.
-- `User` supports a `role` column with `admin`, `treasurer`, and `staff`.
+- `User` supports a `role` column with `admin`, `treasurer`, `staff`, and `member`.
 - `User` may be linked to a `Member` through `member_id`.
-- `User` has convenience methods: `isAdmin()`, `isTreasurer()`, and `isStaff()`.
+- `User` has convenience methods: `isAdmin()`, `isTreasurer()`, `isStaff()`, and `isMember()`.
+- `User` implements Filament panel access so only admin, treasurer, and staff can enter `/admin`.
 
 Current authorization state:
 
@@ -53,6 +59,7 @@ Current authorization state:
 - User/member account linking exists through `users.member_id`.
 - Initial named gates are registered in `AuthServiceProvider`.
 - Main route groups and actions use `can:` middleware for admin, treasurer, and staff boundaries.
+- Filament panel access blocks member-role users from the back-office panel.
 - Full model policies are not implemented yet.
 
 The target role/permission model is documented in `docs/features/authorization.md`.
@@ -63,6 +70,12 @@ Public routes:
 
 - `/` renders the welcome page.
 - Auth routes from `routes/auth.php` handle login, registration, verification, and password reset.
+
+Filament routes:
+
+- `/admin` serves the Filament back-office panel.
+- `/admin/members` uses `App\Filament\Resources\Members\MemberResource`.
+- `/admin/members/{record}/edit` allows member edits and dependent management through a relation manager.
 
 Authenticated routes:
 
@@ -110,6 +123,8 @@ Flow:
 - `destroy` deletes the member.
 - `import` accepts a CSV file and delegates member/dependent parsing and persistence to `App\Actions\Imports\ImportMembers`.
 - `ImportMembers` validates each row, creates members, and optionally creates dependents from pipe-delimited `dependent_names` and `dependent_relationships` fields.
+- `MemberResource` provides the first Filament back-office resource for listing, creating, and editing members.
+- `DependentsRelationManager` manages dependents from the Filament member edit screen.
 
 Current concerns:
 
@@ -257,7 +272,7 @@ Current concerns:
 
 The target import/export scope from `AGENTS.md` is Purok-specific:
 
-- Members and dependents
+- Classic Blade member CRUD
 - Expenses
 - Incomes
 - Rentals
@@ -315,7 +330,7 @@ Important constraints:
 
 ## Testing
 
-Current tests are mostly Breeze-generated authentication and profile tests:
+Current tests include Breeze-generated authentication/profile coverage plus focused tests around the refactored workflows:
 
 - Authentication
 - Registration
@@ -323,11 +338,16 @@ Current tests are mostly Breeze-generated authentication and profile tests:
 - Email verification
 - Profile update/delete
 - Example unit and feature tests
+- Role-based route authorization
+- Member/dependent import and export
+- Contribution rules and accounting-period totals
+- Rental create/update/return/delete workflows
+- User-to-member account linking
+- Filament member resource access
 
 There are no dedicated tests yet for:
 
 - Members and dependents
-- Contributions
 - Income and expense import/export
 - Rental import/export
 - Certificate logs
@@ -343,7 +363,7 @@ The biggest gap is that the app's business workflows currently live in controlle
 - Support classes
 - Immutable DTOs where useful
 - Enums instead of hardcoded strings
-- Thin Livewire components and Filament Resources after the stack migration
+- Thin Livewire components and additional Filament Resources as the stack migration continues
 
 Recommended extraction candidates:
 

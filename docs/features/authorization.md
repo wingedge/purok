@@ -4,7 +4,7 @@ This document defines the intended role and permission model for Purok. The appl
 
 ## Current State
 
-- Users have one role: `admin`, `treasurer`, or `staff`.
+- Users have one role: `admin`, `treasurer`, `staff`, or `member`.
 - The `User` model has helper methods for these roles.
 - All main back-office screens require authentication.
 - Certificate routes require both authentication and email verification.
@@ -12,6 +12,7 @@ This document defines the intended role and permission model for Purok. The appl
 - Main business routes use `can:` middleware for the first permission boundaries.
 - Full model policies are not implemented yet.
 - Users can be linked to member records through `users.member_id`.
+- Filament admin panel access is restricted to admin, treasurer, and staff users.
 - Member portal routes and screens are not implemented yet.
 
 ## Target Roles
@@ -32,7 +33,7 @@ Allowed:
 - Manage inventory and rentals.
 - Import and export rentals.
 - Manage purok certificate logs.
-- Access future Filament admin resources.
+- Access Filament admin resources.
 
 ### Treasurer
 
@@ -80,7 +81,7 @@ Not allowed by default:
 
 ### Member
 
-Member access is a future portal role or account type. The user-to-member relationship foundation exists, but portal routes and screens are not implemented yet.
+Member access is a portal role. The user-to-member relationship foundation exists, but portal routes and screens are not implemented yet.
 
 Allowed target behavior:
 
