@@ -17,10 +17,18 @@
 
             {{-- Action Buttons --}}
             <div class="mb-6 flex flex-col sm:flex-row sm:items-center sm:justify-between space-y-4 sm:space-y-0">
-                <a href="{{ route('members.create') }}" class="inline-flex items-center justify-center bg-indigo-600 hover:bg-indigo-700 text-white px-6 py-3 rounded-lg font-bold transition shadow-lg">
-                    <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z"></path></svg>
-                    Add Member
-                </a>
+                <div class="flex flex-col sm:flex-row gap-3">
+                    @can('manage-members')
+                        <a href="{{ route('members.create') }}" class="inline-flex items-center justify-center bg-indigo-600 hover:bg-indigo-700 text-white px-6 py-3 rounded-lg font-bold transition shadow-lg">
+                            <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z"></path></svg>
+                            Add Member
+                        </a>
+
+                        <a href="{{ route('members.export') }}" class="inline-flex items-center justify-center bg-emerald-600 hover:bg-emerald-700 text-white px-6 py-3 rounded-lg font-bold transition shadow-lg">
+                            Export CSV
+                        </a>
+                    @endcan
+                </div>
 
                 {{-- Optional: Keep the Import Button clean if you uncomment it --}}
                 {{-- <div class="flex items-center">
@@ -102,7 +110,9 @@
 
                         <div class="flex justify-end space-x-3 mt-4 pt-3 border-t border-gray-50">
                             <a href="{{ route('members.show', $member) }}" class="text-indigo-600 text-sm font-bold px-3 py-1">View</a>
-                            <a href="{{ route('members.edit', $member) }}" class="text-yellow-600 text-sm font-bold px-3 py-1 border border-yellow-100 rounded-lg bg-yellow-50">Edit</a>
+                            @can('manage-members')
+                                <a href="{{ route('members.edit', $member) }}" class="text-yellow-600 text-sm font-bold px-3 py-1 border border-yellow-100 rounded-lg bg-yellow-50">Edit</a>
+                            @endcan
                         </div>
                     </div>
                 @empty
@@ -148,7 +158,9 @@
                             </td>
                             <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium space-x-3">
                                 <a href="{{ route('members.show', $member) }}" class="text-indigo-600 hover:text-indigo-900">View</a>
-                                <a href="{{ route('members.edit', $member) }}" class="text-yellow-600 hover:text-yellow-900">Edit</a>
+                                @can('manage-members')
+                                    <a href="{{ route('members.edit', $member) }}" class="text-yellow-600 hover:text-yellow-900">Edit</a>
+                                @endcan
                             </td>
                         </tr>
                         @endforeach

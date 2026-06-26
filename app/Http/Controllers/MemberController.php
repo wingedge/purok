@@ -2,10 +2,11 @@
 
 namespace App\Http\Controllers;
 
+use App\Actions\Exports\ExportMembers;
+use App\Actions\Imports\ImportMembers;
 use App\Models\Member;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Validator;
+use Symfony\Component\HttpFoundation\StreamedResponse;
 
 class MemberController extends Controller
 {
@@ -121,80 +122,34 @@ class MemberController extends Controller
             ->with('success', 'Member deleted.');
     }
 
+    public function export(ExportMembers $exportMembers): StreamedResponse
+    {
+        $filename = 'members-'.now()->format('Y-m-d').'.csv';
+
+        return response()->streamDownload(
+            fn () => print $exportMembers->execute(),
+            $filename,
+            ['Content-Type' => 'text/csv; charset=UTF-8'],
+        );
+    }
+
     /**
      * CSV IMPORT
      */
-    public function import(Request $request)
+    public function import(Request $request, ImportMembers $importMembers)
     {
         $request->validate([
             'csv_file' => 'required|file|mimes:csv,txt',
         ]);
 
-        $rows = array_map('str_getcsv', file($request->file('csv_file')->getRealPath()));
-        $header = array_map('trim', array_shift($rows));
-
-        DB::beginTransaction();
-
         try {
-            foreach ($rows as $row) {
-                if (count(array_filter($row)) === 0) continue;
-
-                $data = array_combine($header, $row);
-
-                // Normalize empty values
-                foreach ($data as $key => $value) {
-                    $value = trim($value);
-                    $data[$key] = $value === '' ? null : $value;
-                }
-
-                // Normalize indigent
-                $data['indigent'] = in_array(
-                    strtolower($data['indigent'] ?? ''),
-                    ['yes', '1', 'true'],
-                    true
-                );
-
-                $validator = Validator::make($data, [
-                    'name'     => 'required|string|max:255',
-                    'phone'    => 'nullable|string',
-                    'email'    => 'nullable|email',
-                    'birthday' => 'nullable|date',
-                    'indigent' => 'boolean',
-                ]);
-
-                if ($validator->fails()) {
-                    continue;
-                }
-
-                $member = Member::create([
-                    'name'     => $data['name'],
-                    'phone'    => $data['phone'],
-                    'email'    => $data['email'],
-                    'birthday' => $data['birthday'],
-                    'indigent' => $data['indigent'],
-                ]);
-
-                if (!empty($data['dependent_names'])) {
-                    foreach (explode('|', $data['dependent_names']) as $depName) {
-                        $depName = trim($depName);
-                        if ($depName) {
-                            $member->dependents()->create([
-                                'name' => $depName,
-                            ]);
-                        }
-                    }
-                }
-            }
-
-            DB::commit();
+            $result = $importMembers->execute($request->file('csv_file')->getRealPath());
 
             return redirect()
                 ->route('members.index')
-                ->with('success', 'Members imported successfully.');
+                ->with('success', 'Members imported. '.$result->summary());
 
         } catch (\Exception $e) {
-            DB::rollBack();
-
             return back()->withErrors([
                 'csv_file' => 'Import failed: ' . $e->getMessage()
             ]);

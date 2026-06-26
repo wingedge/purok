@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Enums\UserRole;
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
@@ -49,17 +50,17 @@ class User extends Authenticatable
 
     public function isAdmin(): bool
     {
-        return $this->role === 'admin';
+        return $this->role === UserRole::Admin->value;
     }
 
     public function isTreasurer(): bool
     {
-        return $this->role === 'treasurer';
+        return $this->role === UserRole::Treasurer->value;
     }
 
     public function isStaff(): bool
     {
-        return $this->role === 'staff';
+        return $this->role === UserRole::Staff->value;
     }
     
 }
