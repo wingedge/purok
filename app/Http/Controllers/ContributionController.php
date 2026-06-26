@@ -6,11 +6,12 @@ use Carbon\Carbon;
 use App\Models\Member;
 use App\Models\Contribution;
 use Illuminate\Http\Request;
+use App\Services\ContributionService;
 
 class ContributionController extends Controller
 {
 
-    public function index(Request $request)
+    public function index(Request $request, ContributionService $contributions)
     {
         $viewType = $request->get('view_type', 'month');
         $search = $request->get('search');
@@ -28,15 +29,7 @@ class ContributionController extends Controller
             $end = $start->copy()->endOfMonth();
         }
 
-        // 2. Generate Sundays
-        $weeks = [];
-        $cursor = $start->copy()->startOfWeek(\Carbon\Carbon::SUNDAY);
-        if ($cursor->lt($start)) $cursor->addWeek();
-
-        while ($cursor->lte($end)) {
-            $weeks[] = $cursor->copy();
-            $cursor->addWeek();
-        }
+        $weeks = $contributions->sundaysBetween($start, $end)->all();
 
         // 3. Query Members
         $members = Member::query()
@@ -102,14 +95,7 @@ class ContributionController extends Controller
     //     return 10.00; 
     // }
 
-    private function getContributionAmount($memberId)
-    {
-        $member = Member::find($memberId);
-        // If indigent is true, maybe they only pay 0 or 50?
-        return $member->indigent ? 0.00 : 10.00;
-    }
-
-    public function store(Request $request)
+    public function store(Request $request, ContributionService $contributions)
     {
         // 1. Remove 'amount' from the validation
         $request->validate([
@@ -118,7 +104,8 @@ class ContributionController extends Controller
         ]);
 
         // 2. Define the amount here (Internal control)
-        $amount = $this->getContributionAmount($request->member_id);
+        $member = Member::findOrFail($request->member_id);
+        $amount = $contributions->amountFor($member);
 
         // 3. Save to database
         $contribution = Contribution::updateOrCreate(
@@ -158,4 +145,3 @@ class ContributionController extends Controller
     }
     
 }
-

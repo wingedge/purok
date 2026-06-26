@@ -9,4 +9,4 @@ for other members
 
 # Goal
 
-Goal is to revamp and improve the flow, use filament and backend and allow member login and updating their profile and dependents.
+Goal is to revamp and improve the flow, use filament for all of the backend and allow members login and update their profile and dependents.

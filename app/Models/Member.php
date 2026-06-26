@@ -40,4 +40,9 @@ class Member extends Model
         return $this->hasMany(Contribution::class);
     }
 
+    public function user()
+    {
+        return $this->hasOne(User::class);
+    }
+
 }

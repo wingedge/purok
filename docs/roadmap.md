@@ -21,6 +21,7 @@ Purok currently has a working Laravel MVC foundation with authenticated CRUD scr
 
 - `users` table exists.
 - `role` column exists with `admin`, `treasurer`, and `staff`.
+- `member_id` column links users to member records for future member portal accounts.
 - `User` model has role helper methods.
 - Database seeder creates two admin users.
 
@@ -49,6 +50,9 @@ Purok currently has a working Laravel MVC foundation with authenticated CRUD scr
 - Indigent members are excluded from the contribution grid.
 - Contributions can be added and removed through JSON endpoints.
 - Yearly totals are shown per member.
+- Contribution amount and accounting-period date logic are centralized in `ContributionService`.
+- Dashboard and cash flow contribution totals use `week_start`.
+- Contribution rules have focused feature tests.
 
 ### Finances
 
@@ -72,6 +76,8 @@ Purok currently has a working Laravel MVC foundation with authenticated CRUD scr
 - Rental return restores inventory.
 - Rental deletion restores inventory when needed and removes linked income.
 - Rental/inventory updates use database transactions for the main workflows.
+- Rental/inventory/income synchronization is extracted to Actions.
+- Rental workflow Actions have focused feature tests.
 
 ### Purok Certificate Logs
 
@@ -104,7 +110,9 @@ Purok currently has a working Laravel MVC foundation with authenticated CRUD scr
 ### Architecture Refactor
 
 - The first Action extraction exists for member/dependent import.
-- Services are not implemented.
+- Rental workflow Actions exist for create, update, return, and delete.
+- Contribution rules are extracted to `ContributionService`.
+- `ContributionService` is implemented; other service extractions remain pending.
 - Repositories are not implemented.
 - Import result DTOs are implemented for member/dependent import.
 - A `UserRole` enum is implemented.
@@ -124,7 +132,7 @@ Purok currently has a working Laravel MVC foundation with authenticated CRUD scr
 - Members cannot log in as community members with scoped profile access.
 - Members cannot update their own profile.
 - Members cannot manage dependents from a self-service portal.
-- Users are not linked to member records.
+- Users can be linked to member records.
 - Member account invitation/claiming flow is not implemented.
 
 ### Imports
@@ -154,13 +162,12 @@ Current gaps:
 - Income sources are hardcoded in `IncomeController`.
 - Expense categories are hardcoded in `ExpenseController`.
 - Income and expense category/source enums or lookup tables are not implemented.
-- Contribution amount rules are hardcoded in `ContributionController`.
-- Contribution accounting date behavior needs review because some totals use `created_at` while weekly tracking uses `week_start`.
+- Contribution amount rules are centralized but not configurable.
 - Cash on hand/opening balance workflow is not clearly modeled.
 
 ### Inventory And Rental Improvements
 
-- Rental business logic is still controller-based.
+- Rental business logic is action-based for create, update, return, and delete.
 - Rental pricing is not centralized.
 - Rental amount is stored as linked income, not on the rental.
 - Inventory adjustment/audit history is not implemented.
@@ -187,9 +194,9 @@ Current gaps:
 - Authorization tests exist for the first role-protected route boundaries.
 - Member/dependent import tests exist.
 - Member/dependent export tests exist.
-- No tests exist for contribution workflows.
+- Contribution amount and accounting-period tests exist.
 - No tests exist for income and expense CRUD or import/export.
-- No tests exist for rental inventory synchronization.
+- Rental inventory synchronization tests exist.
 - No tests exist for rental import/export.
 - No tests exist for certificate logs.
 - No tests exist for reports/dashboard totals.
@@ -197,18 +204,16 @@ Current gaps:
 ### Documentation
 
 - Feature-specific docs exist for authorization and import/export.
+- Member portal flow is documented in `docs/features/member-portal.md`.
 - Role and permission rules are documented.
-- Member portal flow is not documented.
 - Import file formats are documented.
 - Report definitions are not documented.
 
 ## Suggested Next Steps
 
-1. Extract rental/inventory/income synchronization into tested Actions or Services.
-2. Extract contribution amount and reporting date rules into a dedicated service.
-3. Add expense export, then expense import.
-4. Add income export, then income import.
-5. Add rental export/import after rental synchronization is extracted.
-6. Decide whether the next UI migration step is Filament admin resources, Livewire member portal screens, or both.
-7. Link users to member records before building member self-service profile/dependent updates.
-8. Add more `docs/features/` documents as each feature area is refactored.
+1. Decide and execute the Filament installation/migration path for back-office resources.
+2. Build Filament resources for members and dependents first.
+3. Add member-facing routes and policies using `users.member_id`.
+4. Build member profile/dependent self-service screens.
+5. Continue import/export work for expenses, incomes, and rentals.
+6. Add more `docs/features/` documents as each feature area is refactored.

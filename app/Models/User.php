@@ -23,6 +23,7 @@ class User extends Authenticatable
         'email',
         'password',
         'role',
+        'member_id',
     ];
 
     /**
@@ -61,6 +62,11 @@ class User extends Authenticatable
     public function isStaff(): bool
     {
         return $this->role === UserRole::Staff->value;
+    }
+
+    public function member()
+    {
+        return $this->belongsTo(Member::class);
     }
     
 }

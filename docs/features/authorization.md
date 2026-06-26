@@ -11,7 +11,8 @@ This document defines the intended role and permission model for Purok. The appl
 - Named gates are registered in `AuthServiceProvider`.
 - Main business routes use `can:` middleware for the first permission boundaries.
 - Full model policies are not implemented yet.
-- There is no separate member portal role or user-to-member link yet.
+- Users can be linked to member records through `users.member_id`.
+- Member portal routes and screens are not implemented yet.
 
 ## Target Roles
 
@@ -79,7 +80,7 @@ Not allowed by default:
 
 ### Member
 
-Member access is a future portal role or account type. It is not implemented yet.
+Member access is a future portal role or account type. The user-to-member relationship foundation exists, but portal routes and screens are not implemented yet.
 
 Allowed target behavior:
 
@@ -124,7 +125,7 @@ Not allowed:
 - Add a small role middleware only if route grouping becomes clearer than named gates.
 - Keep role checks out of Blade templates except for showing or hiding action controls.
 - Enforce permissions in controllers, Livewire components, and Filament resources, not only in navigation.
-- Introduce a `member_id` link on users before building member self-service.
+- Use the `member_id` link on users when building member self-service.
 - Add tests for every restricted route and destructive action.
 
 ## Open Decisions

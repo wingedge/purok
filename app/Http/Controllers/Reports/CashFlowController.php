@@ -6,25 +6,24 @@ use Carbon\Carbon;
 use App\Models\Income;
 use App\Models\Member;
 use App\Models\Expense;
-use App\Models\Contribution;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+use App\Services\ContributionService;
 
 class CashFlowController extends Controller
 {
-    public function index(Request $request)
+    public function index(Request $request, ContributionService $contributions)
     {
         $year  = $request->get('year', now()->year);
         $month = $request->get('month');
+        $month = $month ? (int) $month : null;
 
         // Inflows
         $incomeTotal = Income::whereYear('date', $year)
             ->when($month, fn ($q) => $q->whereMonth('date', $month))
             ->sum('amount');
 
-        $contributionTotal = Contribution::whereYear('created_at', $year)
-            ->when($month, fn ($q) => $q->whereMonth('created_at', $month))
-            ->sum('amount');
+        $contributionTotal = $contributions->totalForAccountingPeriod((int) $year, $month);
 
         // Outflows
         $expenseTotal = Expense::whereYear('date', $year)

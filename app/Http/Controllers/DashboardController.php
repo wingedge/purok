@@ -2,30 +2,20 @@
 
 namespace App\Http\Controllers;
 
-use DB;
-use Carbon\Carbon;
 use App\Models\Income;
 use App\Models\Member;
 use App\Models\Rental;
 use App\Models\Expense;
-use App\Models\Contribution;
 use Illuminate\Http\Request;
+use App\Services\ContributionService;
 
 class DashboardController extends Controller
 {
-    public function index(Request $request)
+    public function index(Request $request, ContributionService $contributions)
     {
         $year  = $request->get('year', now()->year);
         $month = $request->get('month'); // optional
-        
-
-        $dateFilter = function ($query) use ($year, $month) {
-            $query->whereYear('created_at', $year);
-
-            if ($month) {
-                $query->whereMonth('created_at', $month);
-            }
-        };
+        $month = $month ? (int) $month : null;
 
         $totalMembers = Member::count();
 
@@ -35,15 +25,13 @@ class DashboardController extends Controller
             ->sum('amount');
 
         // Contributions
-        $totalContributions = Contribution::where($dateFilter)->sum('amount');
+        $totalContributions = $contributions->totalForAccountingPeriod((int) $year, $month);
 
         // 1. Total contributions for the current calendar year (2026)
-        $thisYearContributions = Contribution::whereYear('created_at', $year)
-            ->sum('amount');
+        $thisYearContributions = $contributions->totalForAccountingPeriod((int) $year);
 
         // 2. Total contributions for the last 7 days
-        $recentContributions = Contribution::where('created_at', '>=', now()->subDays(7))
-            ->sum('amount');
+        $recentContributions = $contributions->recentRecordedTotal();
 
         // Expenses
         $totalExpenses = Expense::whereYear('date', $year)
@@ -51,9 +39,7 @@ class DashboardController extends Controller
             ->sum('amount');
 
         // Members count
-        $contributorsCount = Contribution::where($dateFilter)
-            ->distinct('member_id')
-            ->count('member_id');
+        $contributorsCount = $contributions->contributorCountForAccountingPeriod((int) $year, $month);
 
         // Rentals
         $totalRentals = Rental::whereYear('created_at', $year)

@@ -44,11 +44,13 @@ Authentication is generated from Laravel Breeze patterns:
 - Guest routes handle register, login, forgot password, and password reset.
 - Authenticated routes handle logout, password confirmation, email verification, password update, and profile management.
 - `User` supports a `role` column with `admin`, `treasurer`, and `staff`.
+- `User` may be linked to a `Member` through `member_id`.
 - `User` has convenience methods: `isAdmin()`, `isTreasurer()`, and `isStaff()`.
 
 Current authorization state:
 
 - Roles exist at the model/database level.
+- User/member account linking exists through `users.member_id`.
 - Initial named gates are registered in `AuthServiceProvider`.
 - Main route groups and actions use `can:` middleware for admin, treasurer, and staff boundaries.
 - Full model policies are not implemented yet.
@@ -97,6 +99,7 @@ Relationships:
 - A member has many dependents.
 - A dependent belongs to a member.
 - A member has many contributions.
+- A member may have one linked user account.
 
 Flow:
 
@@ -126,7 +129,7 @@ Relationships:
 Flow:
 
 - `ContributionController@index` supports monthly and yearly views.
-- The controller generates Sundays within the selected date range.
+- `ContributionService` generates Sundays within the selected date range.
 - Only non-indigent members are listed.
 - Contributions for visible weeks are eager-loaded.
 - A yearly total is calculated per member with `withSum`.
@@ -135,12 +138,13 @@ Flow:
 
 Business rule:
 
-- The contribution amount is currently hardcoded in the controller as `10.00` for non-indigent members and `0.00` for indigent members.
+- `ContributionService` calculates the contribution amount as `10.00` for non-indigent members and `0.00` for indigent members.
+- Dashboard and cash flow accounting totals use `week_start`.
+- Dashboard recent contribution activity still uses `created_at`.
 
 Current concerns:
 
-- Contribution amount logic belongs in a service or action.
-- Dashboard and reports currently filter contribution totals by `created_at`, while the contribution grid uses `week_start`. This should be reviewed so financial reports use the intended accounting date.
+- Contribution amount is still a fixed rule and is not configurable yet.
 
 ### Income And Expenses
 
@@ -187,23 +191,23 @@ Flow:
 - `InventoryController` manages inventory item CRUD.
 - Inventory items track `total_quantity`, `available_quantity`, and `rental_rate`.
 - `RentalController@store` validates rental quantity against available inventory.
-- Rental creation runs inside a database transaction:
+- `RentalController` delegates rental business workflows to Actions.
+- `CreateRental` runs inside a database transaction:
   - Lock inventory row.
   - Create the rental.
   - Create a linked income record.
   - Decrement available inventory quantity.
-- `RentalController@update` runs inside a transaction:
+- `UpdateRental` runs inside a transaction:
   - Locks inventory.
   - Adjusts inventory when the quantity changes.
   - Restores inventory when status changes from rented to returned.
   - Updates or creates the linked income record.
   - Updates the rental.
-- `RentalController@destroy` restores inventory for active rentals, deletes the linked income, then deletes the rental.
-- `RentalController@returnItem` marks a rental as returned and restores inventory.
+- `DeleteRental` restores inventory for active rentals, deletes the linked income, then deletes the rental.
+- `ReturnRental` marks a rental as returned and restores inventory once.
 
 Current concerns:
 
-- Rental/inventory/income synchronization is important business logic and should move into an Action or Service.
 - `Rental` validates an `amount`, but `amount` is not fillable or stored on the rental itself; it is stored as a linked income record.
 - Inventory edits allow directly changing `available_quantity`, so staff can manually correct stock but can also bypass rental rules.
 - Rental import/export workflows are not implemented yet.
@@ -247,7 +251,6 @@ Flow:
 Current concerns:
 
 - Reporting logic is in controllers.
-- Contribution report totals use `created_at` in some places and `week_start` in others.
 - Browser print styles exist for some reports, but structured exports are not implemented yet.
 
 ### Imports And Exports
@@ -284,6 +287,7 @@ Detailed import/export columns and rules are documented in `docs/features/import
 Core tables:
 
 - `users`: authentication users plus `role`.
+- `users.member_id`: optional link to a member record for future member portal accounts.
 - `members`: community members with contact details, birthday, and indigent flag.
 - `dependents`: dependents attached to members.
 - `contributions`: member contributions with `week_start`, `amount`, and optional remarks.
@@ -325,7 +329,6 @@ There are no dedicated tests yet for:
 - Members and dependents
 - Contributions
 - Income and expense import/export
-- Inventory and rental transactions
 - Rental import/export
 - Certificate logs
 - Reports/dashboard totals
@@ -352,11 +355,6 @@ Recommended extraction candidates:
 - `ExportRentals`
 - `RecordContribution`
 - `DeleteContribution`
-- `CalculateContributionAmount`
-- `CreateRentalWithIncome`
-- `UpdateRentalWithIncome`
-- `ReturnRentalInventory`
-- `DeleteRentalAndRestoreInventory`
 - `BuildDashboardSummary`
 - `BuildCashFlowReport`
 - `BuildContributionReport`
