@@ -2,45 +2,26 @@
 
 namespace App\Http\Controllers\Reports;
 
+use App\Actions\Reports\BuildCashFlowReport;
 use Carbon\Carbon;
-use App\Models\Income;
 use App\Models\Member;
-use App\Models\Expense;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
-use App\Services\ContributionService;
 
 class CashFlowController extends Controller
 {
-    public function index(Request $request, ContributionService $contributions)
+    public function index(Request $request, BuildCashFlowReport $buildCashFlowReport)
     {
         $year  = $request->get('year', now()->year);
         $month = $request->get('month');
         $month = $month ? (int) $month : null;
 
-        // Inflows
-        $incomeTotal = Income::whereYear('date', $year)
-            ->when($month, fn ($q) => $q->whereMonth('date', $month))
-            ->sum('amount');
-
-        $contributionTotal = $contributions->totalForAccountingPeriod((int) $year, $month);
-
-        // Outflows
-        $expenseTotal = Expense::whereYear('date', $year)
-            ->when($month, fn ($q) => $q->whereMonth('date', $month))
-            ->sum('amount');
-
-        // Net Cash Flow
-        $netCashFlow = ($incomeTotal + $contributionTotal) - $expenseTotal;
+        $report = $buildCashFlowReport->execute((int) $year, $month);
 
         return view('reports.cashflow', compact(
             'year',
             'month',
-            'incomeTotal',
-            'contributionTotal',
-            'expenseTotal',
-            'netCashFlow'
-        ));
+        ) + $report);
     }
 
     // Example Controller Logic

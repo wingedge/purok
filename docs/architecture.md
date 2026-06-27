@@ -89,6 +89,7 @@ Filament routes:
 - `/admin/rentals` uses `App\Filament\Resources\Rentals\RentalResource`.
 - `/admin/purok-certificates` uses `App\Filament\Resources\PurokCertificates\PurokCertificateResource`.
 - `/admin/contributions` uses `App\Filament\Resources\Contributions\ContributionResource`.
+- `/admin/reports/cash-flow` uses `App\Filament\Pages\CashFlowReport`.
 
 Authenticated routes:
 
@@ -290,6 +291,7 @@ Controllers:
 Action:
 
 - `BuildDashboardSummary`
+- `BuildCashFlowReport`
 
 Flow:
 
@@ -298,11 +300,13 @@ Flow:
 - `DashboardController` delegates dashboard totals to `BuildDashboardSummary`.
 - `DashboardStatsOverview` reuses `BuildDashboardSummary` for the Filament dashboard's current-year stats.
 - Cash flow report totals incomes, contributions, expenses, and net cash flow.
+- `Reports\CashFlowController@index` delegates cash-flow totals to `BuildCashFlowReport`.
+- `CashFlowReport` reuses `BuildCashFlowReport` for the Filament cash-flow report page.
 - Contributions report generates weekly columns and lists member contributions over a selected range.
 
 Current concerns:
 
-- Report logic is still in controllers.
+- Contribution report logic is still in the controller.
 - The old dashboard Blade filter view still exists while dashboard/report migration continues.
 - Browser print styles exist for some reports, but structured exports are not implemented yet.
 
@@ -386,12 +390,13 @@ Current tests include Breeze-generated authentication/profile coverage plus focu
 - User-to-member account linking
 - Filament member resource access
 - Filament dashboard summary access and totals
+- Filament cash-flow report access and totals
 
 There are no dedicated tests yet for:
 
 - Members and dependents
 - Certificate logs
-- Report totals
+- Contribution report totals
 
 ## Architectural Gaps To Address
 

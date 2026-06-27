@@ -4,7 +4,7 @@ This roadmap separates what is already working in the current app from what stil
 
 ## Current Status Summary
 
-Purok currently has a working Laravel MVC foundation with authenticated CRUD screens for members, contributions, finances, inventory, rentals, certificate logs, dashboard summaries, and reports. Filament 4 has been introduced for the back office. Filament now covers members, dependents, contribution record CRUD, expense CRUD, income CRUD, inventory CRUD, rental CRUD, certificate log CRUD, and dashboard summary stats. The first member-facing portal profile screen is implemented.
+Purok currently has a working Laravel MVC foundation with authenticated CRUD screens for members, contributions, finances, inventory, rentals, certificate logs, dashboard summaries, and reports. Filament 4 has been introduced for the back office. Filament now covers members, dependents, contribution record CRUD, expense CRUD, income CRUD, inventory CRUD, rental CRUD, certificate log CRUD, dashboard summary stats, and the cash-flow report page. The first member-facing portal profile screen is implemented.
 
 ## Done
 
@@ -113,6 +113,9 @@ Purok currently has a working Laravel MVC foundation with authenticated CRUD scr
 - Filament dashboard summary access has focused feature tests.
 - Reports landing page exists.
 - Cash flow report exists.
+- Cash flow report totals are extracted to `BuildCashFlowReport`.
+- Cash flow report is available in Filament.
+- Filament cash-flow report access and totals have focused feature tests.
 - Contribution report exists.
 
 ## Not Done
@@ -125,7 +128,7 @@ Purok currently has a working Laravel MVC foundation with authenticated CRUD scr
 - Filament 4 is installed and used for the admin panel.
 - Filament Resources are implemented for members, dependents, contribution records, expenses, incomes, inventory, rentals, and certificate logs.
 - Remaining Filament work for contributions is the custom monthly/yearly contribution grid page.
-- Remaining back-office Filament work for dashboard and reports is the filterable dashboard/report pages.
+- Remaining back-office Filament work for dashboard and reports is the filterable dashboard page and contribution report page.
 - Livewire member self-service screens are not implemented.
 
 ### Architecture Refactor
@@ -139,7 +142,7 @@ Purok currently has a working Laravel MVC foundation with authenticated CRUD scr
 - A `UserRole` enum is implemented.
 - Most business workflows still live directly in controllers.
 - Most controllers are not yet thin.
-- Dashboard summary query logic is extracted to `BuildDashboardSummary`; report query extraction remains pending.
+- Dashboard summary query logic is extracted to `BuildDashboardSummary`; cash-flow report query logic is extracted to `BuildCashFlowReport`; contribution report query extraction remains pending.
 
 ### Authorization
 
@@ -217,9 +220,9 @@ Current gaps:
 
 - Structured report exports are not implemented.
 - Browser print/save-PDF support exists for some report views, but it is not a formal export workflow.
-- Report query logic is still controller-based.
+- Contribution report query logic is still controller-based.
 - Report filters are basic.
-- Dashboard summary totals have focused tests; report totals do not.
+- Dashboard summary and cash-flow report totals have focused tests; contribution report totals do not.
 - No printable report layout is documented.
 
 ### Testing
@@ -229,6 +232,7 @@ Current gaps:
 - Filament member resource access tests exist.
 - Filament finance resource access tests exist.
 - Filament dashboard summary tests exist.
+- Filament cash-flow report tests exist.
 - Member/dependent import tests exist.
 - Member/dependent export tests exist.
 - Contribution amount and accounting-period tests exist.
@@ -236,7 +240,7 @@ Current gaps:
 - Rental inventory synchronization tests exist.
 - Rental import/export tests exist.
 - No tests exist for certificate logs.
-- No tests exist for report totals.
+- No tests exist for contribution report totals.
 
 ### Documentation
 
