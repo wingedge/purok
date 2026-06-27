@@ -4,7 +4,7 @@ This roadmap separates what is already working in the current app from what stil
 
 ## Current Status Summary
 
-Purok currently has a working Laravel MVC foundation with authenticated CRUD screens for members, contributions, finances, inventory, rentals, certificate logs, dashboard summaries, and reports. Filament 4 has been introduced for the back office, and the first resource now covers members and dependents. The first member-facing portal profile screen is implemented.
+Purok currently has a working Laravel MVC foundation with authenticated CRUD screens for members, contributions, finances, inventory, rentals, certificate logs, dashboard summaries, and reports. Filament 4 has been introduced for the back office. Filament now covers members, dependents, expense CRUD, income CRUD, inventory CRUD, and rental CRUD. The first member-facing portal profile screen is implemented.
 
 ## Done
 
@@ -46,6 +46,9 @@ Purok currently has a working Laravel MVC foundation with authenticated CRUD scr
 - Filament `MemberResource` is implemented for back-office list/create/edit workflows.
 - Filament `DependentsRelationManager` is implemented for dependent management from the member edit screen.
 - Filament member resource access has focused feature tests.
+- Filament `ExpenseResource` is implemented for back-office finance CRUD.
+- Filament `IncomeResource` is implemented for back-office finance CRUD.
+- Filament finance resource access has focused feature tests.
 
 ### Contributions
 
@@ -66,6 +69,7 @@ Purok currently has a working Laravel MVC foundation with authenticated CRUD scr
 - `expenses` table exists.
 - Income CRUD is implemented.
 - Expense CRUD is implemented.
+- Income and expense CRUD are also available in Filament.
 - Expense records store the creating user.
 - Income records can be linked to rentals.
 
@@ -76,6 +80,7 @@ Purok currently has a working Laravel MVC foundation with authenticated CRUD scr
 - Inventory CRUD is implemented.
 - Inventory tracks total quantity, available quantity, and rental rate.
 - Rental CRUD is implemented.
+- Inventory and rental CRUD are also available in Filament.
 - Rental creation decrements available inventory.
 - Rental creation creates linked income.
 - Rental updates can sync linked income.
@@ -84,6 +89,7 @@ Purok currently has a working Laravel MVC foundation with authenticated CRUD scr
 - Rental/inventory updates use database transactions for the main workflows.
 - Rental/inventory/income synchronization is extracted to Actions.
 - Rental workflow Actions have focused feature tests.
+- Filament logistics resource access has focused feature tests.
 
 ### Purok Certificate Logs
 
@@ -110,8 +116,8 @@ Purok currently has a working Laravel MVC foundation with authenticated CRUD scr
 - PHP 8.3+ requirement is not enforced in `composer.json`.
 - Livewire 4 is not installed or used.
 - Filament 4 is installed and used for the admin panel.
-- The first Filament Resource is implemented for members and dependents.
-- Remaining back-office Filament Resources are not implemented.
+- Filament Resources are implemented for members, dependents, expenses, incomes, inventory, and rentals.
+- Remaining back-office Filament Resources for contributions, certificate logs, dashboard, and reports are not implemented.
 - Livewire member self-service screens are not implemented.
 
 ### Architecture Refactor
@@ -179,8 +185,8 @@ Current gaps:
 
 ### Finance Improvements
 
-- Income sources are hardcoded in `IncomeController`.
-- Expense categories are hardcoded in `ExpenseController`.
+- Income sources are duplicated in the old `IncomeController` and Filament `IncomeForm`.
+- Expense categories are duplicated in the old `ExpenseController` and Filament `ExpenseForm`.
 - Income and expense category/source enums or lookup tables are not implemented.
 - Contribution amount rules are centralized but not configurable.
 - Cash on hand/opening balance workflow is not clearly modeled.
@@ -213,6 +219,7 @@ Current gaps:
 - No feature tests exist for member CRUD.
 - Authorization tests exist for the first role-protected route boundaries.
 - Filament member resource access tests exist.
+- Filament finance resource access tests exist.
 - Member/dependent import tests exist.
 - Member/dependent export tests exist.
 - Contribution amount and accounting-period tests exist.
@@ -233,5 +240,5 @@ Current gaps:
 ## Suggested Next Steps
 
 1. Decide whether to replace staff-set temporary passwords with email invitations or account claiming tokens.
-2. Continue migrating back-office resources to Filament, starting with finance or inventory.
+2. Continue migrating back-office resources to Filament, starting with certificate logs or contributions.
 3. Add more `docs/features/` documents as each feature area is refactored.

@@ -82,6 +82,10 @@ Filament routes:
 - `/admin` serves the Filament back-office panel.
 - `/admin/members` uses `App\Filament\Resources\Members\MemberResource`.
 - `/admin/members/{record}/edit` allows member edits and dependent management through a relation manager.
+- `/admin/expenses` uses `App\Filament\Resources\Expenses\ExpenseResource`.
+- `/admin/incomes` uses `App\Filament\Resources\Incomes\IncomeResource`.
+- `/admin/inventories` uses `App\Filament\Resources\Inventories\InventoryResource`.
+- `/admin/rentals` uses `App\Filament\Resources\Rentals\RentalResource`.
 
 Authenticated routes:
 
@@ -132,6 +136,10 @@ Flow:
 - `ImportMembers` validates each row, creates members, and optionally creates dependents from pipe-delimited `dependent_names` and `dependent_relationships` fields.
 - `MemberResource` provides the first Filament back-office resource for listing, creating, and editing members.
 - `DependentsRelationManager` manages dependents from the Filament member edit screen.
+- `ExpenseResource` provides Filament back-office CRUD for expense records.
+- `IncomeResource` provides Filament back-office CRUD for income records.
+- `InventoryResource` provides Filament back-office CRUD for inventory records.
+- `RentalResource` provides Filament back-office CRUD for rental records.
 - `MemberPortalController` allows member-role users linked through `users.member_id` to update their own phone, email, birthday, and dependents.
 - `UpdateMemberProfile` and `SyncMemberDependents` keep member self-service persistence outside the controller.
 - `CreateMemberPortalAccount` creates or updates a member-role user account for the selected member from the Filament member edit page.
@@ -192,12 +200,13 @@ Flow:
 - `ExpenseController` provides CRUD screens for expense records.
 - Expense categories are currently a private array in the controller.
 - Expenses store the authenticated user's ID in `created_by`.
+- `IncomeResource` and `ExpenseResource` provide Filament CRUD screens for finance records.
 
 Current concerns:
 
 - Source and category values should eventually move to enums, configuration, lookup tables, or another explicit domain structure.
-- Finance controllers directly contain validation and persistence logic.
-- Import/export workflows for incomes and expenses are not implemented yet.
+- Finance controllers still serve old Blade CRUD and import/export routes while the Filament migration continues.
+- Income and expense source/category options are duplicated between the old controllers and Filament form classes.
 
 ### Inventory And Rentals
 
@@ -219,6 +228,7 @@ Flow:
 - Inventory items track `total_quantity`, `available_quantity`, and `rental_rate`.
 - `RentalController@store` validates rental quantity against available inventory.
 - `RentalController` delegates rental business workflows to Actions.
+- `RentalResource` delegates Filament rental create, update, delete, and return workflows to the same rental Actions.
 - `CreateRental` runs inside a database transaction:
   - Lock inventory row.
   - Create the rental.

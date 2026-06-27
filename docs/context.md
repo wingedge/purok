@@ -17,6 +17,8 @@ Goal is to revamp and improve the flow, use filament for all of the backend and 
 
 - Filament 4 is installed and the admin panel is available at `/admin`.
 - Back-office member and dependent management has started moving into Filament through `MemberResource` and `DependentsRelationManager`.
+- Back-office finance CRUD has started moving into Filament through `ExpenseResource` and `IncomeResource`.
+- Back-office logistics CRUD has started moving into Filament through `InventoryResource` and `RentalResource`.
 - Role-based access exists for admin, treasurer, staff, and member users.
 - Member-role users are blocked from the Filament admin panel.
 - Users can be linked to member records through `users.member_id`.
@@ -28,3 +30,24 @@ Goal is to revamp and improve the flow, use filament for all of the backend and 
 - Expense CSV import/export is implemented through Actions and treasurer/admin routes.
 - Income CSV import/export is implemented through Actions and treasurer/admin routes.
 - Rental CSV import/export is implemented through Actions and staff/admin routes.
+
+## Filament Migration Status
+
+Using Filament:
+
+- Members and dependents
+- Expense CRUD
+- Income CRUD
+- Inventory CRUD
+- Rental CRUD
+
+Still using the old Blade/controller backend:
+
+- Dashboard
+- Contributions
+- Expense import/export
+- Income import/export
+- Rental import/export
+- Purok certificate logs
+- Reports
+- Auth profile and member portal
