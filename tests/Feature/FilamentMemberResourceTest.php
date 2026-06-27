@@ -29,6 +29,16 @@ class FilamentMemberResourceTest extends TestCase
             ->assertOk();
     }
 
+    public function test_staff_can_access_portal_account_action_from_member_edit_page(): void
+    {
+        $member = Member::create(['name' => 'Maria Santos']);
+
+        $this->actingAs($this->userWithRole(UserRole::Staff))
+            ->get("/admin/members/{$member->id}/edit")
+            ->assertOk()
+            ->assertSee('Create Portal Account');
+    }
+
     public function test_member_role_cannot_access_filament_admin_panel(): void
     {
         $this->actingAs($this->userWithRole(UserRole::Member))

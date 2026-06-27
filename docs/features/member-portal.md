@@ -19,6 +19,8 @@ Members should be able to log in, view their own information, update their own p
 - Member users are redirected to `/member/profile` after login.
 - Member users are blocked from the back-office dashboard.
 - Unlinked member users can view an account setup message but cannot update member data.
+- Staff/admin can create or update a linked portal account from the Filament member edit screen.
+- Linked member users can view read-only contribution status for their own record.
 
 ## Target Flow
 
@@ -28,7 +30,7 @@ Members should be able to log in, view their own information, update their own p
 4. The member is routed to the member-facing profile screen.
 5. The member can view and update only their own member profile.
 6. The member can add, edit, or remove only their own dependents.
-7. Optional later: the member can view their own contribution status.
+7. The member can view their own read-only contribution status.
 
 ## Access Rules
 
@@ -37,6 +39,7 @@ Allowed:
 - A linked member user can view their own member profile.
 - A linked member user can update their own phone, email, birthday, and other approved profile fields.
 - A linked member user can manage dependents attached to their own member record.
+- A linked member user can view only their own contribution status.
 
 Not allowed:
 
@@ -58,10 +61,14 @@ Current implementation:
 - `App\Http\Controllers\MemberPortalController` handles member portal display and validation.
 - `App\Actions\Members\UpdateMemberProfile` updates approved profile fields.
 - `App\Actions\Members\SyncMemberDependents` replaces the member's dependent list from validated input.
+- `App\Actions\Members\CreateMemberPortalAccount` creates or updates the linked member-role user account.
+- `App\Actions\Members\BuildMemberContributionStatus` builds the member-only read-only contribution summary.
+- `App\Filament\Resources\Members\Pages\EditMember` exposes the portal account action for staff/admin.
 - `resources/views/member-portal/show.blade.php` renders the first Blade-based portal screen.
 
 ## Open Decisions
 
 - Whether members can update email on the member record, user account, or both.
 - Whether dependent changes require staff approval.
-- Whether members can view contribution history or only current balance/status.
+- Whether the contribution status should show full contribution history or stay limited to recent records and monthly summaries.
+- Whether to replace temporary-password setup with email invitations or account claiming tokens.

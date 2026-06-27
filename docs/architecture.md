@@ -54,6 +54,8 @@ Authentication is generated from Laravel Breeze patterns:
 - `User` implements Filament panel access so only admin, treasurer, and staff can enter `/admin`.
 - Member-role users are redirected to `/member/profile` after login.
 - Member-role users are blocked from the back-office dashboard.
+- Staff/admin can create or update a linked member-role user account from the Filament member edit page.
+- Member-role users can view read-only contribution status for their linked member record.
 
 Current authorization state:
 
@@ -130,6 +132,8 @@ Flow:
 - `DependentsRelationManager` manages dependents from the Filament member edit screen.
 - `MemberPortalController` allows member-role users linked through `users.member_id` to update their own phone, email, birthday, and dependents.
 - `UpdateMemberProfile` and `SyncMemberDependents` keep member self-service persistence outside the controller.
+- `CreateMemberPortalAccount` creates or updates a member-role user account for the selected member from the Filament member edit page.
+- `BuildMemberContributionStatus` builds the member portal's own-record contribution summary using `ContributionService`.
 
 Current concerns:
 

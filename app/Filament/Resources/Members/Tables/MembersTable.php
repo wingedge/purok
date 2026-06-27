@@ -33,6 +33,11 @@ class MembersTable
                     ->counts('dependents')
                     ->label('Dependents')
                     ->sortable(),
+                TextColumn::make('user.email')
+                    ->label('Portal Account')
+                    ->placeholder('Not linked')
+                    ->searchable()
+                    ->toggleable(),
                 TextColumn::make('created_at')
                     ->dateTime()
                     ->sortable()

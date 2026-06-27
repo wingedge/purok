@@ -3,6 +3,7 @@
 namespace Tests\Feature;
 
 use App\Enums\UserRole;
+use App\Models\Contribution;
 use App\Models\Dependent;
 use App\Models\Member;
 use App\Models\User;
@@ -133,6 +134,80 @@ class MemberPortalTest extends TestCase
         $this->actingAs($user)
             ->get(route('dashboard'))
             ->assertForbidden();
+    }
+
+    public function test_member_can_view_only_their_own_contribution_status(): void
+    {
+        $member = Member::create([
+            'name' => 'Maria Santos',
+            'indigent' => false,
+        ]);
+
+        $otherMember = Member::create([
+            'name' => 'Other Member',
+            'indigent' => false,
+        ]);
+
+        Contribution::create([
+            'member_id' => $member->id,
+            'week_start' => '2026-06-07',
+            'amount' => 10,
+        ]);
+
+        Contribution::create([
+            'member_id' => $member->id,
+            'week_start' => '2026-06-14',
+            'amount' => 10,
+        ]);
+
+        Contribution::create([
+            'member_id' => $otherMember->id,
+            'week_start' => '2026-06-07',
+            'amount' => 99,
+        ]);
+
+        $user = User::factory()->create([
+            'role' => UserRole::Member->value,
+            'member_id' => $member->id,
+        ]);
+
+        $this->actingAs($user)
+            ->get(route('member.portal.show', [
+                'year' => 2026,
+                'month' => 6,
+            ]))
+            ->assertOk()
+            ->assertSee('Contribution Status')
+            ->assertSee('Year Total')
+            ->assertSee('20.00')
+            ->assertSee('Unpaid Weeks')
+            ->assertSee('Paid')
+            ->assertSee('Unpaid')
+            ->assertDontSee('99.00')
+            ->assertDontSee('Other Member');
+    }
+
+    public function test_indigent_member_contribution_status_has_no_required_balance(): void
+    {
+        $member = Member::create([
+            'name' => 'Maria Santos',
+            'indigent' => true,
+        ]);
+
+        $user = User::factory()->create([
+            'role' => UserRole::Member->value,
+            'member_id' => $member->id,
+        ]);
+
+        $this->actingAs($user)
+            ->get(route('member.portal.show', [
+                'year' => 2026,
+                'month' => 6,
+            ]))
+            ->assertOk()
+            ->assertSee('No weekly contribution is currently required')
+            ->assertSee('Not Required')
+            ->assertSee('0.00');
     }
 
     public function test_member_login_redirects_to_member_portal(): void

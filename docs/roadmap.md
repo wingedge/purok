@@ -146,8 +146,9 @@ Purok currently has a working Laravel MVC foundation with authenticated CRUD scr
 - Member-role users cannot access the Filament admin panel.
 - Member-role users are redirected to `/member/profile` after login.
 - Member-role users are blocked from the back-office dashboard.
-- Member account invitation/claiming flow is not implemented.
-- Member portal contribution status is not implemented.
+- Staff/admin can create or update linked member portal accounts from the Filament member edit screen.
+- Formal member account invitation/claiming flow is not implemented.
+- Member portal read-only contribution status is implemented for the linked member record.
 
 ### Imports
 
@@ -226,9 +227,9 @@ Current gaps:
 
 ## Suggested Next Steps
 
-1. Add member account invitation or linking workflow for staff/admin.
+1. Decide whether to replace staff-set temporary passwords with email invitations or account claiming tokens.
 2. Decide whether dependent self-service changes need staff approval.
-3. Decide whether members should see contribution status in the portal.
+3. Decide whether member contribution status should include full history or stay as recent records and monthly summaries.
 4. Continue migrating back-office resources to Filament, starting with finance or inventory.
 5. Continue import/export work for expenses, incomes, and rentals.
 6. Add more `docs/features/` documents as each feature area is refactored.
