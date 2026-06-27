@@ -4,7 +4,7 @@ This roadmap separates what is already working in the current app from what stil
 
 ## Current Status Summary
 
-Purok currently has a working Laravel MVC foundation with authenticated CRUD screens for members, contributions, finances, inventory, rentals, certificate logs, dashboard summaries, and reports. Filament 4 has been introduced for the back office, and the first resource now covers members and dependents. The member-facing portal is not implemented yet.
+Purok currently has a working Laravel MVC foundation with authenticated CRUD screens for members, contributions, finances, inventory, rentals, certificate logs, dashboard summaries, and reports. Filament 4 has been introduced for the back office, and the first resource now covers members and dependents. The first member-facing portal profile screen is implemented.
 
 ## Done
 
@@ -134,17 +134,20 @@ Purok currently has a working Laravel MVC foundation with authenticated CRUD scr
 - Full policies are not implemented for members, finances, rentals, certificates, or reports.
 - Staff/treasurer/admin permissions are documented in `docs/features/authorization.md` and partially enforced in code.
 - Member-role users are blocked from Filament admin access.
-- Member portal permissions are not implemented beyond regular user authentication and the account link.
+- Member portal permissions are implemented for the first profile/dependent self-service screen.
 
 ### Member Portal
 
-- Members cannot log in as community members with scoped profile access.
-- Members cannot update their own profile.
-- Members cannot manage dependents from a self-service portal.
+- Members can log in as community members with scoped profile access.
+- Members can update approved profile fields from a self-service portal.
+- Members can manage dependents from a self-service portal.
 - Users can be linked to member records.
 - The `member` role exists for member-facing accounts.
 - Member-role users cannot access the Filament admin panel.
+- Member-role users are redirected to `/member/profile` after login.
+- Member-role users are blocked from the back-office dashboard.
 - Member account invitation/claiming flow is not implemented.
+- Member portal contribution status is not implemented.
 
 ### Imports
 
@@ -223,9 +226,9 @@ Current gaps:
 
 ## Suggested Next Steps
 
-1. Build member-facing routes, middleware, and policies using `users.member_id`.
-2. Add Actions for member self-service profile and dependent updates.
-3. Build the member profile/dependent self-service screens.
+1. Add member account invitation or linking workflow for staff/admin.
+2. Decide whether dependent self-service changes need staff approval.
+3. Decide whether members should see contribution status in the portal.
 4. Continue migrating back-office resources to Filament, starting with finance or inventory.
 5. Continue import/export work for expenses, incomes, and rentals.
 6. Add more `docs/features/` documents as each feature area is refactored.

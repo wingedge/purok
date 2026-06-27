@@ -1,6 +1,6 @@
 # Member Portal
 
-This document defines the target member-facing portal flow. The current app has back-office authentication, and users can now be linked to member records through `users.member_id`, but member self-service screens are not implemented yet.
+This document defines the target member-facing portal flow. The current app has back-office authentication, and users can now be linked to member records through `users.member_id`. The first member self-service profile screen is implemented with Blade and controller Actions.
 
 ## Goal
 
@@ -13,14 +13,19 @@ Members should be able to log in, view their own information, update their own p
 - Back-office roles still use the existing `role` column.
 - Back-office users may have no linked member record.
 - Member-role users cannot access the Filament admin panel.
-- Member-facing routes, screens, and policies are not implemented yet.
+- Member-facing routes exist at `/member/profile`.
+- Linked member users can view their own member profile.
+- Linked member users can update phone, email, birthday, and dependents.
+- Member users are redirected to `/member/profile` after login.
+- Member users are blocked from the back-office dashboard.
+- Unlinked member users can view an account setup message but cannot update member data.
 
 ## Target Flow
 
 1. Staff or admin creates or verifies a member record.
 2. Staff or admin links a user account to that member.
 3. The member logs in with their user account.
-4. The member is routed to a member-facing dashboard.
+4. The member is routed to the member-facing profile screen.
 5. The member can view and update only their own member profile.
 6. The member can add, edit, or remove only their own dependents.
 7. Optional later: the member can view their own contribution status.
@@ -47,6 +52,13 @@ Not allowed:
 - Keep member portal components thin and delegate profile/dependent updates to Actions.
 - Use Livewire for member-facing profile/dependent forms when Livewire is introduced.
 - Keep Filament for back-office administration, not member self-service.
+
+Current implementation:
+
+- `App\Http\Controllers\MemberPortalController` handles member portal display and validation.
+- `App\Actions\Members\UpdateMemberProfile` updates approved profile fields.
+- `App\Actions\Members\SyncMemberDependents` replaces the member's dependent list from validated input.
+- `resources/views/member-portal/show.blade.php` renders the first Blade-based portal screen.
 
 ## Open Decisions
 

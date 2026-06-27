@@ -52,6 +52,8 @@ Authentication is generated from Laravel Breeze patterns:
 - `User` may be linked to a `Member` through `member_id`.
 - `User` has convenience methods: `isAdmin()`, `isTreasurer()`, `isStaff()`, and `isMember()`.
 - `User` implements Filament panel access so only admin, treasurer, and staff can enter `/admin`.
+- Member-role users are redirected to `/member/profile` after login.
+- Member-role users are blocked from the back-office dashboard.
 
 Current authorization state:
 
@@ -81,6 +83,7 @@ Authenticated routes:
 
 - `/dashboard` uses `DashboardController@index`.
 - `/profile` uses `ProfileController`.
+- `/member/profile` uses `MemberPortalController` for member self-service profile and dependent updates.
 - `/members` uses `MemberController` resource routes.
 - `/members/import` imports member CSV data.
 - `/members/search` returns JSON member search results for certificate flows.
@@ -125,10 +128,13 @@ Flow:
 - `ImportMembers` validates each row, creates members, and optionally creates dependents from pipe-delimited `dependent_names` and `dependent_relationships` fields.
 - `MemberResource` provides the first Filament back-office resource for listing, creating, and editing members.
 - `DependentsRelationManager` manages dependents from the Filament member edit screen.
+- `MemberPortalController` allows member-role users linked through `users.member_id` to update their own phone, email, birthday, and dependents.
+- `UpdateMemberProfile` and `SyncMemberDependents` keep member self-service persistence outside the controller.
 
 Current concerns:
 
 - Updating dependents by deleting and recreating them is simple, but it does not preserve dependent IDs or history.
+- Member portal dependent updates also replace the full dependent list and do not preserve dependent IDs.
 
 ### Contributions
 

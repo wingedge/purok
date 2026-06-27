@@ -28,6 +28,10 @@ class AuthenticatedSessionController extends Controller
 
         $request->session()->regenerate();
 
+        if ($request->user()->isMember()) {
+            return redirect()->route('member.portal.show');
+        }
+
         return redirect()->intended(route('dashboard', absolute: false));
     }
 

@@ -32,6 +32,11 @@ class AuthServiceProvider extends ServiceProvider
             UserRole::Staff->value,
         ], true));
 
+        Gate::define('view-dashboard', fn (User $user): bool => in_array($user->role, [
+            UserRole::Treasurer->value,
+            UserRole::Staff->value,
+        ], true));
+
         Gate::define('manage-members', fn (User $user): bool => $user->role === UserRole::Staff->value);
 
         Gate::define('delete-members', fn (User $user): bool => false);

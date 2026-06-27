@@ -8,6 +8,7 @@ use App\Http\Controllers\ExpenseController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\InventoryController;
+use App\Http\Controllers\MemberPortalController;
 use App\Http\Controllers\ContributionController;
 use App\Http\Controllers\PurokCertificateController;
 use App\Http\Controllers\Reports\CashFlowController;
@@ -24,6 +25,12 @@ Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+
+    Route::get('/member/profile', [MemberPortalController::class, 'show'])
+        ->name('member.portal.show');
+
+    Route::patch('/member/profile', [MemberPortalController::class, 'update'])
+        ->name('member.portal.update');
 });
 
 Route::middleware(['auth'])->group(function () {
@@ -138,7 +145,7 @@ Route::middleware(['auth'])->group(function () {
 });
 
 Route::get('/dashboard', [DashboardController::class, 'index'])
-    ->middleware(['auth'])
+    ->middleware(['auth', 'can:view-dashboard'])
     ->name('dashboard');
 
 
