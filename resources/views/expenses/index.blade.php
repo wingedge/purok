@@ -25,12 +25,26 @@
                 </div>
             @endif
 
-            {{-- Action Button --}}
-            <div class="mb-6">
+            {{-- Actions --}}
+            <div class="mb-6 flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
                 <a href="{{ route('expenses.create') }}" class="inline-flex items-center justify-center w-full sm:w-auto bg-rose-600 hover:bg-rose-700 text-white px-6 py-3 rounded-lg font-bold transition shadow-lg">
                     <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
                     Add Expense
                 </a>
+
+                <div class="flex flex-col gap-3 sm:flex-row sm:items-center">
+                    <a href="{{ route('expenses.export') }}" class="inline-flex items-center justify-center bg-gray-800 hover:bg-gray-900 text-white px-5 py-3 rounded-lg font-bold transition shadow">
+                        Export CSV
+                    </a>
+
+                    <form method="POST" action="{{ route('expenses.import') }}" enctype="multipart/form-data" class="flex flex-col gap-2 sm:flex-row sm:items-center">
+                        @csrf
+                        <input type="file" name="csv_file" accept=".csv,text/csv,text/plain" class="block w-full text-sm text-gray-700 file:mr-3 file:rounded file:border-0 file:bg-gray-100 file:px-3 file:py-2 file:text-sm file:font-semibold file:text-gray-700">
+                        <button class="inline-flex items-center justify-center bg-blue-600 hover:bg-blue-700 text-white px-5 py-3 rounded-lg font-bold transition shadow">
+                            Import CSV
+                        </button>
+                    </form>
+                </div>
             </div>
 
             {{-- Mobile View: Stacked Cards --}}

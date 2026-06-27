@@ -149,6 +149,9 @@ Purok currently has a working Laravel MVC foundation with authenticated CRUD scr
 - Staff/admin can create or update linked member portal accounts from the Filament member edit screen.
 - Formal member account invitation/claiming flow is not implemented.
 - Member portal read-only contribution status is implemented for the linked member record.
+- Member portal contribution history can be filtered by year and optional month.
+- Member portal email updates sync to the linked login account.
+- Member portal password change and forgot-password flows are available through the linked user account.
 
 ### Imports
 
@@ -164,11 +167,13 @@ Current gaps:
 - Shared import/export architecture is not implemented.
 - Current CSV member/dependent import is action-based.
 - Current CSV member/dependent export is action-based.
-- Expense import/export is not implemented.
-- Income import/export is not implemented.
+- Expense import/export is implemented.
+- Income import/export is implemented.
 - Rental import/export is not implemented.
 - Member/dependent import returns an `ImportResult` summary.
-- Expense, income, and rental import validation/reporting is not implemented.
+- Expense import validation/reporting is implemented.
+- Income import validation/reporting is implemented.
+- Rental import validation/reporting is not implemented.
 - Stable export column definitions are documented in `docs/features/import-export.md`.
 - Import file formats are documented in `docs/features/import-export.md`.
 
@@ -228,8 +233,6 @@ Current gaps:
 ## Suggested Next Steps
 
 1. Decide whether to replace staff-set temporary passwords with email invitations or account claiming tokens.
-2. Decide whether dependent self-service changes need staff approval.
-3. Decide whether member contribution status should include full history or stay as recent records and monthly summaries.
-4. Continue migrating back-office resources to Filament, starting with finance or inventory.
-5. Continue import/export work for expenses, incomes, and rentals.
-6. Add more `docs/features/` documents as each feature area is refactored.
+2. Continue migrating back-office resources to Filament, starting with finance or inventory.
+3. Continue import/export work for rentals.
+4. Add more `docs/features/` documents as each feature area is refactored.

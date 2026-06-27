@@ -55,6 +55,7 @@
                     <label class="block text-sm font-medium text-gray-700">Email</label>
                     <input name="email"
                            type="email"
+                           required
                            value="{{ old('email', $member->email) }}"
                            class="mt-1 w-full border rounded px-3 py-2">
                     <x-input-error :messages="$errors->get('email')" class="mt-2" />
@@ -120,7 +121,7 @@
                 <div class="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
                     <div>
                         <h2 class="text-lg font-semibold text-gray-900">Contribution Status</h2>
-                        <p class="mt-1 text-sm text-gray-500">Review your recorded weekly contributions.</p>
+                        <p class="mt-1 text-sm text-gray-500">Review your full recorded contribution history.</p>
                     </div>
 
                     <form method="GET" action="{{ route('member.portal.show') }}" class="flex flex-wrap items-end gap-2">
@@ -138,6 +139,7 @@
                         <div>
                             <label class="block text-xs font-semibold text-gray-500 uppercase">Month</label>
                             <select name="month" class="mt-1 border rounded px-3 py-2 text-sm">
+                                <option value="" @selected($contributionStatus['selected_month'] === null)>All months</option>
                                 @foreach (range(1, 12) as $month)
                                     <option value="{{ $month }}" @selected($contributionStatus['selected_month'] === $month)>
                                         {{ \Carbon\Carbon::create()->month($month)->format('F') }}
@@ -165,6 +167,7 @@
                         <div class="mt-1 text-2xl font-bold text-gray-900">
                             {{ number_format($contributionStatus['monthly_paid_total'], 2) }}
                         </div>
+                        <div class="mt-1 text-xs text-gray-500">{{ $contributionStatus['period_label'] }}</div>
                     </div>
 
                     <div class="rounded border bg-gray-50 p-4">
@@ -222,10 +225,10 @@
                 </div>
 
                 <div>
-                    <h3 class="font-semibold text-gray-800">Recent Contributions</h3>
+                    <h3 class="font-semibold text-gray-800">Contribution History</h3>
 
-                    @if ($contributionStatus['recent_contributions']->isEmpty())
-                        <p class="mt-2 text-sm text-gray-500">No contributions have been recorded yet.</p>
+                    @if ($contributionStatus['filtered_contributions']->isEmpty())
+                        <p class="mt-2 text-sm text-gray-500">No contributions match the selected filters.</p>
                     @else
                         <div class="mt-3 overflow-x-auto border rounded">
                             <table class="min-w-full divide-y divide-gray-200 text-sm">
@@ -236,7 +239,7 @@
                                     </tr>
                                 </thead>
                                 <tbody class="divide-y divide-gray-100 bg-white">
-                                    @foreach ($contributionStatus['recent_contributions'] as $contribution)
+                                    @foreach ($contributionStatus['filtered_contributions'] as $contribution)
                                         <tr>
                                             <td class="px-4 py-3 text-gray-700">
                                                 {{ $contribution->week_start->format('M d, Y') }}
@@ -251,6 +254,57 @@
                         </div>
                     @endif
                 </div>
+            </section>
+
+            <section class="bg-white p-6 rounded shadow space-y-5">
+                <div>
+                    <h2 class="text-lg font-semibold text-gray-900">Password</h2>
+                    <p class="mt-1 text-sm text-gray-500">Change your portal login password.</p>
+                </div>
+
+                @if (session('status') === 'password-updated')
+                    <div class="rounded border border-green-200 bg-green-50 px-4 py-3 text-sm text-green-700">
+                        Password updated.
+                    </div>
+                @endif
+
+                <form method="POST" action="{{ route('password.update') }}" class="space-y-4">
+                    @csrf
+                    @method('PUT')
+
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700">Current Password</label>
+                        <input name="current_password"
+                               type="password"
+                               autocomplete="current-password"
+                               class="mt-1 w-full border rounded px-3 py-2">
+                        <x-input-error :messages="$errors->updatePassword->get('current_password')" class="mt-2" />
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700">New Password</label>
+                        <input name="password"
+                               type="password"
+                               autocomplete="new-password"
+                               class="mt-1 w-full border rounded px-3 py-2">
+                        <x-input-error :messages="$errors->updatePassword->get('password')" class="mt-2" />
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700">Confirm New Password</label>
+                        <input name="password_confirmation"
+                               type="password"
+                               autocomplete="new-password"
+                               class="mt-1 w-full border rounded px-3 py-2">
+                        <x-input-error :messages="$errors->updatePassword->get('password_confirmation')" class="mt-2" />
+                    </div>
+
+                    <div class="flex justify-end">
+                        <button class="px-4 py-2 bg-green-600 text-white rounded">
+                            Update Password
+                        </button>
+                    </div>
+                </form>
             </section>
         @endif
     </div>

@@ -18,10 +18,14 @@ class BuildMemberContributionStatus
     /**
      * @return array<string, mixed>
      */
-    public function execute(Member $member, int $year, int $month): array
+    public function execute(Member $member, int $year, ?int $month): array
     {
-        $start = Carbon::create($year, $month, 1)->startOfMonth();
-        $end = $start->copy()->endOfMonth();
+        $start = $month === null
+            ? Carbon::create($year, 1, 1)->startOfYear()
+            : Carbon::create($year, $month, 1)->startOfMonth();
+        $end = $month === null
+            ? $start->copy()->endOfYear()
+            : $start->copy()->endOfMonth();
         $weeks = $this->contributions->sundaysBetween($start, $end);
         $weekDates = $weeks->map->toDateString();
         $requiredWeeklyAmount = $this->contributions->amountFor($member);
@@ -50,6 +54,7 @@ class BuildMemberContributionStatus
         return [
             'selected_year' => $year,
             'selected_month' => $month,
+            'period_label' => $month === null ? (string) $year : $start->format('F Y'),
             'required_weekly_amount' => $requiredWeeklyAmount,
             'weekly_status' => $weeklyStatus,
             'paid_weeks' => $paidWeeks,
@@ -61,9 +66,10 @@ class BuildMemberContributionStatus
             'year_total' => (float) $member->contributions()
                 ->whereYear('week_start', $year)
                 ->sum('amount'),
-            'recent_contributions' => $member->contributions()
-                ->latest('week_start')
-                ->limit(5)
+            'filtered_contributions' => $member->contributions()
+                ->whereYear('week_start', $year)
+                ->when($month, fn ($query) => $query->whereMonth('week_start', $month))
+                ->orderByDesc('week_start')
                 ->get(),
         ];
     }

@@ -2,8 +2,11 @@
 
 namespace App\Http\Controllers;
 
+use App\Actions\Exports\ExportIncomes;
+use App\Actions\Imports\ImportIncomes;
 use App\Models\Income;
 use Illuminate\Http\Request;
+use Symfony\Component\HttpFoundation\StreamedResponse;
 
 class IncomeController extends Controller
 {
@@ -87,4 +90,33 @@ class IncomeController extends Controller
             ->with('success', 'Income deleted successfully.');
     }
 
+    public function export(ExportIncomes $exportIncomes): StreamedResponse
+    {
+        $filename = 'incomes-'.now()->format('Y-m-d').'.csv';
+
+        return response()->streamDownload(
+            fn () => print $exportIncomes->execute(),
+            $filename,
+            ['Content-Type' => 'text/csv; charset=UTF-8'],
+        );
+    }
+
+    public function import(Request $request, ImportIncomes $importIncomes)
+    {
+        $request->validate([
+            'csv_file' => ['required', 'file', 'mimes:csv,txt'],
+        ]);
+
+        try {
+            $result = $importIncomes->execute($request->file('csv_file')->getRealPath());
+
+            return redirect()
+                ->route('incomes.index')
+                ->with('success', 'Incomes imported. '.$result->summary());
+        } catch (\Exception $e) {
+            return back()->withErrors([
+                'csv_file' => 'Import failed: '.$e->getMessage(),
+            ]);
+        }
+    }
 }

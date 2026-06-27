@@ -24,3 +24,6 @@ Goal is to revamp and improve the flow, use filament for all of the backend and 
 - Member users are redirected to the member portal after login and blocked from the back-office dashboard.
 - Staff/admin can create or update a linked member portal account from the Filament member edit screen.
 - Member users can view read-only contribution status for their own record in the portal.
+- Member portal email updates sync to the linked login account, and members can change or reset their account password.
+- Expense CSV import/export is implemented through Actions and treasurer/admin routes.
+- Income CSV import/export is implemented through Actions and treasurer/admin routes.

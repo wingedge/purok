@@ -2,8 +2,11 @@
 
 namespace App\Http\Controllers;
 
+use App\Actions\Exports\ExportExpenses;
+use App\Actions\Imports\ImportExpenses;
 use App\Models\Expense;
 use Illuminate\Http\Request;
+use Symfony\Component\HttpFoundation\StreamedResponse;
 
 class ExpenseController extends Controller
 {
@@ -87,4 +90,36 @@ class ExpenseController extends Controller
             ->with('success', 'Expense deleted successfully.');
     }
 
+    public function export(ExportExpenses $exportExpenses): StreamedResponse
+    {
+        $filename = 'expenses-'.now()->format('Y-m-d').'.csv';
+
+        return response()->streamDownload(
+            fn () => print $exportExpenses->execute(),
+            $filename,
+            ['Content-Type' => 'text/csv; charset=UTF-8'],
+        );
+    }
+
+    public function import(Request $request, ImportExpenses $importExpenses)
+    {
+        $request->validate([
+            'csv_file' => ['required', 'file', 'mimes:csv,txt'],
+        ]);
+
+        try {
+            $result = $importExpenses->execute(
+                $request->file('csv_file')->getRealPath(),
+                $request->user(),
+            );
+
+            return redirect()
+                ->route('expenses.index')
+                ->with('success', 'Expenses imported. '.$result->summary());
+        } catch (\Exception $e) {
+            return back()->withErrors([
+                'csv_file' => 'Import failed: '.$e->getMessage(),
+            ]);
+        }
+    }
 }

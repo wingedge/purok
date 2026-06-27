@@ -56,6 +56,8 @@ Authentication is generated from Laravel Breeze patterns:
 - Member-role users are blocked from the back-office dashboard.
 - Staff/admin can create or update a linked member-role user account from the Filament member edit page.
 - Member-role users can view read-only contribution status for their linked member record.
+- Member portal email updates sync to the linked user account so login and password reset use the same email.
+- Member portal users can change their own password through the existing authenticated password update route.
 
 Current authorization state:
 
@@ -133,7 +135,7 @@ Flow:
 - `MemberPortalController` allows member-role users linked through `users.member_id` to update their own phone, email, birthday, and dependents.
 - `UpdateMemberProfile` and `SyncMemberDependents` keep member self-service persistence outside the controller.
 - `CreateMemberPortalAccount` creates or updates a member-role user account for the selected member from the Filament member edit page.
-- `BuildMemberContributionStatus` builds the member portal's own-record contribution summary using `ContributionService`.
+- `BuildMemberContributionStatus` builds the member portal's own-record contribution summary and filtered full history using `ContributionService`.
 
 Current concerns:
 
@@ -293,8 +295,10 @@ Current state:
 - `MemberController@import` validates the uploaded file and delegates to the import action.
 - Member/dependent CSV export exists in `App\Actions\Exports\ExportMembers`.
 - `MemberController@export` delegates to the export action and returns a CSV download.
-- Expense import/export is not implemented.
-- Income import/export is not implemented.
+- Expense CSV import exists in `App\Actions\Imports\ImportExpenses`.
+- Expense CSV export exists in `App\Actions\Exports\ExportExpenses`.
+- Income CSV import exists in `App\Actions\Imports\ImportIncomes`.
+- Income CSV export exists in `App\Actions\Exports\ExportIncomes`.
 - Rental import/export is not implemented.
 
 Recommended architecture:
@@ -358,7 +362,6 @@ Current tests include Breeze-generated authentication/profile coverage plus focu
 There are no dedicated tests yet for:
 
 - Members and dependents
-- Income and expense import/export
 - Rental import/export
 - Certificate logs
 - Reports/dashboard totals

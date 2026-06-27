@@ -21,6 +21,10 @@ Members should be able to log in, view their own information, update their own p
 - Unlinked member users can view an account setup message but cannot update member data.
 - Staff/admin can create or update a linked portal account from the Filament member edit screen.
 - Linked member users can view read-only contribution status for their own record.
+- Member email updates sync to both the member record and linked user account.
+- Member dependent changes are applied immediately and do not require staff approval.
+- Members can change their portal password while logged in.
+- Members can use the forgot-password email flow with their linked account email.
 
 ## Target Flow
 
@@ -40,6 +44,8 @@ Allowed:
 - A linked member user can update their own phone, email, birthday, and other approved profile fields.
 - A linked member user can manage dependents attached to their own member record.
 - A linked member user can view only their own contribution status.
+- A linked member user can filter full contribution history by year and optional month.
+- A linked member user can change their own account password.
 
 Not allowed:
 
@@ -66,9 +72,13 @@ Current implementation:
 - `App\Filament\Resources\Members\Pages\EditMember` exposes the portal account action for staff/admin.
 - `resources/views/member-portal/show.blade.php` renders the first Blade-based portal screen.
 
+## Decisions
+
+- Members can update email on both the member record and linked user account.
+- Dependent changes do not require staff approval.
+- Contribution status shows full filtered history, with year and optional month filters.
+- Members can change passwords while logged in and use the existing forgot-password email flow.
+
 ## Open Decisions
 
-- Whether members can update email on the member record, user account, or both.
-- Whether dependent changes require staff approval.
-- Whether the contribution status should show full contribution history or stay limited to recent records and monthly summaries.
 - Whether to replace temporary-password setup with email invitations or account claiming tokens.

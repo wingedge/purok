@@ -9,6 +9,7 @@ use App\Actions\Members\SyncMemberDependents;
 use App\Actions\Members\UpdateMemberProfile;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Validation\Rule;
 use Illuminate\View\View;
 
 class MemberPortalController extends Controller
@@ -29,7 +30,7 @@ class MemberPortalController extends Controller
             $contributionStatus = $buildMemberContributionStatus->execute(
                 $member,
                 (int) ($validated['year'] ?? now()->year),
-                (int) ($validated['month'] ?? now()->month),
+                isset($validated['month']) ? (int) $validated['month'] : null,
             );
         }
 
@@ -52,14 +53,19 @@ class MemberPortalController extends Controller
 
         $validated = $request->validate([
             'phone' => ['nullable', 'string', 'max:50'],
-            'email' => ['nullable', 'email', 'max:255'],
+            'email' => [
+                'required',
+                'email',
+                'max:255',
+                Rule::unique('users', 'email')->ignore($request->user()->id),
+            ],
             'birthday' => ['nullable', 'date'],
             'dependents' => ['nullable', 'array'],
             'dependents.*.name' => ['nullable', 'string', 'max:255'],
             'dependents.*.relationship' => ['nullable', 'string', 'max:255'],
         ]);
 
-        $updateMemberProfile->execute($member, $validated);
+        $updateMemberProfile->execute($member, $request->user(), $validated);
         $syncMemberDependents->execute($member, $validated['dependents'] ?? []);
 
         return redirect()

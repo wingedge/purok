@@ -10,8 +10,8 @@ This document defines the target import/export contracts for the Purok back-offi
 - Member/dependent CSV export exists.
 - Member/dependent export logic lives in `App\Actions\Exports\ExportMembers`.
 - `MemberController@export` delegates to the export action and returns a CSV download.
-- Expense import/export is not implemented.
-- Income import/export is not implemented.
+- Expense import/export is implemented.
+- Income import/export is implemented.
 - Rental import/export is not implemented.
 - Member/dependent import returns an `ImportResult` with created, updated, skipped, and failed counts.
 - Failed member/dependent rows include row number, original data, and validation errors.
@@ -85,6 +85,13 @@ Rules:
 
 ## Expenses
 
+Current implementation:
+
+- Expense CSV export lives in `App\Actions\Exports\ExportExpenses`.
+- Expense CSV import lives in `App\Actions\Imports\ImportExpenses`.
+- `ExpenseController` validates uploaded CSV files and delegates import/export work to Actions.
+- Imported expenses record the authenticated user as `created_by`.
+
 ### Target Import Columns
 
 Required:
@@ -116,6 +123,13 @@ Rules:
 - `updated_at`
 
 ## Incomes
+
+Current implementation:
+
+- Income CSV export lives in `App\Actions\Exports\ExportIncomes`.
+- Income CSV import lives in `App\Actions\Imports\ImportIncomes`.
+- `IncomeController` validates uploaded CSV files and delegates import/export work to Actions.
+- `rental_id` is optional and must reference an existing rental when provided.
 
 ### Target Import Columns
 
@@ -207,8 +221,8 @@ Rules:
 
 ## Implementation Order
 
-1. Add expense export, then expense import.
-2. Add income export, then income import.
+1. Expense export and import are implemented.
+2. Income export and import are implemented.
 3. Extract rental creation/sync logic before adding rental import.
 4. Add rental export.
 5. Add rental import after the rental service is tested.

@@ -74,8 +74,24 @@ Route::middleware(['auth'])->group(function () {
         ->middleware('can:delete-members')
         ->name('members.destroy');
 
+    Route::get('expenses/export', [ExpenseController::class, 'export'])
+        ->middleware('can:manage-finances')
+        ->name('expenses.export');
+
+    Route::post('expenses/import', [ExpenseController::class, 'import'])
+        ->middleware('can:manage-finances')
+        ->name('expenses.import');
+
     Route::resource('expenses', ExpenseController::class)
         ->middleware('can:manage-finances');
+
+    Route::get('incomes/export', [IncomeController::class, 'export'])
+        ->middleware('can:manage-finances')
+        ->name('incomes.export');
+
+    Route::post('incomes/import', [IncomeController::class, 'import'])
+        ->middleware('can:manage-finances')
+        ->name('incomes.import');
 
     Route::resource('incomes', IncomeController::class)
         ->middleware('can:manage-finances');
