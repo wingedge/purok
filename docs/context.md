@@ -27,3 +27,4 @@ Goal is to revamp and improve the flow, use filament for all of the backend and 
 - Member portal email updates sync to the linked login account, and members can change or reset their account password.
 - Expense CSV import/export is implemented through Actions and treasurer/admin routes.
 - Income CSV import/export is implemented through Actions and treasurer/admin routes.
+- Rental CSV import/export is implemented through Actions and staff/admin routes.

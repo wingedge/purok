@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Actions\Exports\ExportRentals;
+use App\Actions\Imports\ImportRentals;
 use App\Actions\Rentals\CreateRental;
 use App\Actions\Rentals\DeleteRental;
 use App\Actions\Rentals\ReturnRental;
@@ -9,6 +11,7 @@ use App\Actions\Rentals\UpdateRental;
 use App\Models\Rental;
 use App\Models\Inventory;
 use Illuminate\Http\Request;
+use Symfony\Component\HttpFoundation\StreamedResponse;
 
 class RentalController extends Controller
 {
@@ -100,5 +103,35 @@ class RentalController extends Controller
         }
 
         return back()->with('success', 'Item marked as returned and inventory updated.');
+    }
+
+    public function export(ExportRentals $exportRentals): StreamedResponse
+    {
+        $filename = 'rentals-'.now()->format('Y-m-d').'.csv';
+
+        return response()->streamDownload(
+            fn () => print $exportRentals->execute(),
+            $filename,
+            ['Content-Type' => 'text/csv; charset=UTF-8'],
+        );
+    }
+
+    public function import(Request $request, ImportRentals $importRentals)
+    {
+        $request->validate([
+            'csv_file' => ['required', 'file', 'mimes:csv,txt'],
+        ]);
+
+        try {
+            $result = $importRentals->execute($request->file('csv_file')->getRealPath());
+
+            return redirect()
+                ->route('rentals.index')
+                ->with('success', 'Rentals imported. '.$result->summary());
+        } catch (\Exception $e) {
+            return back()->withErrors([
+                'csv_file' => 'Import failed: '.$e->getMessage(),
+            ]);
+        }
     }
 }

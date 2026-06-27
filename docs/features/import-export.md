@@ -12,7 +12,7 @@ This document defines the target import/export contracts for the Purok back-offi
 - `MemberController@export` delegates to the export action and returns a CSV download.
 - Expense import/export is implemented.
 - Income import/export is implemented.
-- Rental import/export is not implemented.
+- Rental import/export is implemented.
 - Member/dependent import returns an `ImportResult` with created, updated, skipped, and failed counts.
 - Failed member/dependent rows include row number, original data, and validation errors.
 
@@ -164,6 +164,14 @@ Rules:
 
 ## Rentals
 
+Current implementation:
+
+- Rental CSV export lives in `App\Actions\Exports\ExportRentals`.
+- Rental CSV import lives in `App\Actions\Imports\ImportRentals`.
+- `RentalController` validates uploaded CSV files and delegates import/export work to Actions.
+- Active imported rentals use the rental creation workflow, decrement inventory, and create linked income.
+- Returned imported rentals are treated as historical rentals, create linked income, and do not decrement current inventory.
+
 ### Target Import Columns
 
 Required:
@@ -223,6 +231,4 @@ Rules:
 
 1. Expense export and import are implemented.
 2. Income export and import are implemented.
-3. Extract rental creation/sync logic before adding rental import.
-4. Add rental export.
-5. Add rental import after the rental service is tested.
+3. Rental export and import are implemented.

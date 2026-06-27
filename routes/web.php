@@ -135,6 +135,14 @@ Route::middleware(['auth'])->group(function () {
     Route::get('rentals', [RentalController::class, 'index'])
         ->name('rentals.index');
 
+    Route::get('rentals/export', [RentalController::class, 'export'])
+        ->middleware('can:manage-rentals')
+        ->name('rentals.export');
+
+    Route::post('rentals/import', [RentalController::class, 'import'])
+        ->middleware('can:manage-rentals')
+        ->name('rentals.import');
+
     Route::get('rentals/create', [RentalController::class, 'create'])
         ->middleware('can:manage-rentals')
         ->name('rentals.create');

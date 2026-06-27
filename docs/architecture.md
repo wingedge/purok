@@ -237,7 +237,7 @@ Current concerns:
 
 - `Rental` validates an `amount`, but `amount` is not fillable or stored on the rental itself; it is stored as a linked income record.
 - Inventory edits allow directly changing `available_quantity`, so staff can manually correct stock but can also bypass rental rules.
-- Rental import/export workflows are not implemented yet.
+- Rental CSV import/export workflows are implemented.
 
 ### Purok Certificate Log
 
@@ -299,7 +299,8 @@ Current state:
 - Expense CSV export exists in `App\Actions\Exports\ExportExpenses`.
 - Income CSV import exists in `App\Actions\Imports\ImportIncomes`.
 - Income CSV export exists in `App\Actions\Exports\ExportIncomes`.
-- Rental import/export is not implemented.
+- Rental CSV import exists in `App\Actions\Imports\ImportRentals`.
+- Rental CSV export exists in `App\Actions\Exports\ExportRentals`.
 
 Recommended architecture:
 
@@ -362,7 +363,6 @@ Current tests include Breeze-generated authentication/profile coverage plus focu
 There are no dedicated tests yet for:
 
 - Members and dependents
-- Rental import/export
 - Certificate logs
 - Reports/dashboard totals
 

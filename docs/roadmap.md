@@ -169,11 +169,11 @@ Current gaps:
 - Current CSV member/dependent export is action-based.
 - Expense import/export is implemented.
 - Income import/export is implemented.
-- Rental import/export is not implemented.
+- Rental import/export is implemented.
 - Member/dependent import returns an `ImportResult` summary.
 - Expense import validation/reporting is implemented.
 - Income import validation/reporting is implemented.
-- Rental import validation/reporting is not implemented.
+- Rental import validation/reporting is implemented.
 - Stable export column definitions are documented in `docs/features/import-export.md`.
 - Import file formats are documented in `docs/features/import-export.md`.
 
@@ -216,9 +216,9 @@ Current gaps:
 - Member/dependent import tests exist.
 - Member/dependent export tests exist.
 - Contribution amount and accounting-period tests exist.
-- No tests exist for income and expense CRUD or import/export.
+- No tests exist for income and expense CRUD.
 - Rental inventory synchronization tests exist.
-- No tests exist for rental import/export.
+- Rental import/export tests exist.
 - No tests exist for certificate logs.
 - No tests exist for reports/dashboard totals.
 
@@ -234,5 +234,4 @@ Current gaps:
 
 1. Decide whether to replace staff-set temporary passwords with email invitations or account claiming tokens.
 2. Continue migrating back-office resources to Filament, starting with finance or inventory.
-3. Continue import/export work for rentals.
-4. Add more `docs/features/` documents as each feature area is refactored.
+3. Add more `docs/features/` documents as each feature area is refactored.
