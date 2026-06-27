@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Actions\Contributions\RecordContribution;
 use Carbon\Carbon;
 use App\Models\Member;
 use App\Models\Contribution;
@@ -95,7 +96,7 @@ class ContributionController extends Controller
     //     return 10.00; 
     // }
 
-    public function store(Request $request, ContributionService $contributions)
+    public function store(Request $request, RecordContribution $recordContribution)
     {
         // 1. Remove 'amount' from the validation
         $request->validate([
@@ -105,23 +106,14 @@ class ContributionController extends Controller
 
         // 2. Define the amount here (Internal control)
         $member = Member::findOrFail($request->member_id);
-        $amount = $contributions->amountFor($member);
 
         // 3. Save to database
-        $contribution = Contribution::updateOrCreate(
-            [
-                'member_id' => $request->member_id,
-                'week_start' => $request->week_start,
-            ],
-            [
-                'amount' => $amount,                
-            ]
-        );
+        $contribution = $recordContribution->execute($member, $request->week_start);
 
         // 4. Return the amount so the JavaScript knows how much to add to the total
         return response()->json([
             'success' => true, 
-            'amount' => $amount
+            'amount' => (float) $contribution->amount,
         ]);
     }
 

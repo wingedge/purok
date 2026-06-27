@@ -23,7 +23,7 @@ The app currently follows classic Laravel MVC:
 - Models define fillable fields, casts, and relationships.
 - Blade templates render forms, tables, dashboards, reports, and navigation.
 - The first Action/DTO extraction exists for member imports.
-- The first Filament Resource exists for back-office member management.
+- Filament Resources and dashboard widgets exist for several back-office workflows.
 - Services are starting to be introduced for domain rules.
 - Repositories and member-facing Livewire components are not implemented yet.
 
@@ -80,12 +80,15 @@ Public routes:
 Filament routes:
 
 - `/admin` serves the Filament back-office panel.
+- `/admin` includes `App\Filament\Widgets\DashboardStatsOverview` for current-year summary stats.
 - `/admin/members` uses `App\Filament\Resources\Members\MemberResource`.
 - `/admin/members/{record}/edit` allows member edits and dependent management through a relation manager.
 - `/admin/expenses` uses `App\Filament\Resources\Expenses\ExpenseResource`.
 - `/admin/incomes` uses `App\Filament\Resources\Incomes\IncomeResource`.
 - `/admin/inventories` uses `App\Filament\Resources\Inventories\InventoryResource`.
 - `/admin/rentals` uses `App\Filament\Resources\Rentals\RentalResource`.
+- `/admin/purok-certificates` uses `App\Filament\Resources\PurokCertificates\PurokCertificateResource`.
+- `/admin/contributions` uses `App\Filament\Resources\Contributions\ContributionResource`.
 
 Authenticated routes:
 
@@ -140,6 +143,8 @@ Flow:
 - `IncomeResource` provides Filament back-office CRUD for income records.
 - `InventoryResource` provides Filament back-office CRUD for inventory records.
 - `RentalResource` provides Filament back-office CRUD for rental records.
+- `PurokCertificateResource` provides Filament back-office CRUD for certificate logs.
+- `ContributionResource` provides Filament back-office CRUD for individual contribution records.
 - `MemberPortalController` allows member-role users linked through `users.member_id` to update their own phone, email, birthday, and dependents.
 - `UpdateMemberProfile` and `SyncMemberDependents` keep member self-service persistence outside the controller.
 - `CreateMemberPortalAccount` creates or updates a member-role user account for the selected member from the Filament member edit page.
@@ -170,6 +175,8 @@ Flow:
 - A yearly total is calculated per member with `withSum`.
 - `store` creates or updates one contribution for a member/week pair.
 - `destroy` removes one member/week contribution.
+- `RecordContribution` centralizes creating/updating a contribution with the correct service-calculated amount.
+- `ContributionResource` uses `RecordContribution` for Filament contribution record creation and updates.
 
 Business rule:
 
@@ -180,6 +187,7 @@ Business rule:
 Current concerns:
 
 - Contribution amount is still a fixed rule and is not configurable yet.
+- The old Blade contribution grid still provides the monthly/yearly operational grid; Filament currently provides record CRUD only.
 
 ### Income And Expenses
 
@@ -265,6 +273,7 @@ Flow:
 - `PurokCertificateController@index` searches logs by member name or dependent name.
 - `searchMembers` provides JSON autocomplete-style search over members and dependents.
 - `store` and `update` validate `member_id`, `request_date`, and `purpose`.
+- `PurokCertificateResource` provides Filament CRUD with searchable member selection.
 
 Current concerns:
 
@@ -278,16 +287,23 @@ Controllers:
 - `DashboardController`
 - `Reports\CashFlowController`
 
+Action:
+
+- `BuildDashboardSummary`
+
 Flow:
 
 - Dashboard summarizes members, incomes, contributions, expenses, contributors, rentals, and total funds.
 - Dashboard supports `year` and optional `month` filters.
+- `DashboardController` delegates dashboard totals to `BuildDashboardSummary`.
+- `DashboardStatsOverview` reuses `BuildDashboardSummary` for the Filament dashboard's current-year stats.
 - Cash flow report totals incomes, contributions, expenses, and net cash flow.
 - Contributions report generates weekly columns and lists member contributions over a selected range.
 
 Current concerns:
 
-- Reporting logic is in controllers.
+- Report logic is still in controllers.
+- The old dashboard Blade filter view still exists while dashboard/report migration continues.
 - Browser print styles exist for some reports, but structured exports are not implemented yet.
 
 ### Imports And Exports
@@ -369,12 +385,13 @@ Current tests include Breeze-generated authentication/profile coverage plus focu
 - Rental create/update/return/delete workflows
 - User-to-member account linking
 - Filament member resource access
+- Filament dashboard summary access and totals
 
 There are no dedicated tests yet for:
 
 - Members and dependents
 - Certificate logs
-- Reports/dashboard totals
+- Report totals
 
 ## Architectural Gaps To Address
 

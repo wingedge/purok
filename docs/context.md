@@ -19,6 +19,9 @@ Goal is to revamp and improve the flow, use filament for all of the backend and 
 - Back-office member and dependent management has started moving into Filament through `MemberResource` and `DependentsRelationManager`.
 - Back-office finance CRUD has started moving into Filament through `ExpenseResource` and `IncomeResource`.
 - Back-office logistics CRUD has started moving into Filament through `InventoryResource` and `RentalResource`.
+- Back-office certificate log CRUD has moved into Filament through `PurokCertificateResource`.
+- Back-office contribution record CRUD has moved into Filament through `ContributionResource`.
+- Back-office dashboard summary stats are available in Filament through `DashboardStatsOverview`.
 - Role-based access exists for admin, treasurer, staff, and member users.
 - Member-role users are blocked from the Filament admin panel.
 - Users can be linked to member records through `users.member_id`.
@@ -40,14 +43,16 @@ Using Filament:
 - Income CRUD
 - Inventory CRUD
 - Rental CRUD
+- Purok certificate log CRUD
+- Contribution record CRUD
+- Dashboard summary stats
 
 Still using the old Blade/controller backend:
 
-- Dashboard
-- Contributions
+- Dashboard filter view
+- Contribution grid view
 - Expense import/export
 - Income import/export
 - Rental import/export
-- Purok certificate logs
 - Reports
 - Auth profile and member portal
