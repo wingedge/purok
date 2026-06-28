@@ -6,10 +6,12 @@ namespace App\Filament\Pages;
 
 use App\Actions\Exports\ExportExpenses;
 use App\Actions\Exports\ExportIncomes;
+use App\Actions\Exports\ExportInventories;
 use App\Actions\Exports\ExportMembers;
 use App\Actions\Exports\ExportRentals;
 use App\Actions\Imports\ImportExpenses;
 use App\Actions\Imports\ImportIncomes;
+use App\Actions\Imports\ImportInventories;
 use App\Actions\Imports\ImportMembers;
 use App\Actions\Imports\ImportRentals;
 use BackedEnum;
@@ -45,6 +47,8 @@ class DataExchange extends Page
 
     public ?TemporaryUploadedFile $incomesCsv = null;
 
+    public ?TemporaryUploadedFile $inventoriesCsv = null;
+
     public ?TemporaryUploadedFile $rentalsCsv = null;
 
     public ?string $lastImportSummary = null;
@@ -53,6 +57,7 @@ class DataExchange extends Page
     {
         return static::canManageMembers()
             || static::canManageFinances()
+            || static::canManageInventory()
             || static::canManageRentals();
     }
 
@@ -64,6 +69,11 @@ class DataExchange extends Page
     public static function canManageFinances(): bool
     {
         return auth()->user()?->can('manage-finances') ?? false;
+    }
+
+    public static function canManageInventory(): bool
+    {
+        return auth()->user()?->can('manage-inventory') ?? false;
     }
 
     public static function canManageRentals(): bool
@@ -135,6 +145,28 @@ class DataExchange extends Page
         Gate::authorize('manage-finances');
 
         return $this->downloadCsv($exportIncomes->execute(), 'incomes');
+    }
+
+    public function importInventories(ImportInventories $importInventories): void
+    {
+        Gate::authorize('manage-inventory');
+
+        $this->validateOnly('inventoriesCsv', [
+            'inventoriesCsv' => ['required', 'file', 'mimes:csv,txt'],
+        ]);
+
+        $this->runImport('Inventories imported', fn (): string => $importInventories
+            ->execute($this->inventoriesCsv?->getRealPath() ?? '')
+            ->summary());
+
+        $this->inventoriesCsv = null;
+    }
+
+    public function exportInventories(ExportInventories $exportInventories): StreamedResponse
+    {
+        Gate::authorize('manage-inventory');
+
+        return $this->downloadCsv($exportInventories->execute(), 'inventories');
     }
 
     public function importRentals(ImportRentals $importRentals): void

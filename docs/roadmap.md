@@ -145,10 +145,12 @@ Purok currently has a working Laravel MVC foundation with authenticated CRUD scr
 - Member/dependent CSV import/export is implemented through Actions.
 - Expense CSV import/export is implemented through Actions.
 - Income CSV import/export is implemented through Actions.
+- Inventory CSV import/export is implemented through Actions.
 - Rental CSV import/export is implemented through Actions.
 - Back-office CSV import/export operations are available in Filament.
 - Filament data exchange access, import, and export flows have focused feature tests.
 - Old Blade back-office entry pages redirect to Filament.
+- Old Blade/controller back-office mutation, import, export, and report-detail routes are no longer publicly accessible.
 - Live-site deployment steps are documented in `docs/live-site-deployment.md`.
 
 ## Not Done
@@ -161,7 +163,7 @@ Purok currently has a working Laravel MVC foundation with authenticated CRUD scr
 - Filament 4 is installed and used for the admin panel.
 - Filament Resources and pages are implemented for members, dependents, contribution records, the contribution grid, expenses, incomes, inventory, rentals, and certificate logs.
 - Back-office dashboard, report, and import/export pages are now available in Filament.
-- Old Blade back-office entry points redirect to Filament while compatibility routes remain available.
+- Old Blade back-office entry points redirect to Filament. Old back-office mutation, import, export, and report-detail compatibility routes have been removed from public access.
 - Member self-service screens are currently Blade/controller-based; moving them to Livewire is optional, not required.
 
 ### Architecture Refactor
@@ -216,6 +218,7 @@ Target import/export scope from `AGENTS.md`:
 - Members and dependents
 - Expenses
 - Incomes
+- Inventory
 - Rentals
 
 Current state and gaps:
@@ -225,6 +228,7 @@ Current state and gaps:
 - Current CSV member/dependent export is action-based.
 - Expense import/export is implemented.
 - Income import/export is implemented.
+- Inventory import/export is implemented.
 - Rental import/export is implemented.
 - Filament import/export operations page is implemented.
 - Member/dependent import returns an `ImportResult` summary.
@@ -296,5 +300,5 @@ Current state and gaps:
 ## Suggested Next Steps
 
 1. Decide whether to replace staff-set temporary passwords with email invitations or account claiming tokens.
-2. Review which old Blade/controller back-office routes can be retired after Filament parity is verified.
+2. Review whether unreachable old Blade back-office templates and unused controller methods can be deleted after live-site smoke testing.
 3. Add more `docs/features/` documents as each feature area is refactored.

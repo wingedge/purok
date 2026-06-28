@@ -5,6 +5,7 @@ namespace Tests\Feature;
 use App\Enums\UserRole;
 use App\Filament\Pages\DataExchange;
 use App\Models\Expense;
+use App\Models\Inventory;
 use App\Models\Member;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -22,6 +23,7 @@ class FilamentDataExchangePageTest extends TestCase
             ->get('/admin/data-exchange')
             ->assertOk()
             ->assertSee('Members And Dependents')
+            ->assertSee('Inventory')
             ->assertSee('Rentals')
             ->assertDontSee('Expenses')
             ->assertDontSee('Incomes');
@@ -35,6 +37,7 @@ class FilamentDataExchangePageTest extends TestCase
             ->assertSee('Expenses')
             ->assertSee('Incomes')
             ->assertDontSee('Members And Dependents')
+            ->assertDontSee('Inventory')
             ->assertDontSee('Rentals');
     }
 
@@ -95,6 +98,25 @@ class FilamentDataExchangePageTest extends TestCase
             ->assertForbidden();
     }
 
+    public function test_staff_can_import_inventories_from_filament_page(): void
+    {
+        Livewire::actingAs($this->userWithRole(UserRole::Staff))
+            ->test(DataExchange::class)
+            ->set('inventoriesCsv', UploadedFile::fake()->createWithContent(
+                'inventories.csv',
+                "item_name,total_quantity,available_quantity,rental_rate\nChairs,20,15,25.50\n",
+            ))
+            ->call('importInventories')
+            ->assertHasNoErrors()
+            ->assertSet('lastImportSummary', 'Created: 1. Updated: 0. Skipped: 0. Failed: 0.');
+
+        $this->assertDatabaseHas('inventories', [
+            'item_name' => 'Chairs',
+            'total_quantity' => 20,
+            'available_quantity' => 15,
+        ]);
+    }
+
     public function test_filament_page_can_export_allowed_csv(): void
     {
         $treasurer = $this->userWithRole(UserRole::Treasurer);
@@ -121,6 +143,21 @@ class FilamentDataExchangePageTest extends TestCase
             ->test(DataExchange::class)
             ->call('exportMembers')
             ->assertFileDownloaded('members-'.now()->format('Y-m-d').'.csv');
+    }
+
+    public function test_staff_can_export_inventories_from_filament_page(): void
+    {
+        Inventory::create([
+            'item_name' => 'Exported Chairs',
+            'total_quantity' => 20,
+            'available_quantity' => 15,
+            'rental_rate' => 25.50,
+        ]);
+
+        Livewire::actingAs($this->userWithRole(UserRole::Staff))
+            ->test(DataExchange::class)
+            ->call('exportInventories')
+            ->assertFileDownloaded('inventories-'.now()->format('Y-m-d').'.csv');
     }
 
     private function userWithRole(UserRole $role): User

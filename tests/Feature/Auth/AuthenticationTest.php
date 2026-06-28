@@ -51,4 +51,16 @@ class AuthenticationTest extends TestCase
         $this->assertGuest();
         $response->assertRedirect('/');
     }
+
+    public function test_filament_logout_redirects_to_main_page(): void
+    {
+        $user = User::factory()->create([
+            'role' => 'admin',
+        ]);
+
+        $response = $this->actingAs($user)->post('/admin/logout');
+
+        $this->assertGuest();
+        $response->assertRedirect('/');
+    }
 }

@@ -1,17 +1,18 @@
 # Imports And Exports
 
-This document defines the target import/export contracts for the Purok back-office system. The current application only supports CSV import for members and dependents through `MemberController@import`.
+This document defines the target import/export contracts for the Purok back-office system. CSV import/export workflows are now exposed through Filament `DataExchange` and delegated to Actions.
 
 ## Current State
 
 - Member/dependent CSV import exists.
 - Member/dependent import logic lives in `App\Actions\Imports\ImportMembers`.
-- `MemberController@import` validates the uploaded file and delegates to the import action.
+- Filament `DataExchange` validates uploaded member CSV files and delegates to the import action.
 - Member/dependent CSV export exists.
 - Member/dependent export logic lives in `App\Actions\Exports\ExportMembers`.
-- `MemberController@export` delegates to the export action and returns a CSV download.
+- Filament `DataExchange` delegates member CSV export work to the export action.
 - Expense import/export is implemented.
 - Income import/export is implemented.
+- Inventory import/export is implemented.
 - Rental import/export is implemented.
 - Member/dependent import returns an `ImportResult` with created, updated, skipped, and failed counts.
 - Failed member/dependent rows include row number, original data, and validation errors.
@@ -89,7 +90,7 @@ Current implementation:
 
 - Expense CSV export lives in `App\Actions\Exports\ExportExpenses`.
 - Expense CSV import lives in `App\Actions\Imports\ImportExpenses`.
-- `ExpenseController` and Filament `DataExchange` validate uploaded CSV files and delegate import/export work to Actions.
+- Filament `DataExchange` validates uploaded CSV files and delegates expense import/export work to Actions.
 - Imported expenses record the authenticated user as `created_by`.
 
 ### Target Import Columns
@@ -128,7 +129,7 @@ Current implementation:
 
 - Income CSV export lives in `App\Actions\Exports\ExportIncomes`.
 - Income CSV import lives in `App\Actions\Imports\ImportIncomes`.
-- `IncomeController` and Filament `DataExchange` validate uploaded CSV files and delegate import/export work to Actions.
+- Filament `DataExchange` validates uploaded CSV files and delegates income import/export work to Actions.
 - `rental_id` is optional and must reference an existing rental when provided.
 
 ### Target Import Columns
@@ -168,7 +169,7 @@ Current implementation:
 
 - Rental CSV export lives in `App\Actions\Exports\ExportRentals`.
 - Rental CSV import lives in `App\Actions\Imports\ImportRentals`.
-- `RentalController` and Filament `DataExchange` validate uploaded CSV files and delegate import/export work to Actions.
+- Filament `DataExchange` validates uploaded CSV files and delegates rental import/export work to Actions.
 - Active imported rentals use the rental creation workflow, decrement inventory, and create linked income.
 - Returned imported rentals are treated as historical rentals, create linked income, and do not decrement current inventory.
 
@@ -214,6 +215,43 @@ Rules:
 - `created_at`
 - `updated_at`
 
+## Inventory
+
+Current implementation:
+
+- Inventory CSV export lives in `App\Actions\Exports\ExportInventories`.
+- Inventory CSV import lives in `App\Actions\Imports\ImportInventories`.
+- Filament `DataExchange` validates uploaded CSV files and delegates inventory import/export work to Actions.
+
+### Target Import Columns
+
+Required:
+
+- `item_name`
+- `total_quantity`
+
+Optional:
+
+- `available_quantity`
+- `rental_rate`
+
+Rules:
+
+- `total_quantity` must be zero or greater.
+- `available_quantity` must be zero or greater and cannot exceed `total_quantity`.
+- Blank `available_quantity` defaults to `total_quantity`.
+- Blank `rental_rate` defaults to `0.00`.
+
+### Target Export Columns
+
+- `id`
+- `item_name`
+- `total_quantity`
+- `available_quantity`
+- `rental_rate`
+- `created_at`
+- `updated_at`
+
 ## Recommended Classes
 
 - `App\Actions\Imports\ImportMembers`
@@ -222,6 +260,8 @@ Rules:
 - `App\Actions\Exports\ExportExpenses`
 - `App\Actions\Imports\ImportIncomes`
 - `App\Actions\Exports\ExportIncomes`
+- `App\Actions\Imports\ImportInventories`
+- `App\Actions\Exports\ExportInventories`
 - `App\Actions\Imports\ImportRentals`
 - `App\Actions\Exports\ExportRentals`
 - `App\Data\Imports\ImportResult`
@@ -231,4 +271,5 @@ Rules:
 
 1. Expense export and import are implemented.
 2. Income export and import are implemented.
-3. Rental export and import are implemented.
+3. Inventory export and import are implemented.
+4. Rental export and import are implemented.

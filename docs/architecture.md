@@ -19,9 +19,9 @@ This document describes the current structure and request flow of the Purok Lara
 The app currently follows classic Laravel MVC:
 
 - Routes are defined in `routes/web.php` and `routes/auth.php`.
-- Controllers validate requests, run Eloquent queries, perform business operations, and return Blade views or JSON responses.
+- Controllers still serve auth/profile and member portal screens. Back-office workflows are routed through Filament, with business operations delegated to Actions.
 - Models define fillable fields, casts, and relationships.
-- Blade templates render forms, tables, dashboards, reports, and navigation.
+- Blade templates still render auth/profile and member portal screens. Old back-office Blade templates remain in the tree for now but are no longer publicly routed.
 - The first Action/DTO extraction exists for member imports.
 - Filament Resources and dashboard widgets exist for several back-office workflows.
 - Custom Filament page layout helpers live in `public/css/filament/admin/theme.css` and are registered as an additional admin panel CSS asset.
@@ -107,13 +107,8 @@ Authenticated routes:
 - `/dashboard` still uses `DashboardController@index` for compatibility.
 - `/profile` uses `ProfileController`.
 - `/member/profile` uses `MemberPortalController` for member self-service profile and dependent updates.
-- Old back-office GET entry pages such as `/members`, `/expenses`, `/incomes`, `/inventories`, `/rentals`, `/contributions`, `/purok_certificates`, and `/reports` redirect to Filament.
-- `/members/import` imports member CSV data.
-- `/members/search` returns JSON member search results for certificate flows.
-- Legacy write, import, export, and report-detail routes remain available while live-site compatibility is verified.
-- `/rentals/{rental}/return` marks a rental as returned.
-- `/reports/cashflow` uses `Reports\CashFlowController@index`.
-- `/reports/contributions` uses `Reports\CashFlowController@contributions`.
+- Old back-office GET entry pages such as `/members`, `/expenses`, `/incomes`, `/inventories`, `/rentals`, `/contributions`, `/purok_certificates`, `/dashboard`, and `/reports` redirect to Filament.
+- Old back-office write, import, export, JSON search, rental return, and Blade report-detail routes are no longer publicly accessible.
 
 Verified authenticated routes:
 
@@ -137,7 +132,7 @@ Relationships:
 
 Flow:
 
-- `MemberController@index` delegates member search, dependent counts, sorting, and pagination to `App\Actions\Members\ListMembers`.
+- Member back-office list/create/edit workflows are routed through Filament. The old `MemberController` write endpoints are no longer publicly routed.
 - `create` and `edit` views collect member fields and dependent rows.
 - `store` validates input and delegates member/dependent creation to `App\Actions\Members\CreateMember`.
 - `update` validates input and delegates member updates plus dependent replacement to `App\Actions\Members\UpdateMember`.
@@ -199,7 +194,7 @@ Business rule:
 Current concerns:
 
 - Contribution amount is still a fixed rule and is not configurable yet.
-- The old Blade contribution grid still exists temporarily while the Filament operational grid is verified.
+- The old Blade contribution grid template remains in the tree temporarily, but the public route redirects to the Filament operational grid.
 
 ### Income And Expenses
 
@@ -215,9 +210,9 @@ Relationships:
 
 Flow:
 
-- `IncomeController` provides CRUD screens for income records.
+- Income CRUD screens are provided by Filament `IncomeResource`.
 - Income sources are centralized in `IncomeSources`.
-- `ExpenseController` provides CRUD screens for expense records.
+- Expense CRUD screens are provided by Filament `ExpenseResource`.
 - Expense categories are centralized in `ExpenseCategories`.
 - Expenses store the authenticated user's ID in `created_by`.
 - Legacy income and expense create, update, and delete persistence is extracted to `App\Actions\Incomes` and `App\Actions\Expenses`.
@@ -229,7 +224,7 @@ Flow:
 Current concerns:
 
 - Source and category values should eventually move to enums, configuration, lookup tables, or another explicit domain structure.
-- Finance controllers still serve old Blade CRUD and import/export routes for compatibility while Filament parity is verified.
+- Old finance Blade CRUD and import/export routes are no longer publicly routed; Filament resources and `DataExchange` own the back-office finance workflows.
 - Income and expense source/category options are centralized in support classes, but they are still stored as plain strings.
 
 ### Inventory And Rentals
@@ -250,8 +245,8 @@ Flow:
 
 - `InventoryController` manages inventory item CRUD.
 - Inventory items track `total_quantity`, `available_quantity`, and `rental_rate`.
-- `RentalController@store` validates rental quantity against available inventory.
-- `RentalController` delegates rental business workflows to Actions.
+- Rental quantity and inventory workflows are handled through rental Actions.
+- Filament `RentalResource` delegates rental create, update, delete, and return workflows to the rental Actions.
 - `RentalResource` delegates Filament rental create, update, delete, and return workflows to the same rental Actions.
 - `CreateRental` runs inside a database transaction:
   - Lock inventory row.
@@ -271,6 +266,7 @@ Current concerns:
 
 - `Rental` validates an `amount`, but `amount` is not fillable or stored on the rental itself; it is stored as a linked income record.
 - Inventory edits allow directly changing `available_quantity`, so staff can manually correct stock but can also bypass rental rules.
+- Inventory CSV import/export workflows are implemented.
 - Rental CSV import/export workflows are implemented.
 
 ### Purok Certificate Log
@@ -327,28 +323,31 @@ Flow:
 
 Current concerns:
 
-- The old dashboard Blade filter view still exists temporarily while the Filament dashboard summary page is verified.
+- The old dashboard route redirects to Filament; the Filament dashboard summary page owns the back-office dashboard workflow.
 - Browser print styles exist for some reports, but structured exports are not implemented yet.
 
 ### Imports And Exports
 
 The target import/export scope from `AGENTS.md` is Purok-specific:
 
-- Classic Blade member CRUD
+- Filament member CRUD
 - Expenses
 - Incomes
+- Inventory
 - Rentals
 
 Current state:
 
 - Member/dependent CSV import exists in `App\Actions\Imports\ImportMembers`.
-- `MemberController@import` validates the uploaded file and delegates to the import action.
+- Filament `DataExchange` validates uploaded member CSV files and delegates to the import action.
 - Member/dependent CSV export exists in `App\Actions\Exports\ExportMembers`.
-- `MemberController@export` delegates to the export action and returns a CSV download.
+- Filament `DataExchange` delegates member export work to the export action and returns a CSV download.
 - Expense CSV import exists in `App\Actions\Imports\ImportExpenses`.
 - Expense CSV export exists in `App\Actions\Exports\ExportExpenses`.
 - Income CSV import exists in `App\Actions\Imports\ImportIncomes`.
 - Income CSV export exists in `App\Actions\Exports\ExportIncomes`.
+- Inventory CSV import exists in `App\Actions\Imports\ImportInventories`.
+- Inventory CSV export exists in `App\Actions\Exports\ExportInventories`.
 - Rental CSV import exists in `App\Actions\Imports\ImportRentals`.
 - Rental CSV export exists in `App\Actions\Exports\ExportRentals`.
 - `DataExchange` provides the Filament CSV import/export page and delegates to the same Actions.
@@ -356,7 +355,7 @@ Current state:
 Recommended architecture:
 
 - Keep import/export parsing, validation, persistence, and file generation outside controllers.
-- Use focused Actions or Services such as `ImportMembers`, `ExportMembers`, `ImportExpenses`, `ExportExpenses`, `ImportIncomes`, `ExportIncomes`, `ImportRentals`, and `ExportRentals`.
+- Use focused Actions or Services such as `ImportMembers`, `ExportMembers`, `ImportExpenses`, `ExportExpenses`, `ImportIncomes`, `ExportIncomes`, `ImportInventories`, `ExportInventories`, `ImportRentals`, and `ExportRentals`.
 - Use DTOs or validated row objects for imported rows so controllers, Livewire components, or Filament actions do not pass raw arrays deep into business logic.
 - Treat exports as query-backed reports with explicit columns and stable formats.
 - Record import results with created, updated, skipped, and failed row counts before expanding imports beyond members.

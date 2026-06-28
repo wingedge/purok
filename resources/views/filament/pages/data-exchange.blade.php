@@ -79,6 +79,31 @@
             </section>
         @endcan
 
+        @can('manage-inventory')
+            <section class="purok-exchange-card">
+                <div>
+                    <h2 class="purok-link-title">Inventory</h2>
+                    <p class="purok-link-description">Import or export inventory quantities and rental rates.</p>
+                </div>
+
+                <div class="purok-exchange-form">
+                    <input type="file" wire:model="inventoriesCsv" accept=".csv,text/csv,text/plain" class="purok-file-input">
+                    @error('inventoriesCsv')
+                        <p class="purok-error">{{ $message }}</p>
+                    @enderror
+
+                    <div class="purok-fi-actions">
+                        <button type="button" wire:click="importInventories" wire:loading.attr="disabled" class="fi-btn fi-color-primary fi-size-md">
+                            Import CSV
+                        </button>
+                        <button type="button" wire:click="exportInventories" wire:loading.attr="disabled" class="fi-btn fi-color-gray fi-size-md">
+                            Export CSV
+                        </button>
+                    </div>
+                </div>
+            </section>
+        @endcan
+
         @can('manage-rentals')
             <section class="purok-exchange-card">
                 <div>
