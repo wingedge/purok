@@ -13,6 +13,7 @@ This document defines the intended role and permission model for Purok. The appl
 - Full model policies are not implemented yet.
 - Users can be linked to member records through `users.member_id`.
 - Filament admin panel access is restricted to admin, treasurer, and staff users.
+- Admin-only user and role management is available in Filament at `/admin/users`.
 - Member portal routes and screens are implemented for linked member profile, dependent, password, and contribution-status access.
 
 ## Target Roles
@@ -24,6 +25,7 @@ Admin users can manage the whole back-office system.
 Allowed:
 
 - Manage users and roles.
+- Link users to member/officer records through the member record.
 - View dashboard and all reports.
 - Manage members and dependents.
 - Manage purok officers.

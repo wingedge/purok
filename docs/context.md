@@ -29,6 +29,7 @@ Goal is to revamp and improve the flow, use filament for all of the backend and 
 - Back-office cash-flow reporting has started moving into Filament through `CashFlowReport`.
 - Back-office contribution reporting has moved into Filament through `ContributionReport`.
 - Back-office CSV import/export workflows are available in Filament through `DataExchange`.
+- Back-office user and role management is available to admins in Filament through `UserResource`.
 - Old Blade back-office entry pages redirect to their Filament equivalents.
 - Role-based access exists for admin, treasurer, staff, and member users.
 - Member-role users are blocked from the Filament admin panel.
@@ -36,6 +37,7 @@ Goal is to revamp and improve the flow, use filament for all of the backend and 
 - Member-facing profile and dependent self-service screens are implemented through Blade routes at `/member/profile`.
 - Member users are redirected to the member portal after login and blocked from the back-office dashboard.
 - Staff/admin can create or update a linked member portal account from the Filament member edit screen.
+- Admins can create back-office users, assign roles, and link accounts to member/officer records from `/admin/users`.
 - Member users can view read-only contribution status for their own record in the portal.
 - Member portal email updates sync to the linked login account, and members can change or reset their account password.
 - Expense CSV import/export is implemented through Actions and treasurer/admin routes.
@@ -61,6 +63,7 @@ Using Filament:
 - Cash-flow report page
 - Contribution report page
 - CSV import/export page
+- User and role management
 
 Still using the old Blade/controller backend:
 

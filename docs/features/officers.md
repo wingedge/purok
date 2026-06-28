@@ -13,6 +13,7 @@ Officer records are separate from login roles. A member can be listed as a purok
 - Officer records live in the `officers` table.
 - Each officer belongs to a member through `member_id`.
 - Officer management is available in Filament at `/admin/officers`.
+- Admin users can link a login account to an officer by selecting the officer's member record in `/admin/users`.
 - Staff and admin users can manage officer records through the existing `manage-members` permission.
 - Treasurer and member-role users cannot access officer management by default.
 

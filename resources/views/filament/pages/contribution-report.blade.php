@@ -48,9 +48,9 @@
                             Apply
                         </button>
 
-                        <button type="button" onclick="window.print()" class="fi-btn fi-size-md fi-color-gray">
+                        {{-- <button type="button" onclick="window.print()" class="fi-btn fi-size-md fi-color-gray">
                             Print
-                        </button>
+                        </button> --}}
                     </div>
                 </div>
             </div>
