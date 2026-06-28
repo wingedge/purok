@@ -4,7 +4,7 @@ This roadmap separates what is already working in the current app from what stil
 
 ## Current Status Summary
 
-Purok currently has a working Laravel MVC foundation with authenticated CRUD screens for members, contributions, finances, inventory, rentals, certificate logs, dashboard summaries, and reports. Filament 4 has been introduced for the back office. Filament now covers members, dependents, contribution record CRUD, expense CRUD, income CRUD, inventory CRUD, rental CRUD, certificate log CRUD, dashboard summary stats, and the cash-flow report page. The first member-facing portal profile screen is implemented.
+Purok currently has a working Laravel MVC foundation with authenticated CRUD screens for members, contributions, finances, inventory, rentals, certificate logs, dashboard summaries, and reports. Filament 4 has been introduced for the back office. Filament now covers members, dependents, contribution record CRUD, the contribution grid, expense CRUD, income CRUD, inventory CRUD, rental CRUD, certificate log CRUD, dashboard summary stats, and the cash-flow report page. The first member-facing portal profile screen is implemented.
 
 ## Done
 
@@ -63,7 +63,9 @@ Purok currently has a working Laravel MVC foundation with authenticated CRUD scr
 - Dashboard and cash flow contribution totals use `week_start`.
 - Contribution rules have focused feature tests.
 - Contribution record CRUD is available in Filament.
+- The monthly/yearly contribution grid is available in Filament.
 - Filament contribution resource access has focused feature tests.
+- Filament contribution grid access and toggle behavior have focused feature tests.
 
 ### Finances
 
@@ -120,16 +122,15 @@ Purok currently has a working Laravel MVC foundation with authenticated CRUD scr
 
 ## Not Done
 
-### Target Stack Migration
+### Stack Direction
 
-- Laravel 13 upgrade is not done.
-- PHP 8.3+ requirement is not enforced in `composer.json`.
-- Livewire 4 is not installed or used.
+- Laravel 13 is no longer a mandatory upgrade target; keep the current Laravel version unless a clear maintenance or compatibility reason appears.
+- PHP 8.3+ is preferred, but the current PHP requirement can remain if there are no compatibility issues.
+- Livewire 4 is optional and should only be introduced when a backend or member portal workflow clearly benefits from it.
 - Filament 4 is installed and used for the admin panel.
-- Filament Resources are implemented for members, dependents, contribution records, expenses, incomes, inventory, rentals, and certificate logs.
-- Remaining Filament work for contributions is the custom monthly/yearly contribution grid page.
+- Filament Resources and pages are implemented for members, dependents, contribution records, the contribution grid, expenses, incomes, inventory, rentals, and certificate logs.
 - Remaining back-office Filament work for dashboard and reports is the filterable dashboard page and contribution report page.
-- Livewire member self-service screens are not implemented.
+- Member self-service screens are currently Blade/controller-based; moving them to Livewire is optional, not required.
 
 ### Architecture Refactor
 
@@ -236,6 +237,7 @@ Current gaps:
 - Member/dependent import tests exist.
 - Member/dependent export tests exist.
 - Contribution amount and accounting-period tests exist.
+- Filament contribution grid tests exist.
 - No tests exist for income and expense CRUD.
 - Rental inventory synchronization tests exist.
 - Rental import/export tests exist.

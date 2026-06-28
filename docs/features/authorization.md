@@ -13,7 +13,7 @@ This document defines the intended role and permission model for Purok. The appl
 - Full model policies are not implemented yet.
 - Users can be linked to member records through `users.member_id`.
 - Filament admin panel access is restricted to admin, treasurer, and staff users.
-- Member portal routes and screens are not implemented yet.
+- Member portal routes and screens are implemented for linked member profile, dependent, password, and contribution-status access.
 
 ## Target Roles
 
@@ -81,14 +81,14 @@ Not allowed by default:
 
 ### Member
 
-Member access is a portal role. The user-to-member relationship foundation exists, but portal routes and screens are not implemented yet.
+Member access is a portal role. Member users are linked to one member record through `users.member_id` and use dedicated member portal routes.
 
 Allowed target behavior:
 
 - Log in to a member-facing portal.
 - View and update their own profile.
 - View and update their own dependents.
-- View their own contribution status if approved later.
+- View their own contribution status.
 
 Not allowed:
 

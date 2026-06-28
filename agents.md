@@ -18,9 +18,9 @@ Before implementing any feature:
 
 # Technology Stack
 
-* Laravel 13
-* PHP 8.3+
-* Livewire 4
+* Laravel 12 or current stable Laravel version used by the project
+* PHP 8.3+ preferred; keep the current PHP requirement if there are no compatibility issues
+* Livewire is optional unless a backend or portal workflow clearly benefits from it
 * Filament 4
 * TailwindCSS
 * MySQL

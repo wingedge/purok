@@ -39,7 +39,7 @@
                 @method('PATCH')
 
                 <div>
-                    <h2 class="text-lg font-semibold text-gray-900">{{ $member->name }}</h2>
+                    <h2 class="text-lg uppercase font-semibold text-gray-900">{{ $member->name }}</h2>
                     <p class="mt-1 text-sm text-gray-500">Update your contact information and household dependents.</p>
                 </div>
 
@@ -127,7 +127,7 @@
                     <form method="GET" action="{{ route('member.portal.show') }}" class="flex flex-wrap items-end gap-2">
                         <div>
                             <label class="block text-xs font-semibold text-gray-500 uppercase">Year</label>
-                            <select name="year" class="mt-1 border rounded px-3 py-2 text-sm">
+                            <select name="year" class="mt-1 border rounded px-8 py-2 text-sm">
                                 @foreach (range(now()->year + 1, now()->year - 5) as $year)
                                     <option value="{{ $year }}" @selected($contributionStatus['selected_year'] === $year)>
                                         {{ $year }}
@@ -138,7 +138,7 @@
 
                         <div>
                             <label class="block text-xs font-semibold text-gray-500 uppercase">Month</label>
-                            <select name="month" class="mt-1 border rounded px-3 py-2 text-sm">
+                            <select name="month" class="mt-1 border rounded px-8 py-2 text-sm">
                                 <option value="" @selected($contributionStatus['selected_month'] === null)>All months</option>
                                 @foreach (range(1, 12) as $month)
                                     <option value="{{ $month }}" @selected($contributionStatus['selected_month'] === $month)>
@@ -177,12 +177,12 @@
                         </div>
                     </div>
 
-                    <div class="rounded border bg-gray-50 p-4">
+                    {{-- <div class="rounded border bg-gray-50 p-4">
                         <div class="text-xs font-semibold text-gray-500 uppercase">Balance</div>
                         <div class="mt-1 text-2xl font-bold text-gray-900">
                             {{ number_format($contributionStatus['monthly_balance'], 2) }}
                         </div>
-                    </div>
+                    </div> --}}
                 </div>
 
                 @if ($contributionStatus['required_weekly_amount'] <= 0)

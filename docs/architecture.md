@@ -12,7 +12,7 @@ This document describes the current structure and request flow of the Purok Lara
 - Eloquent models and migrations for community, finance, certificate, inventory, and rental records.
 - Sanctum is installed, but there are no custom API endpoints in active use.
 
-`AGENTS.md` lists the intended target stack as Laravel 13, PHP 8.3+, Livewire 4, Filament 4, TailwindCSS, and MySQL. Filament 4 has now been introduced for the back office, but Laravel, PHP, and Livewire still need later target-stack alignment.
+`AGENTS.md` now treats the current Laravel version as acceptable unless a clear maintenance or compatibility reason appears. PHP 8.3+ is preferred, but the current PHP requirement can remain if it is not causing issues. Livewire is optional and should only be introduced when a backend or member portal workflow clearly benefits from it. Filament 4 remains the primary back-office direction.
 
 ## Application Shape
 
@@ -25,7 +25,7 @@ The app currently follows classic Laravel MVC:
 - The first Action/DTO extraction exists for member imports.
 - Filament Resources and dashboard widgets exist for several back-office workflows.
 - Services are starting to be introduced for domain rules.
-- Repositories and member-facing Livewire components are not implemented yet.
+- Repositories are not implemented yet, and member-facing screens currently remain Blade/controller-based.
 
 The main authenticated navigation is grouped into:
 
@@ -89,6 +89,7 @@ Filament routes:
 - `/admin/rentals` uses `App\Filament\Resources\Rentals\RentalResource`.
 - `/admin/purok-certificates` uses `App\Filament\Resources\PurokCertificates\PurokCertificateResource`.
 - `/admin/contributions` uses `App\Filament\Resources\Contributions\ContributionResource`.
+- `/admin/contribution-grid` uses `App\Filament\Pages\ContributionGrid`.
 - `/admin/reports/cash-flow` uses `App\Filament\Pages\CashFlowReport`.
 
 Authenticated routes:
@@ -178,6 +179,8 @@ Flow:
 - `destroy` removes one member/week contribution.
 - `RecordContribution` centralizes creating/updating a contribution with the correct service-calculated amount.
 - `ContributionResource` uses `RecordContribution` for Filament contribution record creation and updates.
+- `BuildContributionGrid` centralizes the monthly/yearly grid date range, non-indigent member query, visible contribution eager loading, and yearly total calculation.
+- `ContributionGrid` provides the Filament operational grid and reuses `RecordContribution` when toggling payments on.
 
 Business rule:
 
@@ -188,7 +191,7 @@ Business rule:
 Current concerns:
 
 - Contribution amount is still a fixed rule and is not configurable yet.
-- The old Blade contribution grid still provides the monthly/yearly operational grid; Filament currently provides record CRUD only.
+- The old Blade contribution grid still exists temporarily while the Filament operational grid is verified.
 
 ### Income And Expenses
 
@@ -389,6 +392,7 @@ Current tests include Breeze-generated authentication/profile coverage plus focu
 - Rental create/update/return/delete workflows
 - User-to-member account linking
 - Filament member resource access
+- Filament contribution grid access and toggle behavior
 - Filament dashboard summary access and totals
 - Filament cash-flow report access and totals
 
@@ -408,7 +412,8 @@ The biggest gap is that the app's business workflows currently live in controlle
 - Support classes
 - Immutable DTOs where useful
 - Enums instead of hardcoded strings
-- Thin Livewire components and additional Filament Resources as the stack migration continues
+- Thin Livewire components only when Livewire is intentionally introduced for a workflow
+- Additional Filament Resources as the back-office migration continues
 
 Recommended extraction candidates:
 
@@ -418,7 +423,6 @@ Recommended extraction candidates:
 - `ExportIncomes`
 - `ImportRentals`
 - `ExportRentals`
-- `RecordContribution`
 - `DeleteContribution`
 - `BuildDashboardSummary`
 - `BuildCashFlowReport`
