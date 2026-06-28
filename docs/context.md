@@ -23,6 +23,7 @@ Goal is to revamp and improve the flow, use filament for all of the backend and 
 - Back-office contribution record CRUD has moved into Filament through `ContributionResource`.
 - Back-office monthly/yearly contribution grid has moved into Filament through `ContributionGrid`.
 - Back-office dashboard summary stats are available in Filament through `DashboardStatsOverview`.
+- Back-office filterable dashboard summary has moved into Filament through `DashboardSummary`.
 - Back-office cash-flow reporting has started moving into Filament through `CashFlowReport`.
 - Back-office contribution reporting has moved into Filament through `ContributionReport`.
 - Role-based access exists for admin, treasurer, staff, and member users.
@@ -50,12 +51,12 @@ Using Filament:
 - Contribution record CRUD
 - Contribution grid page
 - Dashboard summary stats
+- Filterable dashboard summary page
 - Cash-flow report page
 - Contribution report page
 
 Still using the old Blade/controller backend:
 
-- Dashboard filter view
 - Expense import/export
 - Income import/export
 - Rental import/export

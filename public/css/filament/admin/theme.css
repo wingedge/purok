@@ -179,6 +179,52 @@
     color: rgb(107 114 128);
 }
 
+.purok-stat-grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 16px;
+}
+
+.purok-stat-card {
+    min-height: 124px;
+    border: 1px solid rgb(229 231 235);
+    border-radius: 8px;
+    padding: 18px;
+    background: white;
+}
+
+.purok-stat-label {
+    color: rgb(107 114 128);
+    font-size: 13px;
+    font-weight: 600;
+}
+
+.purok-stat-value {
+    margin-top: 10px;
+    color: rgb(17 24 39);
+    font-size: 26px;
+    font-weight: 700;
+    line-height: 1.15;
+}
+
+.purok-stat-value-success {
+    color: rgb(22 163 74);
+}
+
+.purok-stat-value-danger {
+    color: rgb(220 38 38);
+}
+
+.purok-stat-value-primary {
+    color: rgb(217 119 6);
+}
+
+.purok-stat-note {
+    margin-top: 8px;
+    color: rgb(107 114 128);
+    font-size: 12px;
+}
+
 @media (prefers-color-scheme: dark) {
     .purok-fi-label {
         color: rgb(229 231 235);
@@ -210,6 +256,20 @@
         background: rgb(17 24 39);
         color: rgb(209 213 219);
     }
+
+    .purok-stat-card {
+        border-color: rgb(31 41 55);
+        background: rgb(3 7 18);
+    }
+
+    .purok-stat-value {
+        color: white;
+    }
+
+    .purok-stat-label,
+    .purok-stat-note {
+        color: rgb(156 163 175);
+    }
 }
 
 @media (max-width: 900px) {
@@ -222,12 +282,20 @@
     .purok-fi-actions {
         grid-column: 1 / -1;
     }
+
+    .purok-stat-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
 }
 
 @media (max-width: 640px) {
     .purok-fi-filters,
     .purok-fi-filters-compact,
     .purok-fi-filters-wide {
+        grid-template-columns: 1fr;
+    }
+
+    .purok-stat-grid {
         grid-template-columns: 1fr;
     }
 }

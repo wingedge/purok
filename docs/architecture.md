@@ -24,7 +24,7 @@ The app currently follows classic Laravel MVC:
 - Blade templates render forms, tables, dashboards, reports, and navigation.
 - The first Action/DTO extraction exists for member imports.
 - Filament Resources and dashboard widgets exist for several back-office workflows.
-- Custom Filament page layout helpers live in `public/css/filament/admin/theme.css` and are registered through the admin panel theme asset.
+- Custom Filament page layout helpers live in `public/css/filament/admin/theme.css` and are registered as an additional admin panel CSS asset.
 - Services are starting to be introduced for domain rules.
 - Repositories are not implemented yet, and member-facing screens currently remain Blade/controller-based.
 
@@ -82,6 +82,7 @@ Filament routes:
 
 - `/admin` serves the Filament back-office panel.
 - `/admin` includes `App\Filament\Widgets\DashboardStatsOverview` for current-year summary stats.
+- `/admin/dashboard-summary` uses `App\Filament\Pages\DashboardSummary`.
 - `/admin/members` uses `App\Filament\Resources\Members\MemberResource`.
 - `/admin/members/{record}/edit` allows member edits and dependent management through a relation manager.
 - `/admin/expenses` uses `App\Filament\Resources\Expenses\ExpenseResource`.
@@ -307,6 +308,7 @@ Flow:
 - Dashboard supports `year` and optional `month` filters.
 - `DashboardController` delegates dashboard totals to `BuildDashboardSummary`.
 - `DashboardStatsOverview` reuses `BuildDashboardSummary` for the Filament dashboard's current-year stats.
+- `DashboardSummary` reuses `BuildDashboardSummary` for a filterable Filament dashboard summary page.
 - Cash flow report totals incomes, contributions, expenses, and net cash flow.
 - `Reports\CashFlowController@index` delegates cash-flow totals to `BuildCashFlowReport`.
 - `CashFlowReport` reuses `BuildCashFlowReport` for the Filament cash-flow report page.
@@ -316,7 +318,7 @@ Flow:
 
 Current concerns:
 
-- The old dashboard Blade filter view still exists while dashboard/report migration continues.
+- The old dashboard Blade filter view still exists temporarily while the Filament dashboard summary page is verified.
 - Browser print styles exist for some reports, but structured exports are not implemented yet.
 
 ### Imports And Exports
@@ -400,6 +402,7 @@ Current tests include Breeze-generated authentication/profile coverage plus focu
 - Filament member resource access
 - Filament contribution grid access and toggle behavior
 - Filament dashboard summary access and totals
+- Filament filterable dashboard summary access and totals
 - Filament cash-flow report access and totals
 - Contribution report totals and Filament access
 
