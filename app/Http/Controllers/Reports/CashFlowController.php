@@ -3,8 +3,7 @@
 namespace App\Http\Controllers\Reports;
 
 use App\Actions\Reports\BuildCashFlowReport;
-use Carbon\Carbon;
-use App\Models\Member;
+use App\Actions\Reports\BuildContributionReport;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 
@@ -24,47 +23,15 @@ class CashFlowController extends Controller
         ) + $report);
     }
 
-    // Example Controller Logic
-    public function contributions(Request $request)
+    public function contributions(Request $request, BuildContributionReport $buildContributionReport)
     {
-        // 1. Determine the Date Range
-        $year = $request->get('year', now()->year);
-        $startMonth = $request->get('start_month'); // e.g., "1"
-        $endMonth = $request->get('end_month');     // e.g., "12"
+        $report = $buildContributionReport->execute(
+            (int) $request->get('year', now()->year),
+            $request->filled('start_month') ? (int) $request->get('start_month') : null,
+            $request->filled('end_month') ? (int) $request->get('end_month') : null,
+            $request->filled('month') ? (string) $request->get('month') : null,
+        );
 
-        if ($startMonth && $endMonth) {
-            // Specific Range or Whole Year
-            $start = Carbon::create($year, $startMonth, 1)->startOfMonth();
-            $end = Carbon::create($year, $endMonth, 1)->endOfMonth();
-        } elseif ($request->has('month')) {
-            // Single Specific Month (YYYY-MM)
-            $start = Carbon::parse($request->month)->startOfMonth();
-            $end = Carbon::parse($request->month)->endOfMonth();
-        } else {
-            // Default to Whole Current Year
-            $start = Carbon::create($year, 1, 1)->startOfMonth();
-            $end = Carbon::create($year, 12, 31)->endOfMonth();
-        }
-
-        // 2. Generate Weeks (Sundays) - Using your exact logic
-        $weeks = [];
-        $cursor = $start->copy()->startOfWeek(Carbon::SUNDAY);
-        if ($cursor->lt($start)) { $cursor->addWeek(); }
-
-        while ($cursor->lte($end)) {
-            $weeks[] = $cursor->copy();
-            $cursor->addWeek();
-        }
-
-        // 3. Fetch Data
-        $members = Member::query()
-            ->where('indigent', false)
-            ->with(['contributions' => function ($q) use ($weeks) {
-                $q->whereIn('week_start', collect($weeks)->map->toDateString());
-            }])
-            ->orderBy('name')
-            ->get();
-
-        return view('reports.contributions', compact('members', 'weeks', 'start', 'end', 'year'));
+        return view('reports.contributions', $report);
     }
 }

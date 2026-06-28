@@ -4,7 +4,7 @@ This roadmap separates what is already working in the current app from what stil
 
 ## Current Status Summary
 
-Purok currently has a working Laravel MVC foundation with authenticated CRUD screens for members, contributions, finances, inventory, rentals, certificate logs, dashboard summaries, and reports. Filament 4 has been introduced for the back office. Filament now covers members, dependents, contribution record CRUD, the contribution grid, expense CRUD, income CRUD, inventory CRUD, rental CRUD, certificate log CRUD, dashboard summary stats, and the cash-flow report page. The first member-facing portal profile screen is implemented.
+Purok currently has a working Laravel MVC foundation with authenticated CRUD screens for members, contributions, finances, inventory, rentals, certificate logs, dashboard summaries, and reports. Filament 4 has been introduced for the back office. Filament now covers members, dependents, contribution record CRUD, the contribution grid, expense CRUD, income CRUD, inventory CRUD, rental CRUD, certificate log CRUD, dashboard summary stats, the cash-flow report page, and the contribution report page. The first member-facing portal profile screen is implemented.
 
 ## Done
 
@@ -119,6 +119,9 @@ Purok currently has a working Laravel MVC foundation with authenticated CRUD scr
 - Cash flow report is available in Filament.
 - Filament cash-flow report access and totals have focused feature tests.
 - Contribution report exists.
+- Contribution report totals are extracted to `BuildContributionReport`.
+- Contribution report is available in Filament.
+- Contribution report totals and Filament access have focused feature tests.
 
 ## Not Done
 
@@ -129,7 +132,7 @@ Purok currently has a working Laravel MVC foundation with authenticated CRUD scr
 - Livewire 4 is optional and should only be introduced when a backend or member portal workflow clearly benefits from it.
 - Filament 4 is installed and used for the admin panel.
 - Filament Resources and pages are implemented for members, dependents, contribution records, the contribution grid, expenses, incomes, inventory, rentals, and certificate logs.
-- Remaining back-office Filament work for dashboard and reports is the filterable dashboard page and contribution report page.
+- Remaining back-office Filament work for dashboard and reports is the filterable dashboard page and reports landing page.
 - Member self-service screens are currently Blade/controller-based; moving them to Livewire is optional, not required.
 
 ### Architecture Refactor
@@ -143,7 +146,7 @@ Purok currently has a working Laravel MVC foundation with authenticated CRUD scr
 - A `UserRole` enum is implemented.
 - Most business workflows still live directly in controllers.
 - Most controllers are not yet thin.
-- Dashboard summary query logic is extracted to `BuildDashboardSummary`; cash-flow report query logic is extracted to `BuildCashFlowReport`; contribution report query extraction remains pending.
+- Dashboard summary query logic is extracted to `BuildDashboardSummary`; cash-flow report query logic is extracted to `BuildCashFlowReport`; contribution report query logic is extracted to `BuildContributionReport`.
 
 ### Authorization
 
@@ -221,9 +224,9 @@ Current gaps:
 
 - Structured report exports are not implemented.
 - Browser print/save-PDF support exists for some report views, but it is not a formal export workflow.
-- Contribution report query logic is still controller-based.
+- Contribution report query logic is extracted to `BuildContributionReport`.
 - Report filters are basic.
-- Dashboard summary and cash-flow report totals have focused tests; contribution report totals do not.
+- Dashboard summary, cash-flow report, and contribution report totals have focused tests.
 - No printable report layout is documented.
 
 ### Testing
@@ -242,7 +245,7 @@ Current gaps:
 - Rental inventory synchronization tests exist.
 - Rental import/export tests exist.
 - No tests exist for certificate logs.
-- No tests exist for contribution report totals.
+- Contribution report total tests exist.
 
 ### Documentation
 

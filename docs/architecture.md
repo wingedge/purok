@@ -91,6 +91,7 @@ Filament routes:
 - `/admin/contributions` uses `App\Filament\Resources\Contributions\ContributionResource`.
 - `/admin/contribution-grid` uses `App\Filament\Pages\ContributionGrid`.
 - `/admin/reports/cash-flow` uses `App\Filament\Pages\CashFlowReport`.
+- `/admin/reports/contributions` uses `App\Filament\Pages\ContributionReport`.
 
 Authenticated routes:
 
@@ -295,6 +296,7 @@ Action:
 
 - `BuildDashboardSummary`
 - `BuildCashFlowReport`
+- `BuildContributionReport`
 
 Flow:
 
@@ -306,10 +308,11 @@ Flow:
 - `Reports\CashFlowController@index` delegates cash-flow totals to `BuildCashFlowReport`.
 - `CashFlowReport` reuses `BuildCashFlowReport` for the Filament cash-flow report page.
 - Contributions report generates weekly columns and lists member contributions over a selected range.
+- `Reports\CashFlowController@contributions` delegates contribution report totals to `BuildContributionReport`.
+- `ContributionReport` reuses `BuildContributionReport` for the Filament contribution report page.
 
 Current concerns:
 
-- Contribution report logic is still in the controller.
 - The old dashboard Blade filter view still exists while dashboard/report migration continues.
 - Browser print styles exist for some reports, but structured exports are not implemented yet.
 
@@ -395,12 +398,12 @@ Current tests include Breeze-generated authentication/profile coverage plus focu
 - Filament contribution grid access and toggle behavior
 - Filament dashboard summary access and totals
 - Filament cash-flow report access and totals
+- Contribution report totals and Filament access
 
 There are no dedicated tests yet for:
 
 - Members and dependents
 - Certificate logs
-- Contribution report totals
 
 ## Architectural Gaps To Address
 
@@ -426,6 +429,5 @@ Recommended extraction candidates:
 - `DeleteContribution`
 - `BuildDashboardSummary`
 - `BuildCashFlowReport`
-- `BuildContributionReport`
 
 These should be introduced incrementally, with focused tests around each moved workflow.

@@ -52,7 +52,7 @@
         <div class="bg-white p-8 border shadow-sm rounded-lg overflow-x-auto print:shadow-none print:border-none print:p-0">
             <div class="text-center mb-8">
                 <h1 class="text-2xl font-black uppercase text-gray-900">Member Contributions</h1>
-                <p class="text-gray-600">Period: {{ $start->format('M Y') }} — {{ $end->format('M Y') }}</p>
+                <p class="text-gray-600">Period: {{ $start->format('M Y') }} - {{ $end->format('M Y') }}</p>
             </div>
 
             <table class="w-full border-collapse">
@@ -69,14 +69,12 @@
                 </thead>
                 <tbody class="divide-y">
                     @foreach($members as $member)
-                        @php $memberTotal = 0; @endphp
                         <tr class="even:bg-gray-50/50">
                             <td class="px-2 py-2 text-xs font-bold text-gray-800 whitespace-nowrap border-r border-gray-100">{{ $member->name }}</td>
                             @foreach($weeks as $week)
                                 @php
                                     $wStr = $week->toDateString();
                                     $contribution = $member->contributions->first(fn($c) => \Carbon\Carbon::parse($c->week_start)->toDateString() === $wStr);
-                                    if($contribution) $memberTotal += $contribution->amount;
                                 @endphp
                                 <td class="px-1 py-2 text-center text-xs">
                                     @if($contribution)
@@ -87,7 +85,7 @@
                                 </td>
                             @endforeach
                             <td class="px-2 py-2 text-right text-xs font-black text-gray-900 bg-gray-50 border-l border-gray-100">
-                                {{ number_format($memberTotal, 2) }}
+                                {{ number_format($memberTotals[$member->id] ?? 0, 2) }}
                             </td>
                         </tr>
                     @endforeach
