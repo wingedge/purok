@@ -10,6 +10,7 @@ use App\Data\Imports\ImportResult;
 use App\Models\Income;
 use App\Models\Inventory;
 use App\Models\Rental;
+use App\Support\Finance\IncomeSources;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\Rule;
@@ -116,7 +117,7 @@ final class ImportRentals
 
             Income::create([
                 'date' => $data['rent_date'],
-                'source' => 'Rentals - Chairs / Table rental',
+                'source' => IncomeSources::rental(),
                 'description' => "Historical rental for {$data['renter_name']} ({$inventory->item_name} x {$quantity})",
                 'amount' => $data['amount'],
                 'rental_id' => $rental->id,

@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Actions\Exports\ExportIncomes;
 use App\Actions\Imports\ImportIncomes;
 use App\Models\Income;
+use App\Support\Finance\IncomeSources;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 
@@ -18,17 +19,12 @@ class IncomeController extends Controller
         return view('incomes.index', compact('incomes'));
     }
 
+    /**
+     * @return array<int, string>
+     */
     private function sources(): array
     {
-        return [
-            'Rentals - Chairs / Table rental',
-            'Donation / Fund Drive',
-            'Commission / Incentive',
-            'Government Aid',
-            'Penalties',
-            'Misc',
-            'Cash on Hand',
-        ];
+        return IncomeSources::values();
     }
 
     public function create()

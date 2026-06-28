@@ -6,6 +6,7 @@ namespace App\Actions\Rentals;
 
 use App\Models\Income;
 use App\Models\Rental;
+use App\Support\Finance\IncomeSources;
 use Illuminate\Support\Facades\DB;
 use RuntimeException;
 
@@ -53,7 +54,7 @@ final class UpdateRental
                 ['rental_id' => $rental->id],
                 [
                     'date' => $data['rent_date'],
-                    'source' => 'Rentals - Chairs / Table rental',
+                    'source' => IncomeSources::rental(),
                     'description' => "Rental: {$data['renter_name']} - {$inventory->item_name} x {$quantity}",
                     'amount' => $data['amount'],
                 ],

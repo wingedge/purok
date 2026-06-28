@@ -62,6 +62,7 @@ Purok currently has a working Laravel MVC foundation with authenticated CRUD scr
 - Yearly totals are shown per member.
 - Contribution amount and accounting-period date logic are centralized in `ContributionService`.
 - Dashboard and cash flow contribution totals use `week_start`.
+- Contribution creation/update and deletion are extracted to Actions.
 - Contribution rules have focused feature tests.
 - Contribution record CRUD is available in Filament.
 - The monthly/yearly contribution grid is available in Filament.
@@ -77,6 +78,7 @@ Purok currently has a working Laravel MVC foundation with authenticated CRUD scr
 - Income and expense CRUD are also available in Filament.
 - Expense records store the creating user.
 - Income records can be linked to rentals.
+- Income sources and expense categories are centralized in shared support classes.
 
 ### Inventory And Rentals
 
@@ -134,6 +136,8 @@ Purok currently has a working Laravel MVC foundation with authenticated CRUD scr
 - Rental CSV import/export is implemented through Actions.
 - Back-office CSV import/export operations are available in Filament.
 - Filament data exchange access, import, and export flows have focused feature tests.
+- Old Blade back-office entry pages redirect to Filament.
+- Live-site deployment steps are documented in `docs/live-site-deployment.md`.
 
 ## Not Done
 
@@ -145,6 +149,7 @@ Purok currently has a working Laravel MVC foundation with authenticated CRUD scr
 - Filament 4 is installed and used for the admin panel.
 - Filament Resources and pages are implemented for members, dependents, contribution records, the contribution grid, expenses, incomes, inventory, rentals, and certificate logs.
 - Back-office dashboard, report, and import/export pages are now available in Filament.
+- Old Blade back-office entry points redirect to Filament while compatibility routes remain available.
 - Member self-service screens are currently Blade/controller-based; moving them to Livewire is optional, not required.
 
 ### Architecture Refactor
@@ -152,6 +157,7 @@ Purok currently has a working Laravel MVC foundation with authenticated CRUD scr
 - The first Action extraction exists for member/dependent import.
 - Rental workflow Actions exist for create, update, return, and delete.
 - Contribution rules are extracted to `ContributionService`.
+- Contribution record/create/delete workflows are partially Action-based.
 - `ContributionService` is implemented; other service extractions remain pending.
 - Repositories are not implemented.
 - Import result DTOs are implemented for member/dependent import.
@@ -213,9 +219,8 @@ Current state and gaps:
 
 ### Finance Improvements
 
-- Income sources are duplicated in the old `IncomeController` and Filament `IncomeForm`.
-- Expense categories are duplicated in the old `ExpenseController` and Filament `ExpenseForm`.
 - Income and expense category/source enums or lookup tables are not implemented.
+- Income and expense category/source values are centralized but still stored as plain strings.
 - Contribution amount rules are centralized but not configurable.
 - Cash on hand/opening balance workflow is not clearly modeled.
 

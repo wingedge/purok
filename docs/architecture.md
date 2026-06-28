@@ -101,19 +101,14 @@ Custom Filament page views should use the shared `purok-fi-*` CSS helpers for fi
 
 Authenticated routes:
 
-- `/dashboard` uses `DashboardController@index`.
+- `/dashboard` still uses `DashboardController@index` for compatibility.
 - `/profile` uses `ProfileController`.
 - `/member/profile` uses `MemberPortalController` for member self-service profile and dependent updates.
-- `/members` uses `MemberController` resource routes.
+- Old back-office GET entry pages such as `/members`, `/expenses`, `/incomes`, `/inventories`, `/rentals`, `/contributions`, `/purok_certificates`, and `/reports` redirect to Filament.
 - `/members/import` imports member CSV data.
 - `/members/search` returns JSON member search results for certificate flows.
-- `/expenses` uses `ExpenseController` resource routes.
-- `/incomes` uses `IncomeController` resource routes.
-- `/contributions` supports index, store, and destroy.
-- `/inventories` uses `InventoryController` resource routes.
-- `/rentals` uses `RentalController` resource routes.
+- Legacy write, import, export, and report-detail routes remain available while live-site compatibility is verified.
 - `/rentals/{rental}/return` marks a rental as returned.
-- `/reports` renders the reports landing page.
 - `/reports/cashflow` uses `Reports\CashFlowController@index`.
 - `/reports/contributions` uses `Reports\CashFlowController@contributions`.
 
@@ -185,9 +180,10 @@ Flow:
 - `store` creates or updates one contribution for a member/week pair.
 - `destroy` removes one member/week contribution.
 - `RecordContribution` centralizes creating/updating a contribution with the correct service-calculated amount.
+- `DeleteContribution` centralizes deleting a contribution by member and week while returning the removed amount.
 - `ContributionResource` uses `RecordContribution` for Filament contribution record creation and updates.
 - `BuildContributionGrid` centralizes the monthly/yearly grid date range, non-indigent member query, visible contribution eager loading, and yearly total calculation.
-- `ContributionGrid` provides the Filament operational grid and reuses `RecordContribution` when toggling payments on.
+- `ContributionGrid` provides the Filament operational grid and reuses `RecordContribution` when toggling payments on and `DeleteContribution` when toggling payments off.
 
 Business rule:
 
@@ -215,17 +211,18 @@ Relationships:
 Flow:
 
 - `IncomeController` provides CRUD screens for income records.
-- Income sources are currently a private array in the controller.
+- Income sources are centralized in `IncomeSources`.
 - `ExpenseController` provides CRUD screens for expense records.
-- Expense categories are currently a private array in the controller.
+- Expense categories are centralized in `ExpenseCategories`.
 - Expenses store the authenticated user's ID in `created_by`.
 - `IncomeResource` and `ExpenseResource` provide Filament CRUD screens for finance records.
+- `IncomeSources` and `ExpenseCategories` provide shared option lists for old Blade controllers and Filament forms.
 
 Current concerns:
 
 - Source and category values should eventually move to enums, configuration, lookup tables, or another explicit domain structure.
 - Finance controllers still serve old Blade CRUD and import/export routes for compatibility while Filament parity is verified.
-- Income and expense source/category options are duplicated between the old controllers and Filament form classes.
+- Income and expense source/category options are centralized in support classes, but they are still stored as plain strings.
 
 ### Inventory And Rentals
 
@@ -430,8 +427,4 @@ The biggest gap is that the app's business workflows currently live in controlle
 - Thin Livewire components only when Livewire is intentionally introduced for a workflow
 - Additional Filament Resources as the back-office migration continues
 
-Recommended extraction candidates:
-
-- `DeleteContribution`
-
-These should be introduced incrementally, with focused tests around each moved workflow.
+Recommended extraction candidates should be introduced incrementally, with focused tests around each moved workflow.

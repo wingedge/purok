@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Actions\Exports\ExportExpenses;
 use App\Actions\Imports\ImportExpenses;
 use App\Models\Expense;
+use App\Support\Finance\ExpenseCategories;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 
@@ -26,15 +27,12 @@ class ExpenseController extends Controller
         ]);
     }
 
+    /**
+     * @return array<int, string>
+     */
     private function categories(): array
     {
-        return [         
-            'Operating Expenses	Supplies, Utility Bills, Communication',
-            'Community Services	Health Programs, Feeding, Cleanup Drives',
-            'Social Benefits, Burial Aid, Emergency Medical Assistance',
-            'Activities, Peace & Security	Patrol Supplies, Volunteers Meals',
-            'Special Projects, Fiesta/Christmas Events, Minor Repairs',
-        ];
+        return ExpenseCategories::values();
     }
 
     public function store(Request $request)

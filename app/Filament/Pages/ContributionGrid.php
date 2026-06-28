@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace App\Filament\Pages;
 
 use App\Actions\Contributions\BuildContributionGrid;
+use App\Actions\Contributions\DeleteContribution;
 use App\Actions\Contributions\RecordContribution;
-use App\Models\Contribution;
 use App\Models\Member;
 use BackedEnum;
 use Filament\Notifications\Notification;
@@ -63,18 +63,18 @@ class ContributionGrid extends Page
         );
     }
 
-    public function toggleContribution(int $memberId, string $weekStart, RecordContribution $recordContribution): void
+    public function toggleContribution(
+        int $memberId,
+        string $weekStart,
+        DeleteContribution $deleteContribution,
+        RecordContribution $recordContribution,
+    ): void
     {
         Gate::authorize('manage-contributions');
 
-        $contribution = Contribution::query()
-            ->where('member_id', $memberId)
-            ->whereDate('week_start', $weekStart)
-            ->first();
+        $amountDeleted = $deleteContribution->execute($memberId, $weekStart);
 
-        if ($contribution !== null) {
-            $contribution->delete();
-
+        if ($amountDeleted !== null) {
             Notification::make()
                 ->title('Contribution removed')
                 ->success()

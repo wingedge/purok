@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources\Incomes\Schemas;
 
+use App\Support\Finance\IncomeSources;
 use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
@@ -25,7 +26,7 @@ class IncomeForm
                             ->minValue(0)
                             ->required(),
                         Select::make('source')
-                            ->options(self::sources())
+                            ->options(IncomeSources::options())
                             ->searchable()
                             ->required()
                             ->columnSpanFull(),
@@ -34,21 +35,5 @@ class IncomeForm
                             ->columnSpanFull(),
                     ]),
             ]);
-    }
-
-    /**
-     * @return array<string, string>
-     */
-    private static function sources(): array
-    {
-        return collect([
-            'Rentals - Chairs / Table rental',
-            'Donation / Fund Drive',
-            'Commission / Incentive',
-            'Government Aid',
-            'Penalties',
-            'Misc',
-            'Cash on Hand',
-        ])->mapWithKeys(fn (string $source): array => [$source => $source])->all();
     }
 }

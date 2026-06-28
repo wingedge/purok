@@ -3,7 +3,7 @@
         <div class="flex justify-between h-16">
             <div class="flex">
                 <div class="shrink-0 flex items-center">
-                    <a href="{{ Auth::user()->isMember() ? route('member.portal.show') : route('dashboard') }}">
+                    <a href="{{ Auth::user()->isMember() ? route('member.portal.show') : url('/admin') }}">
                         <x-application-logo class="block h-9 w-auto fill-current text-indigo-600" />
                     </a>
                 </div>
@@ -14,7 +14,7 @@
                             {{ __('My Profile') }}
                         </x-nav-link>
                     @else
-                        <x-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')">
+                        <x-nav-link :href="url('/admin')" :active="request()->is('admin')">
                             {{ __('Dashboard') }}
                         </x-nav-link>
 
@@ -29,9 +29,9 @@
                                     </button>
                                 </x-slot>
                                 <x-slot name="content">
-                                    <x-dropdown-link :href="route('members.index')">Members List</x-dropdown-link>
-                                    <x-dropdown-link :href="route('contributions.index')">Member Contributions</x-dropdown-link>
-                                    <x-dropdown-link :href="route('purok_certificates.index')">Purok Certificate Log</x-dropdown-link>
+                                    <x-dropdown-link :href="url('/admin/members')">Members List</x-dropdown-link>
+                                    <x-dropdown-link :href="url('/admin/contribution-grid')">Member Contributions</x-dropdown-link>
+                                    <x-dropdown-link :href="url('/admin/purok-certificates')">Purok Certificate Log</x-dropdown-link>
                                 </x-slot>
                             </x-dropdown>
                         </div>
@@ -47,8 +47,8 @@
                                     </button>
                                 </x-slot>
                                 <x-slot name="content">
-                                    <x-dropdown-link :href="route('incomes.index')">Income Records</x-dropdown-link>
-                                    <x-dropdown-link :href="route('expenses.index')">Expense Records</x-dropdown-link>
+                                    <x-dropdown-link :href="url('/admin/incomes')">Income Records</x-dropdown-link>
+                                    <x-dropdown-link :href="url('/admin/expenses')">Expense Records</x-dropdown-link>
                                 </x-slot>
                             </x-dropdown>
                         </div>
@@ -64,13 +64,13 @@
                                     </button>
                                 </x-slot>
                                 <x-slot name="content">
-                                    <x-dropdown-link :href="route('inventories.index')">Inventory Management</x-dropdown-link>
-                                    <x-dropdown-link :href="route('rentals.index')">Rentals Tracker</x-dropdown-link>
+                                    <x-dropdown-link :href="url('/admin/inventories')">Inventory Management</x-dropdown-link>
+                                    <x-dropdown-link :href="url('/admin/rentals')">Rentals Tracker</x-dropdown-link>
                                 </x-slot>
                             </x-dropdown>
                         </div>
 
-                        <x-nav-link href="{{ route('reports.index') }}" :active="request()->routeIs('reports.*')">
+                        <x-nav-link href="{{ url('/admin/reports') }}" :active="request()->is('admin/reports*')">
                             {{ __('Reports') }}
                         </x-nav-link>
                     @endif
@@ -120,23 +120,23 @@
             @if (Auth::user()->isMember())
                 <x-responsive-nav-link :href="route('member.portal.show')" :active="request()->routeIs('member.portal.*')">My Profile</x-responsive-nav-link>
             @else
-                <x-responsive-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')">Dashboard</x-responsive-nav-link>
+                <x-responsive-nav-link :href="url('/admin')" :active="request()->is('admin')">Dashboard</x-responsive-nav-link>
                 
                 <div class="px-4 py-2 text-xs font-bold text-gray-400 uppercase tracking-widest">Community</div>
-                <x-responsive-nav-link href="{{ route('members.index') }}" :active="request()->routeIs('members.*')">Members</x-responsive-nav-link>
-                <x-responsive-nav-link href="{{ route('contributions.index') }}" :active="request()->routeIs('contributions.*')">Contributions</x-responsive-nav-link>
-                <x-responsive-nav-link href="{{ route('purok_certificates.index') }}" :active="request()->routeIs('purok_certificates.*')">Purok Certificates Log</x-responsive-nav-link>
+                <x-responsive-nav-link href="{{ url('/admin/members') }}" :active="request()->is('admin/members*')">Members</x-responsive-nav-link>
+                <x-responsive-nav-link href="{{ url('/admin/contribution-grid') }}" :active="request()->is('admin/contribution-grid')">Contributions</x-responsive-nav-link>
+                <x-responsive-nav-link href="{{ url('/admin/purok-certificates') }}" :active="request()->is('admin/purok-certificates*')">Purok Certificates Log</x-responsive-nav-link>
 
                 <div class="px-4 py-2 text-xs font-bold text-gray-400 uppercase tracking-widest mt-2">Finances</div>
-                <x-responsive-nav-link href="{{ route('incomes.index') }}" :active="request()->routeIs('incomes.*')">Incomes</x-responsive-nav-link>
-                <x-responsive-nav-link href="{{ route('expenses.index') }}" :active="request()->routeIs('expenses.*')">Expenses</x-responsive-nav-link>
+                <x-responsive-nav-link href="{{ url('/admin/incomes') }}" :active="request()->is('admin/incomes*')">Incomes</x-responsive-nav-link>
+                <x-responsive-nav-link href="{{ url('/admin/expenses') }}" :active="request()->is('admin/expenses*')">Expenses</x-responsive-nav-link>
                 
                 <div class="px-4 py-2 text-xs font-bold text-gray-400 uppercase tracking-widest mt-2">Logistics</div>
-                <x-responsive-nav-link href="{{ route('inventories.index') }}" :active="request()->routeIs('inventories.*')">Inventory</x-responsive-nav-link>
-                <x-responsive-nav-link href="{{ route('rentals.index') }}" :active="request()->routeIs('rentals.*')">Rentals</x-responsive-nav-link>
+                <x-responsive-nav-link href="{{ url('/admin/inventories') }}" :active="request()->is('admin/inventories*')">Inventory</x-responsive-nav-link>
+                <x-responsive-nav-link href="{{ url('/admin/rentals') }}" :active="request()->is('admin/rentals*')">Rentals</x-responsive-nav-link>
 
                 <div class="border-t border-gray-200 mt-2 pt-2">
-                    <x-responsive-nav-link href="{{ route('reports.index') }}" :active="request()->routeIs('reports.*')">Reports</x-responsive-nav-link>
+                    <x-responsive-nav-link href="{{ url('/admin/reports') }}" :active="request()->is('admin/reports*')">Reports</x-responsive-nav-link>
                 </div>
             @endif
         </div>

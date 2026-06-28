@@ -7,6 +7,7 @@ namespace App\Actions\Rentals;
 use App\Models\Income;
 use App\Models\Inventory;
 use App\Models\Rental;
+use App\Support\Finance\IncomeSources;
 use Illuminate\Support\Facades\DB;
 use RuntimeException;
 
@@ -45,7 +46,7 @@ final class CreateRental
 
             Income::create([
                 'date' => $data['rent_date'],
-                'source' => 'Rentals - Chairs / Table rental',
+                'source' => IncomeSources::rental(),
                 'description' => "Rental for {$data['renter_name']} ({$inventory->item_name} x {$quantity})",
                 'amount' => $data['amount'],
                 'rental_id' => $rental->id,

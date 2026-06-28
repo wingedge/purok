@@ -10,6 +10,12 @@ use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\InventoryController;
 use App\Http\Controllers\MemberPortalController;
 use App\Http\Controllers\ContributionController;
+use App\Filament\Resources\Expenses\ExpenseResource;
+use App\Filament\Resources\Incomes\IncomeResource;
+use App\Filament\Resources\Inventories\InventoryResource;
+use App\Filament\Resources\Members\MemberResource;
+use App\Filament\Resources\PurokCertificates\PurokCertificateResource;
+use App\Filament\Resources\Rentals\RentalResource;
 use App\Http\Controllers\PurokCertificateController;
 use App\Http\Controllers\Reports\CashFlowController;
 
@@ -38,11 +44,11 @@ Route::middleware(['auth'])->group(function () {
         ->middleware('can:manage-certificates')
         ->name('members.search');
 
-    Route::get('members', [MemberController::class, 'index'])
+    Route::get('members', fn () => redirect()->to(MemberResource::getUrl()))
         ->middleware('can:view-members')
         ->name('members.index');
 
-    Route::get('members/create', [MemberController::class, 'create'])
+    Route::get('members/create', fn () => redirect()->to(MemberResource::getUrl('create')))
         ->middleware('can:manage-members')
         ->name('members.create');
 
@@ -62,7 +68,7 @@ Route::middleware(['auth'])->group(function () {
         ->middleware('can:view-members')
         ->name('members.show');
 
-    Route::get('members/{member}/edit', [MemberController::class, 'edit'])
+    Route::get('members/{member}/edit', fn (App\Models\Member $member) => redirect()->to(MemberResource::getUrl('edit', ['record' => $member])))
         ->middleware('can:manage-members')
         ->name('members.edit');
 
@@ -82,7 +88,20 @@ Route::middleware(['auth'])->group(function () {
         ->middleware('can:manage-finances')
         ->name('expenses.import');
 
+    Route::get('expenses', fn () => redirect()->to(ExpenseResource::getUrl()))
+        ->middleware('can:manage-finances')
+        ->name('expenses.index');
+
+    Route::get('expenses/create', fn () => redirect()->to(ExpenseResource::getUrl('create')))
+        ->middleware('can:manage-finances')
+        ->name('expenses.create');
+
+    Route::get('expenses/{expense}/edit', fn (App\Models\Expense $expense) => redirect()->to(ExpenseResource::getUrl('edit', ['record' => $expense])))
+        ->middleware('can:manage-finances')
+        ->name('expenses.edit');
+
     Route::resource('expenses', ExpenseController::class)
+        ->except(['index', 'create', 'edit'])
         ->middleware('can:manage-finances');
 
     Route::get('incomes/export', [IncomeController::class, 'export'])
@@ -93,10 +112,23 @@ Route::middleware(['auth'])->group(function () {
         ->middleware('can:manage-finances')
         ->name('incomes.import');
 
+    Route::get('incomes', fn () => redirect()->to(IncomeResource::getUrl()))
+        ->middleware('can:manage-finances')
+        ->name('incomes.index');
+
+    Route::get('incomes/create', fn () => redirect()->to(IncomeResource::getUrl('create')))
+        ->middleware('can:manage-finances')
+        ->name('incomes.create');
+
+    Route::get('incomes/{income}/edit', fn (App\Models\Income $income) => redirect()->to(IncomeResource::getUrl('edit', ['record' => $income])))
+        ->middleware('can:manage-finances')
+        ->name('incomes.edit');
+
     Route::resource('incomes', IncomeController::class)
+        ->except(['index', 'create', 'edit'])
         ->middleware('can:manage-finances');
 
-    Route::get('/contributions', [ContributionController::class, 'index'])->name('contributions.index');
+    Route::get('/contributions', fn () => redirect('/admin/contribution-grid'))->name('contributions.index');
 
     Route::post('/contributions', [ContributionController::class, 'store'])
         ->middleware('can:manage-contributions')
@@ -106,10 +138,11 @@ Route::middleware(['auth'])->group(function () {
         ->middleware('can:manage-contributions')
         ->name('contributions.destroy');
 
-    Route::get('inventories', [InventoryController::class, 'index'])
+    Route::get('inventories', fn () => redirect()->to(InventoryResource::getUrl()))
+        ->middleware('can:manage-inventory')
         ->name('inventories.index');
 
-    Route::get('inventories/create', [InventoryController::class, 'create'])
+    Route::get('inventories/create', fn () => redirect()->to(InventoryResource::getUrl('create')))
         ->middleware('can:manage-inventory')
         ->name('inventories.create');
 
@@ -120,7 +153,7 @@ Route::middleware(['auth'])->group(function () {
     Route::get('inventories/{inventory}', [InventoryController::class, 'show'])
         ->name('inventories.show');
 
-    Route::get('inventories/{inventory}/edit', [InventoryController::class, 'edit'])
+    Route::get('inventories/{inventory}/edit', fn (App\Models\Inventory $inventory) => redirect()->to(InventoryResource::getUrl('edit', ['record' => $inventory])))
         ->middleware('can:manage-inventory')
         ->name('inventories.edit');
 
@@ -132,7 +165,8 @@ Route::middleware(['auth'])->group(function () {
         ->middleware('can:manage-inventory')
         ->name('inventories.destroy');
 
-    Route::get('rentals', [RentalController::class, 'index'])
+    Route::get('rentals', fn () => redirect()->to(RentalResource::getUrl()))
+        ->middleware('can:manage-rentals')
         ->name('rentals.index');
 
     Route::get('rentals/export', [RentalController::class, 'export'])
@@ -143,7 +177,7 @@ Route::middleware(['auth'])->group(function () {
         ->middleware('can:manage-rentals')
         ->name('rentals.import');
 
-    Route::get('rentals/create', [RentalController::class, 'create'])
+    Route::get('rentals/create', fn () => redirect()->to(RentalResource::getUrl('create')))
         ->middleware('can:manage-rentals')
         ->name('rentals.create');
 
@@ -151,7 +185,7 @@ Route::middleware(['auth'])->group(function () {
         ->middleware('can:manage-rentals')
         ->name('rentals.store');
 
-    Route::get('rentals/{rental}/edit', [RentalController::class, 'edit'])
+    Route::get('rentals/{rental}/edit', fn (App\Models\Rental $rental) => redirect()->to(RentalResource::getUrl('edit', ['record' => $rental])))
         ->middleware('can:manage-rentals')
         ->name('rentals.edit');
 
@@ -175,7 +209,7 @@ Route::get('/dashboard', [DashboardController::class, 'index'])
 
 
 Route::middleware(['auth'])->prefix('reports')->name('reports.')->group(function () {
-        Route::get('/', function () {return view('reports.index');})->name('index');
+        Route::get('/', fn () => redirect('/admin/reports'))->name('index');
         Route::get('/cashflow', [CashFlowController::class, 'index'])
             ->middleware('can:view-cashflow-reports')
             ->name('cashflow');
@@ -185,7 +219,17 @@ Route::middleware(['auth'])->prefix('reports')->name('reports.')->group(function
 });
 
 Route::middleware(['auth', 'verified', 'can:manage-certificates'])->group(function () {
-    Route::resource('purok_certificates', PurokCertificateController::class); 
+    Route::get('purok_certificates', fn () => redirect()->to(PurokCertificateResource::getUrl()))
+        ->name('purok_certificates.index');
+
+    Route::get('purok_certificates/create', fn () => redirect()->to(PurokCertificateResource::getUrl('create')))
+        ->name('purok_certificates.create');
+
+    Route::get('purok_certificates/{purok_certificate}/edit', fn (App\Models\PurokCertificate $purok_certificate) => redirect()->to(PurokCertificateResource::getUrl('edit', ['record' => $purok_certificate])))
+        ->name('purok_certificates.edit');
+
+    Route::resource('purok_certificates', PurokCertificateController::class)
+        ->except(['index', 'create', 'edit']);
 });
 
 

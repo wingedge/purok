@@ -19,7 +19,7 @@ class AuthorizationTest extends TestCase
 
         $this->actingAs($staff)
             ->get(route('members.create'))
-            ->assertOk();
+            ->assertRedirect('/admin/members/create');
 
         $this->actingAs($treasurer)
             ->get(route('members.create'))
@@ -51,7 +51,7 @@ class AuthorizationTest extends TestCase
 
         $this->actingAs($this->userWithRole(UserRole::Treasurer))
             ->get(route('expenses.create'))
-            ->assertOk();
+            ->assertRedirect('/admin/expenses/create');
     }
 
     public function test_staff_cannot_record_contributions_but_treasurer_can(): void
@@ -77,7 +77,7 @@ class AuthorizationTest extends TestCase
     {
         $this->actingAs($this->userWithRole(UserRole::Staff))
             ->get(route('inventories.create'))
-            ->assertOk();
+            ->assertRedirect('/admin/inventories/create');
 
         $this->actingAs($this->userWithRole(UserRole::Treasurer))
             ->get(route('inventories.create'))
@@ -88,7 +88,7 @@ class AuthorizationTest extends TestCase
     {
         $this->actingAs($this->userWithRole(UserRole::Staff))
             ->get(route('purok_certificates.index'))
-            ->assertOk();
+            ->assertRedirect('/admin/purok-certificates');
 
         $this->actingAs($this->userWithRole(UserRole::Treasurer))
             ->get(route('purok_certificates.index'))

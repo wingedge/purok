@@ -2,6 +2,7 @@
 
 namespace Tests\Feature;
 
+use App\Actions\Contributions\DeleteContribution;
 use App\Enums\UserRole;
 use App\Models\Contribution;
 use App\Models\Member;
@@ -55,6 +56,76 @@ class ContributionRulesTest extends TestCase
             'week_start' => '2026-06-07',
             'amount' => 10,
         ]);
+    }
+
+    public function test_delete_contribution_action_returns_deleted_amount(): void
+    {
+        $member = Member::create([
+            'name' => 'Contributor',
+            'indigent' => false,
+        ]);
+
+        Contribution::create([
+            'member_id' => $member->id,
+            'week_start' => '2026-06-07',
+            'amount' => 10,
+        ]);
+
+        $amount = app(DeleteContribution::class)->execute($member->id, '2026-06-07');
+
+        $this->assertSame(10.0, $amount);
+        $this->assertDatabaseMissing('contributions', [
+            'member_id' => $member->id,
+            'week_start' => '2026-06-07',
+        ]);
+    }
+
+    public function test_delete_contribution_route_uses_delete_action(): void
+    {
+        $member = Member::create([
+            'name' => 'Contributor',
+            'indigent' => false,
+        ]);
+
+        Contribution::create([
+            'member_id' => $member->id,
+            'week_start' => '2026-06-07',
+            'amount' => 10,
+        ]);
+
+        $this->actingAs($this->userWithRole(UserRole::Treasurer))
+            ->deleteJson(route('contributions.destroy'), [
+                'member_id' => $member->id,
+                'week_start' => '2026-06-07',
+            ])
+            ->assertOk()
+            ->assertJson([
+                'success' => true,
+                'amount' => 10,
+            ]);
+
+        $this->assertDatabaseMissing('contributions', [
+            'member_id' => $member->id,
+            'week_start' => '2026-06-07',
+        ]);
+    }
+
+    public function test_delete_contribution_route_returns_not_found_for_missing_record(): void
+    {
+        $member = Member::create([
+            'name' => 'Contributor',
+            'indigent' => false,
+        ]);
+
+        $this->actingAs($this->userWithRole(UserRole::Treasurer))
+            ->deleteJson(route('contributions.destroy'), [
+                'member_id' => $member->id,
+                'week_start' => '2026-06-07',
+            ])
+            ->assertNotFound()
+            ->assertJson([
+                'success' => false,
+            ]);
     }
 
     public function test_dashboard_contribution_totals_use_week_start_for_accounting_period(): void

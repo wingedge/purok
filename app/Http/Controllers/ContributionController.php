@@ -2,10 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use App\Actions\Contributions\DeleteContribution;
 use App\Actions\Contributions\RecordContribution;
-use Carbon\Carbon;
 use App\Models\Member;
-use App\Models\Contribution;
 use Illuminate\Http\Request;
 use App\Services\ContributionService;
 
@@ -117,19 +116,17 @@ class ContributionController extends Controller
         ]);
     }
 
-    public function destroy(Request $request)
+    public function destroy(Request $request, DeleteContribution $deleteContribution)
     {
-        $contribution = Contribution::where('member_id', $request->member_id)
-            ->where('week_start', $request->week_start)
-            ->first();
+        $amountDeleted = $deleteContribution->execute(
+            (int) $request->member_id,
+            (string) $request->week_start,
+        );
 
-        if ($contribution) {
-            $amountDeleted = $contribution->amount;
-            $contribution->delete();
-
+        if ($amountDeleted !== null) {
             return response()->json([
                 'success' => true,
-                'amount' => $amountDeleted
+                'amount' => $amountDeleted,
             ]);
         }
 

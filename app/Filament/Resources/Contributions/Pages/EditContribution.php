@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources\Contributions\Pages;
 
+use App\Actions\Contributions\DeleteContribution;
 use App\Actions\Contributions\RecordContribution;
 use App\Filament\Resources\Contributions\ContributionResource;
 use App\Models\Member;
@@ -23,7 +24,10 @@ class EditContribution extends EditRecord
         );
 
         if (! $updated->is($record)) {
-            $record->delete();
+            app(DeleteContribution::class)->execute(
+                (int) $record->member_id,
+                $record->week_start->toDateString(),
+            );
         }
 
         return $updated;
