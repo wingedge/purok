@@ -141,6 +141,7 @@ Flow:
 - `store` creates a member and any provided dependents.
 - `update` updates member data, deletes all existing dependents, then recreates dependents from the submitted form.
 - `destroy` deletes the member.
+- Legacy member create, update, show, delete, dependent replacement, and role boundary behavior has focused feature tests.
 - `import` accepts a CSV file and delegates member/dependent parsing and persistence to `App\Actions\Imports\ImportMembers`.
 - `ImportMembers` validates each row, creates members, and optionally creates dependents from pipe-delimited `dependent_names` and `dependent_relationships` fields.
 - `MemberResource` provides the first Filament back-office resource for listing, creating, and editing members.
@@ -220,6 +221,7 @@ Flow:
 - Expenses store the authenticated user's ID in `created_by`.
 - `IncomeResource` and `ExpenseResource` provide Filament CRUD screens for finance records.
 - `IncomeSources` and `ExpenseCategories` provide shared option lists for old Blade controllers and Filament forms.
+- Legacy income and expense create, update, delete, and role boundary behavior has focused feature tests.
 
 Current concerns:
 
@@ -283,7 +285,8 @@ Flow:
 - Certificate routes require authenticated and verified users.
 - `PurokCertificateController@index` searches logs by member name or dependent name.
 - `searchMembers` provides JSON autocomplete-style search over members and dependents.
-- `store` and `update` validate `member_id`, `request_date`, and `purpose`.
+- `store` and `update` validate `member_id`, `request_date`, and `purpose`, then delegate persistence to certificate Actions.
+- Certificate list filtering, member/dependent search, creation, update, and deletion are extracted to `App\Actions\Certificates`.
 - `PurokCertificateResource` provides Filament CRUD with searchable member selection.
 
 Current concerns:
@@ -414,10 +417,7 @@ Current tests include Breeze-generated authentication/profile coverage plus focu
 - Contribution report totals and Filament access
 - Filament data exchange access, import, and export behavior
 
-There are no dedicated tests yet for:
-
-- Members and dependents
-- Certificate logs
+The most important legacy CRUD workflows now have focused tests; remaining testing should be added as new refactors or behavior changes are introduced.
 
 ## Architectural Gaps To Address
 

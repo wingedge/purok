@@ -1,8 +1,14 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Http\Controllers;
 
-use App\Models\Member;
+use App\Actions\Certificates\CreatePurokCertificate;
+use App\Actions\Certificates\DeletePurokCertificate;
+use App\Actions\Certificates\ListPurokCertificates;
+use App\Actions\Certificates\SearchCertificateMembers;
+use App\Actions\Certificates\UpdatePurokCertificate;
 use Illuminate\Http\Request;
 use App\Models\PurokCertificate;
 
@@ -13,20 +19,7 @@ class PurokCertificateController extends Controller
     {
         $search = $request->input('search');
 
-        $requests = PurokCertificate::with(['member.dependents'])
-            ->when($search, function ($query, $search) {
-                $query->where(function ($q) use ($search) {
-                    $q->whereHas('member', function ($m) {
-                        $m->where('name', 'like', "%".request('search')."%");
-                    })
-                    ->orWhereHas('member.dependents', function ($d) {
-                        $d->where('name', 'like', "%".request('search')."%");
-                    });
-                });
-            })
-            ->latest()
-            ->paginate(15)
-            ->withQueryString();
+        $requests = app(ListPurokCertificates::class)->execute(is_string($search) ? $search : null);
 
         return view('purok_certificates.index', compact('requests'));
     }
@@ -37,7 +30,7 @@ class PurokCertificateController extends Controller
         return view('purok_certificates.create');
     }
 
-    public function store(Request $request)
+    public function store(Request $request, CreatePurokCertificate $createPurokCertificate)
     {
         $validated = $request->validate([
             'member_id' => 'required|exists:members,id',
@@ -45,28 +38,15 @@ class PurokCertificateController extends Controller
             'purpose' => 'required|string|max:1000',
         ]);
 
-        PurokCertificate::create($validated);
+        $createPurokCertificate->execute($validated);
 
         return redirect()->route('purok_certificates.index')
             ->with('success', 'Certificate log created successfully!');
     }
 
-    public function searchMembers(Request $request)
+    public function searchMembers(Request $request, SearchCertificateMembers $searchCertificateMembers)
     {
-        $term = $request->input('q');
-        if (strlen($term) < 2) return response()->json([]);
-
-        $members = Member::query()
-            ->where('name', 'like', "%{$term}%")
-            ->orWhereHas('dependents', fn($q) => $q->where('name', 'like', "%{$term}%"))
-            ->with('dependents')->limit(10)->get()
-            ->map(fn($m) => [
-                'id' => $m->id, 
-                'name' => $m->name, 
-                'deps' => $m->dependents->pluck('name')->implode(', ')
-            ]);
-
-        return response()->json($members);
+        return response()->json($searchCertificateMembers->execute($request->input('q'))->values());
     }
 
     // Show the edit form
@@ -78,7 +58,11 @@ class PurokCertificateController extends Controller
     }
 
     // Update the record
-    public function update(Request $request, PurokCertificate $purok_certificate)
+    public function update(
+        Request $request,
+        PurokCertificate $purok_certificate,
+        UpdatePurokCertificate $updatePurokCertificate
+    )
     {
         $validated = $request->validate([
             'member_id' => 'required|exists:members,id',
@@ -86,16 +70,16 @@ class PurokCertificateController extends Controller
             'purpose' => 'required|string|max:1000',
         ]);
 
-        $purok_certificate->update($validated);
+        $updatePurokCertificate->execute($purok_certificate, $validated);
 
         return redirect()->route('purok_certificates.index')
             ->with('success', 'Log updated successfully!');
     }
 
     // Remove the record
-    public function destroy(PurokCertificate $purok_certificate)
+    public function destroy(PurokCertificate $purok_certificate, DeletePurokCertificate $deletePurokCertificate)
     {
-        $purok_certificate->delete();
+        $deletePurokCertificate->execute($purok_certificate);
 
         return redirect()->route('purok_certificates.index')
             ->with('success', 'Log deleted successfully!');

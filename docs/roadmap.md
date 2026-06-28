@@ -44,6 +44,7 @@ Purok currently has a working Laravel MVC foundation with authenticated CRUD scr
 - CSV member/dependent export is extracted to `App\Actions\Exports\ExportMembers`.
 - CSV member/dependent export has focused feature tests.
 - Member deletion cascades to dependents through database constraints.
+- Legacy member create, update, show, delete, dependent replacement, and role boundary behavior has focused feature tests.
 - Filament `MemberResource` is implemented for back-office list/create/edit workflows.
 - Filament `DependentsRelationManager` is implemented for dependent management from the member edit screen.
 - Filament member resource access has focused feature tests.
@@ -82,6 +83,7 @@ Purok currently has a working Laravel MVC foundation with authenticated CRUD scr
 - Expense records store the creating user.
 - Income records can be linked to rentals.
 - Income sources and expense categories are centralized in shared support classes.
+- Legacy income and expense create, update, delete, and role boundary behavior has focused feature tests.
 
 ### Inventory And Rentals
 
@@ -108,6 +110,8 @@ Purok currently has a working Laravel MVC foundation with authenticated CRUD scr
 - Certificate routes require authenticated and verified users.
 - Certificate logs can search by member or dependent name.
 - Member search JSON endpoint exists for certificate forms.
+- Legacy certificate create, update, delete, search, and list query behavior has focused feature tests.
+- Legacy certificate persistence, deletion, member search, and list filtering are extracted to Actions.
 - Certificate log CRUD is also available in Filament.
 - Filament certificate resource access has focused feature tests.
 
@@ -159,6 +163,7 @@ Purok currently has a working Laravel MVC foundation with authenticated CRUD scr
 
 - The first Action extraction exists for member/dependent import.
 - Rental workflow Actions exist for create, update, return, and delete.
+- Certificate log Actions exist for legacy create, update, delete, member search, and list filtering workflows.
 - Contribution rules are extracted to `ContributionService`.
 - Contribution record/create/delete workflows are partially Action-based.
 - `ContributionService` is implemented; other service extractions remain pending.
@@ -252,7 +257,7 @@ Current state and gaps:
 
 ### Testing
 
-- No feature tests exist for member CRUD.
+- Legacy member CRUD and dependent replacement tests exist.
 - Authorization tests exist for the first role-protected route boundaries.
 - Filament member resource access tests exist.
 - Filament finance resource access tests exist.
@@ -265,10 +270,10 @@ Current state and gaps:
 - Member/dependent export tests exist.
 - Contribution amount and accounting-period tests exist.
 - Filament contribution grid tests exist.
-- No tests exist for income and expense CRUD.
+- Legacy income and expense CRUD tests exist.
 - Rental inventory synchronization tests exist.
 - Rental import/export tests exist.
-- No tests exist for certificate logs.
+- Legacy certificate log create, update, delete, member search, and list filtering tests exist.
 - Contribution report total tests exist.
 
 ### Documentation
