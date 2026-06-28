@@ -157,6 +157,13 @@ Complex operations belong in Actions or Services.
 
 Use RelationManagers instead of custom CRUD pages when possible.
 
+For custom Filament pages and Blade-based Filament views:
+
+* Use shared `purok-fi-*` classes from `public/css/filament/admin/theme.css` for filter bars, field spacing, and action groups.
+* Avoid relying on one-off Tailwind arbitrary utilities for critical spacing in Filament custom views.
+* Keep dense operational tables readable with stable column widths, explicit cell padding, and labeled buttons.
+* Prefer clear button labels such as `Record`, `Paid`, `Apply`, and `Reset` over icon-only controls unless the icon is universally obvious.
+
 ---
 
 # Imports and Exports

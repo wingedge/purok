@@ -24,6 +24,7 @@ The app currently follows classic Laravel MVC:
 - Blade templates render forms, tables, dashboards, reports, and navigation.
 - The first Action/DTO extraction exists for member imports.
 - Filament Resources and dashboard widgets exist for several back-office workflows.
+- Custom Filament page layout helpers live in `public/css/filament/admin/theme.css` and are registered through the admin panel theme asset.
 - Services are starting to be introduced for domain rules.
 - Repositories are not implemented yet, and member-facing screens currently remain Blade/controller-based.
 
@@ -92,6 +93,8 @@ Filament routes:
 - `/admin/contribution-grid` uses `App\Filament\Pages\ContributionGrid`.
 - `/admin/reports/cash-flow` uses `App\Filament\Pages\CashFlowReport`.
 - `/admin/reports/contributions` uses `App\Filament\Pages\ContributionReport`.
+
+Custom Filament page views should use the shared `purok-fi-*` CSS helpers for filter bars, form controls, and action spacing instead of page-local spacing styles.
 
 Authenticated routes:
 

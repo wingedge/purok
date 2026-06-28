@@ -11,19 +11,19 @@
     <form method="GET" class="fi-section mb-6 print:hidden">
         <div class="fi-section-content-ctn">
             <div class="fi-section-content">
-                <div class="grid gap-4 md:grid-cols-[120px_1fr_1fr_auto_auto] md:items-end">
-                    <label class="block">
-                        <span class="text-sm font-medium text-gray-700 dark:text-gray-200">Year</span>
-                        <select name="year" class="mt-1 w-full rounded-lg border-gray-300 text-sm shadow-sm dark:border-gray-700 dark:bg-gray-900">
+                <div class="purok-fi-filters purok-fi-filters-compact">
+                    <label class="purok-fi-field">
+                        <span class="purok-fi-label">Year</span>
+                        <select name="year" class="purok-fi-control">
                             @foreach (range(now()->year, now()->year - 5) as $y)
                                 <option value="{{ $y }}" @selected($year === $y)>{{ $y }}</option>
                             @endforeach
                         </select>
                     </label>
 
-                    <label class="block">
-                        <span class="text-sm font-medium text-gray-700 dark:text-gray-200">From</span>
-                        <select name="start_month" class="mt-1 w-full rounded-lg border-gray-300 text-sm shadow-sm dark:border-gray-700 dark:bg-gray-900">
+                    <label class="purok-fi-field">
+                        <span class="purok-fi-label">From</span>
+                        <select name="start_month" class="purok-fi-control">
                             @foreach (range(1, 12) as $m)
                                 <option value="{{ $m }}" @selected($startMonth === $m)>
                                     {{ \Carbon\Carbon::createFromDate($year, $m, 1)->format('F') }}
@@ -32,9 +32,9 @@
                         </select>
                     </label>
 
-                    <label class="block">
-                        <span class="text-sm font-medium text-gray-700 dark:text-gray-200">To</span>
-                        <select name="end_month" class="mt-1 w-full rounded-lg border-gray-300 text-sm shadow-sm dark:border-gray-700 dark:bg-gray-900">
+                    <label class="purok-fi-field">
+                        <span class="purok-fi-label">To</span>
+                        <select name="end_month" class="purok-fi-control">
                             @foreach (range(1, 12) as $m)
                                 <option value="{{ $m }}" @selected($endMonth === $m)>
                                     {{ \Carbon\Carbon::createFromDate($year, $m, 1)->format('F') }}
@@ -43,13 +43,15 @@
                         </select>
                     </label>
 
-                    <button type="submit" class="fi-btn fi-size-md fi-color-primary">
-                        Apply
-                    </button>
+                    <div class="purok-fi-actions">
+                        <button type="submit" class="fi-btn fi-size-md fi-color-primary">
+                            Apply
+                        </button>
 
-                    <button type="button" onclick="window.print()" class="fi-btn fi-size-md fi-color-gray">
-                        Print
-                    </button>
+                        <button type="button" onclick="window.print()" class="fi-btn fi-size-md fi-color-gray">
+                            Print
+                        </button>
+                    </div>
                 </div>
             </div>
         </div>

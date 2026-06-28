@@ -27,7 +27,8 @@ class FilamentContributionGridTest extends TestCase
             ->assertOk()
             ->assertSee('Contribution Grid')
             ->assertSee('Maria Santos')
-            ->assertSee('Jun 07');
+            ->assertSee('Jun 07')
+            ->assertSee('Record');
     }
 
     public function test_staff_cannot_view_filament_contribution_grid(): void
@@ -102,7 +103,8 @@ class FilamentContributionGridTest extends TestCase
         $this->actingAs($this->userWithRole(UserRole::Treasurer))
             ->get('/admin/contribution-grid?year=2026&month=6')
             ->assertOk()
-            ->assertSee('PHP 20.00');
+            ->assertSee('PHP 20.00')
+            ->assertSee('Paid');
     }
 
     private function userWithRole(UserRole $role): User

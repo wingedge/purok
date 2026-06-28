@@ -2,19 +2,19 @@
     <form method="GET" class="fi-section mb-6">
         <div class="fi-section-content-ctn">
             <div class="fi-section-content">
-                <div class="grid gap-4 md:grid-cols-[1fr_1fr_auto] md:items-end">
-                    <label class="block">
-                        <span class="text-sm font-medium text-gray-700 dark:text-gray-200">Year</span>
-                        <select name="year" class="mt-1 w-full rounded-lg border-gray-300 text-sm shadow-sm dark:border-gray-700 dark:bg-gray-900">
+                <div class="purok-fi-filters" style="--purok-fi-filter-columns: 2;">
+                    <label class="purok-fi-field">
+                        <span class="purok-fi-label">Year</span>
+                        <select name="year" class="purok-fi-control">
                             @for ($y = now()->year; $y >= now()->year - 5; $y--)
                                 <option value="{{ $y }}" @selected($year === $y)>{{ $y }}</option>
                             @endfor
                         </select>
                     </label>
 
-                    <label class="block">
-                        <span class="text-sm font-medium text-gray-700 dark:text-gray-200">Month</span>
-                        <select name="month" class="mt-1 w-full rounded-lg border-gray-300 text-sm shadow-sm dark:border-gray-700 dark:bg-gray-900">
+                    <label class="purok-fi-field">
+                        <span class="purok-fi-label">Month</span>
+                        <select name="month" class="purok-fi-control">
                             <option value="">Full Year</option>
                             @foreach (range(1, 12) as $m)
                                 <option value="{{ $m }}" @selected($month === $m)>
@@ -24,9 +24,11 @@
                         </select>
                     </label>
 
-                    <button type="submit" class="fi-btn fi-size-md fi-color-primary">
-                        Apply
-                    </button>
+                    <div class="purok-fi-actions">
+                        <button type="submit" class="fi-btn fi-size-md fi-color-primary">
+                            Apply
+                        </button>
+                    </div>
                 </div>
             </div>
         </div>

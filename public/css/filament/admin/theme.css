@@ -1,0 +1,233 @@
+.purok-fi-filters {
+    display: grid;
+    grid-template-columns: repeat(var(--purok-fi-filter-columns, 3), minmax(0, 1fr)) auto;
+    gap: 16px;
+    align-items: end;
+}
+
+.purok-fi-filters-compact {
+    grid-template-columns: 120px minmax(180px, 1fr) minmax(180px, 1fr) auto;
+}
+
+.purok-fi-filters-wide {
+    grid-template-columns: minmax(260px, 1fr) 160px 120px 160px auto;
+}
+
+.purok-fi-field {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    min-width: 0;
+}
+
+.purok-fi-label {
+    display: block;
+    color: rgb(55 65 81);
+    font-size: 13px;
+    font-weight: 600;
+    line-height: 1.25;
+}
+
+.purok-fi-control {
+    width: 100%;
+    min-height: 40px;
+    border-radius: 8px;
+    font-size: 14px;
+}
+
+.purok-fi-actions {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+}
+
+.purok-grid-scroll {
+    max-height: 72vh;
+    overflow: auto;
+}
+
+.purok-contribution-table {
+    width: 100%;
+    min-width: max-content;
+    border-collapse: separate;
+    border-spacing: 0;
+    font-size: 14px;
+}
+
+.purok-contribution-table th,
+.purok-contribution-table td {
+    vertical-align: middle;
+    white-space: nowrap;
+}
+
+.purok-member-heading {
+    position: sticky;
+    left: 0;
+    top: 0;
+    z-index: 30;
+    min-width: 288px;
+    padding: 16px 20px;
+    border-bottom: 1px solid rgb(229 231 235);
+    border-right: 1px solid rgb(229 231 235);
+    background: rgb(249 250 251);
+    text-align: left;
+    font-size: 12px;
+    font-weight: 700;
+    text-transform: uppercase;
+}
+
+.purok-week-heading {
+    position: sticky;
+    top: 0;
+    z-index: 20;
+    min-width: 132px;
+    padding: 14px 16px;
+    border-bottom: 1px solid rgb(229 231 235);
+    background: rgb(249 250 251);
+    text-align: center;
+    font-size: 12px;
+    font-weight: 700;
+    text-transform: uppercase;
+}
+
+.purok-week-day {
+    display: block;
+    margin-top: 4px;
+    color: rgb(107 114 128);
+    font-size: 11px;
+    font-weight: 500;
+    text-transform: none;
+}
+
+.purok-member-cell {
+    position: sticky;
+    left: 0;
+    z-index: 10;
+    min-width: 288px;
+    padding: 16px 20px;
+    border-right: 1px solid rgb(229 231 235);
+    background: white;
+}
+
+.purok-contribution-table tbody tr:hover .purok-member-cell,
+.purok-contribution-table tbody tr:hover td {
+    background: rgb(255 251 235);
+}
+
+.purok-member-name {
+    max-width: 250px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    color: rgb(17 24 39);
+    font-weight: 600;
+}
+
+.purok-member-total {
+    margin-top: 4px;
+    color: rgb(217 119 6);
+    font-size: 12px;
+    font-weight: 700;
+}
+
+.purok-week-cell {
+    padding: 14px 16px;
+    text-align: center;
+}
+
+.purok-toggle {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 92px;
+    min-height: 40px;
+    border: 1px solid rgb(209 213 219);
+    border-radius: 8px;
+    padding: 0 14px;
+    background: white;
+    color: rgb(55 65 81);
+    font-size: 12px;
+    font-weight: 700;
+    transition: background-color 150ms ease, border-color 150ms ease, color 150ms ease;
+}
+
+.purok-toggle:hover {
+    border-color: rgb(217 119 6);
+    background: rgb(255 251 235);
+    color: rgb(146 64 14);
+}
+
+.purok-toggle-paid {
+    border-color: rgb(22 163 74);
+    background: rgb(34 197 94);
+    color: white;
+}
+
+.purok-toggle-paid:hover {
+    border-color: rgb(21 128 61);
+    background: rgb(22 163 74);
+    color: white;
+}
+
+.purok-toggle:disabled {
+    cursor: wait;
+    opacity: .7;
+}
+
+.purok-empty {
+    padding: 40px 16px;
+    text-align: center;
+    color: rgb(107 114 128);
+}
+
+@media (prefers-color-scheme: dark) {
+    .purok-fi-label {
+        color: rgb(229 231 235);
+    }
+
+    .purok-member-heading,
+    .purok-week-heading {
+        border-color: rgb(31 41 55);
+        background: rgb(17 24 39);
+        color: rgb(209 213 219);
+    }
+
+    .purok-member-cell {
+        border-color: rgb(31 41 55);
+        background: rgb(3 7 18);
+    }
+
+    .purok-contribution-table tbody tr:hover .purok-member-cell,
+    .purok-contribution-table tbody tr:hover td {
+        background: rgb(17 24 39);
+    }
+
+    .purok-member-name {
+        color: white;
+    }
+
+    .purok-toggle {
+        border-color: rgb(55 65 81);
+        background: rgb(17 24 39);
+        color: rgb(209 213 219);
+    }
+}
+
+@media (max-width: 900px) {
+    .purok-fi-filters,
+    .purok-fi-filters-compact,
+    .purok-fi-filters-wide {
+        grid-template-columns: 1fr 1fr;
+    }
+
+    .purok-fi-actions {
+        grid-column: 1 / -1;
+    }
+}
+
+@media (max-width: 640px) {
+    .purok-fi-filters,
+    .purok-fi-filters-compact,
+    .purok-fi-filters-wide {
+        grid-template-columns: 1fr;
+    }
+}

@@ -16,6 +16,7 @@ Purok currently has a working Laravel MVC foundation with authenticated CRUD scr
 - TailwindCSS, Alpine.js, and Vite are configured.
 - Filament 4 is installed.
 - Filament admin panel is available at `/admin`.
+- A shared Filament admin theme is registered for custom page/form spacing.
 - Main authenticated layout and navigation are implemented.
 - Basic auth/profile tests exist.
 
