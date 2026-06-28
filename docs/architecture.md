@@ -66,9 +66,10 @@ Current authorization state:
 - Roles exist at the model/database level.
 - User/member account linking exists through `users.member_id`.
 - Initial named gates are registered in `AuthServiceProvider`.
+- Member, income, expense, inventory, rental, and certificate log model policies are registered and delegate to the existing gate-based role rules.
 - Main route groups and actions use `can:` middleware for admin, treasurer, and staff boundaries.
 - Filament panel access blocks member-role users from the back-office panel.
-- Full model policies are not implemented yet.
+- Full model policies are not implemented yet for every remaining domain model.
 
 The target role/permission model is documented in `docs/features/authorization.md`.
 
@@ -136,11 +137,11 @@ Relationships:
 
 Flow:
 
-- `MemberController@index` searches members by name, counts dependents, sorts by name, and paginates.
+- `MemberController@index` delegates member search, dependent counts, sorting, and pagination to `App\Actions\Members\ListMembers`.
 - `create` and `edit` views collect member fields and dependent rows.
 - `store` validates input and delegates member/dependent creation to `App\Actions\Members\CreateMember`.
 - `update` validates input and delegates member updates plus dependent replacement to `App\Actions\Members\UpdateMember`.
-- `destroy` deletes the member.
+- `destroy` delegates deletion to `App\Actions\Members\DeleteMember`.
 - Legacy member create, update, show, delete, dependent replacement, and role boundary behavior has focused feature tests.
 - `import` accepts a CSV file and delegates member/dependent parsing and persistence to `App\Actions\Imports\ImportMembers`.
 - `ImportMembers` validates each row, creates members, and optionally creates dependents from pipe-delimited `dependent_names` and `dependent_relationships` fields.
@@ -154,7 +155,7 @@ Flow:
 - `PurokCertificateResource` provides Filament back-office CRUD for certificate logs.
 - `ContributionResource` provides Filament back-office CRUD for individual contribution records.
 - `MemberPortalController` allows member-role users linked through `users.member_id` to update their own phone, email, birthday, and dependents.
-- `CreateMember`, `UpdateMember`, `UpdateMemberProfile`, and `SyncMemberDependents` keep member persistence workflows outside controllers.
+- `CreateMember`, `UpdateMember`, `DeleteMember`, `UpdateMemberProfile`, and `SyncMemberDependents` keep member persistence workflows outside controllers.
 - `CreateMemberPortalAccount` creates or updates a member-role user account for the selected member from the Filament member edit page.
 - `BuildMemberContributionStatus` builds the member portal's own-record contribution summary and filtered full history using `ContributionService`.
 
@@ -220,6 +221,7 @@ Flow:
 - Expense categories are centralized in `ExpenseCategories`.
 - Expenses store the authenticated user's ID in `created_by`.
 - Legacy income and expense create, update, and delete persistence is extracted to `App\Actions\Incomes` and `App\Actions\Expenses`.
+- Legacy income and expense index query logic is extracted to `ListIncomes` and `ListExpenses`.
 - `IncomeResource` and `ExpenseResource` provide Filament CRUD screens for finance records.
 - `IncomeSources` and `ExpenseCategories` provide shared option lists for old Blade controllers and Filament forms.
 - Legacy income and expense create, update, delete, and role boundary behavior has focused feature tests.

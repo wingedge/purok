@@ -37,6 +37,7 @@ Purok currently has a working Laravel MVC foundation with authenticated CRUD scr
 - Member search is implemented on the member index.
 - Dependents can be created and edited through member forms.
 - Member detail page loads dependents.
+- Legacy member index query logic is extracted to `App\Actions\Members\ListMembers`.
 - CSV member/dependent import exists.
 - CSV member/dependent import is extracted to `App\Actions\Imports\ImportMembers`.
 - CSV member/dependent import has focused feature tests.
@@ -44,6 +45,7 @@ Purok currently has a working Laravel MVC foundation with authenticated CRUD scr
 - CSV member/dependent export is extracted to `App\Actions\Exports\ExportMembers`.
 - CSV member/dependent export has focused feature tests.
 - Legacy member create and update persistence is extracted to `App\Actions\Members\CreateMember` and `App\Actions\Members\UpdateMember`.
+- Legacy member deletion is extracted to `App\Actions\Members\DeleteMember`.
 - Member deletion cascades to dependents through database constraints.
 - Legacy member create, update, show, delete, dependent replacement, and role boundary behavior has focused feature tests.
 - Filament `MemberResource` is implemented for back-office list/create/edit workflows.
@@ -85,6 +87,7 @@ Purok currently has a working Laravel MVC foundation with authenticated CRUD scr
 - Income records can be linked to rentals.
 - Income sources and expense categories are centralized in shared support classes.
 - Legacy income and expense create, update, and delete persistence is extracted to Actions.
+- Legacy income and expense index query logic is extracted to Actions.
 - Legacy income and expense create, update, delete, and role boundary behavior has focused feature tests.
 
 ### Inventory And Rentals
@@ -166,8 +169,9 @@ Purok currently has a working Laravel MVC foundation with authenticated CRUD scr
 - The first Action extraction exists for member/dependent import.
 - Rental workflow Actions exist for create, update, return, and delete.
 - Certificate log Actions exist for legacy create, update, delete, member search, and list filtering workflows.
-- Member create and update Actions exist for legacy member/dependent persistence.
+- Member create, update, delete, and list Actions exist for legacy member/dependent workflows.
 - Income and expense create, update, and delete Actions exist for legacy finance persistence.
+- Member, income, and expense list Actions exist for legacy index query logic.
 - Contribution rules are extracted to `ContributionService`.
 - Contribution record/create/delete workflows are partially Action-based.
 - `ContributionService` is implemented; other service extractions remain pending.
@@ -182,7 +186,8 @@ Purok currently has a working Laravel MVC foundation with authenticated CRUD scr
 
 - Initial role-based route access is implemented with gates and route middleware.
 - Filament panel access is restricted to admin, treasurer, and staff users.
-- Full policies are not implemented for members, finances, rentals, certificates, or reports.
+- Member, income, expense, inventory, rental, and certificate log model policies are implemented and preserve the current gate-based role rules.
+- Full policies are not implemented yet for reports, contributions, users, officers, or every remaining domain model.
 - Staff/treasurer/admin permissions are documented in `docs/features/authorization.md` and partially enforced in code.
 - Member-role users are blocked from Filament admin access.
 - Member portal permissions are implemented for the first profile/dependent self-service screen.

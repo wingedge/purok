@@ -1,9 +1,23 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Providers;
 
 use App\Enums\UserRole;
+use App\Models\Expense;
+use App\Models\Income;
+use App\Models\Inventory;
+use App\Models\Member;
+use App\Models\PurokCertificate;
+use App\Models\Rental;
 use App\Models\User;
+use App\Policies\ExpensePolicy;
+use App\Policies\IncomePolicy;
+use App\Policies\InventoryPolicy;
+use App\Policies\MemberPolicy;
+use App\Policies\PurokCertificatePolicy;
+use App\Policies\RentalPolicy;
 use Illuminate\Foundation\Support\Providers\AuthServiceProvider as ServiceProvider;
 use Illuminate\Support\Facades\Gate;
 
@@ -15,7 +29,12 @@ class AuthServiceProvider extends ServiceProvider
      * @var array<class-string, class-string>
      */
     protected $policies = [
-        //
+        Member::class => MemberPolicy::class,
+        Expense::class => ExpensePolicy::class,
+        Income::class => IncomePolicy::class,
+        Inventory::class => InventoryPolicy::class,
+        Rental::class => RentalPolicy::class,
+        PurokCertificate::class => PurokCertificatePolicy::class,
     ];
 
     /**

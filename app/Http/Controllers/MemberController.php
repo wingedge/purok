@@ -7,6 +7,8 @@ namespace App\Http\Controllers;
 use App\Actions\Exports\ExportMembers;
 use App\Actions\Imports\ImportMembers;
 use App\Actions\Members\CreateMember;
+use App\Actions\Members\DeleteMember;
+use App\Actions\Members\ListMembers;
 use App\Actions\Members\UpdateMember;
 use App\Models\Member;
 use Illuminate\Http\Request;
@@ -14,18 +16,11 @@ use Symfony\Component\HttpFoundation\StreamedResponse;
 
 class MemberController extends Controller
 {
-    public function index(Request $request)
+    public function index(Request $request, ListMembers $listMembers)
     {
         $search = $request->input('search');
 
-        $members = Member::query()
-            ->withCount('dependents') // Assuming you have a dependents relationship
-            ->when($search, function ($query, $search) {
-                return $query->where('name', 'like', "%{$search}%");
-            })
-            ->orderBy('name', 'asc')
-            ->paginate(15)
-            ->withQueryString(); // This keeps the search term in pagination links
+        $members = $listMembers->execute(is_string($search) ? $search : null);
 
         return view('members.index', compact('members'));
     }
@@ -93,9 +88,9 @@ class MemberController extends Controller
             ->with('success', 'Member updated successfully.');
     }
 
-    public function destroy(Member $member)
+    public function destroy(Member $member, DeleteMember $deleteMember)
     {
-        $member->delete();
+        $deleteMember->execute($member);
 
         return redirect()
             ->route('members.index')

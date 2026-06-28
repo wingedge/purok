@@ -6,6 +6,7 @@ namespace App\Http\Controllers;
 
 use App\Actions\Expenses\CreateExpense;
 use App\Actions\Expenses\DeleteExpense;
+use App\Actions\Expenses\ListExpenses;
 use App\Actions\Expenses\UpdateExpense;
 use App\Actions\Exports\ExportExpenses;
 use App\Actions\Imports\ImportExpenses;
@@ -16,11 +17,9 @@ use Symfony\Component\HttpFoundation\StreamedResponse;
 
 class ExpenseController extends Controller
 {
-    public function index()
+    public function index(ListExpenses $listExpenses)
     {
-        $expenses = Expense::with('creator')
-            ->orderBy('date', 'desc')
-            ->paginate(10);
+        $expenses = $listExpenses->execute();
 
         return view('expenses.index', compact('expenses'));
     }

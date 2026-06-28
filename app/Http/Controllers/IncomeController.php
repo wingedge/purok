@@ -8,6 +8,7 @@ use App\Actions\Exports\ExportIncomes;
 use App\Actions\Imports\ImportIncomes;
 use App\Actions\Incomes\CreateIncome;
 use App\Actions\Incomes\DeleteIncome;
+use App\Actions\Incomes\ListIncomes;
 use App\Actions\Incomes\UpdateIncome;
 use App\Models\Income;
 use App\Support\Finance\IncomeSources;
@@ -16,10 +17,9 @@ use Symfony\Component\HttpFoundation\StreamedResponse;
 
 class IncomeController extends Controller
 {
-    public function index()
+    public function index(ListIncomes $listIncomes)
     {
-        $incomes = Income::orderBy('date', 'desc')
-            ->paginate(10);
+        $incomes = $listIncomes->execute();
 
         return view('incomes.index', compact('incomes'));
     }
