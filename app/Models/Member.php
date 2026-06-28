@@ -40,6 +40,11 @@ class Member extends Model
         return $this->hasMany(Contribution::class);
     }
 
+    public function officerRecords()
+    {
+        return $this->hasMany(Officer::class);
+    }
+
     public function user()
     {
         return $this->hasOne(User::class);

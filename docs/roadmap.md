@@ -47,6 +47,9 @@ Purok currently has a working Laravel MVC foundation with authenticated CRUD scr
 - Filament `MemberResource` is implemented for back-office list/create/edit workflows.
 - Filament `DependentsRelationManager` is implemented for dependent management from the member edit screen.
 - Filament member resource access has focused feature tests.
+- Officer records are implemented as member-linked community positions.
+- Filament `OfficerResource` is implemented for officer list/create/edit workflows.
+- Filament officer resource access has focused feature tests.
 - Filament `ExpenseResource` is implemented for back-office finance CRUD.
 - Filament `IncomeResource` is implemented for back-office finance CRUD.
 - Filament finance resource access has focused feature tests.

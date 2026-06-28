@@ -17,6 +17,7 @@ Goal is to revamp and improve the flow, use filament for all of the backend and 
 
 - Filament 4 is installed and the admin panel is available at `/admin`.
 - Back-office member and dependent management has started moving into Filament through `MemberResource` and `DependentsRelationManager`.
+- Back-office officer management has moved into Filament through `OfficerResource`.
 - Back-office finance CRUD has started moving into Filament through `ExpenseResource` and `IncomeResource`.
 - Back-office logistics CRUD has started moving into Filament through `InventoryResource` and `RentalResource`.
 - Back-office certificate log CRUD has moved into Filament through `PurokCertificateResource`.
@@ -46,6 +47,7 @@ Goal is to revamp and improve the flow, use filament for all of the backend and 
 Using Filament:
 
 - Members and dependents
+- Officers
 - Expense CRUD
 - Income CRUD
 - Inventory CRUD

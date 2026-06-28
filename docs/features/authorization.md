@@ -26,6 +26,7 @@ Allowed:
 - Manage users and roles.
 - View dashboard and all reports.
 - Manage members and dependents.
+- Manage purok officers.
 - Import and export members and dependents.
 - Manage contributions.
 - Manage incomes and expenses.
@@ -67,6 +68,7 @@ Allowed:
 
 - View dashboard.
 - Manage members and dependents.
+- Manage purok officers.
 - Import and export members and dependents.
 - Manage purok certificate logs.
 - Manage inventory and rentals.
@@ -106,6 +108,7 @@ Not allowed:
 | Members/dependents create/update | Yes | No | Yes | Own record only |
 | Members/dependents delete | Yes | No | No | No |
 | Members/dependents import/export | Yes | No | Yes | No |
+| Officers | Yes | No | Yes | No |
 | Contributions view | Yes | Yes | Yes | Own status later |
 | Contributions manage | Yes | Yes | No | No |
 | Incomes | Yes | Yes | No | No |

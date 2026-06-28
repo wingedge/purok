@@ -42,6 +42,7 @@ Feature contracts live under `docs/features/`. Current contracts:
 - `docs/features/authorization.md`
 - `docs/features/import-export.md`
 - `docs/features/member-portal.md`
+- `docs/features/officers.md`
 
 ## Authentication And Users
 
@@ -86,6 +87,7 @@ Filament routes:
 - `/admin/reports` uses `App\Filament\Pages\Reports`.
 - `/admin/members` uses `App\Filament\Resources\Members\MemberResource`.
 - `/admin/members/{record}/edit` allows member edits and dependent management through a relation manager.
+- `/admin/officers` uses `App\Filament\Resources\Officers\OfficerResource`.
 - `/admin/expenses` uses `App\Filament\Resources\Expenses\ExpenseResource`.
 - `/admin/incomes` uses `App\Filament\Resources\Incomes\IncomeResource`.
 - `/admin/inventories` uses `App\Filament\Resources\Inventories\InventoryResource`.
@@ -143,6 +145,7 @@ Flow:
 - `ImportMembers` validates each row, creates members, and optionally creates dependents from pipe-delimited `dependent_names` and `dependent_relationships` fields.
 - `MemberResource` provides the first Filament back-office resource for listing, creating, and editing members.
 - `DependentsRelationManager` manages dependents from the Filament member edit screen.
+- `OfficerResource` manages member-linked purok officer positions separately from login roles.
 - `ExpenseResource` provides Filament back-office CRUD for expense records.
 - `IncomeResource` provides Filament back-office CRUD for income records.
 - `InventoryResource` provides Filament back-office CRUD for inventory records.
@@ -362,6 +365,7 @@ Core tables:
 - `users.member_id`: optional link to a member record for future member portal accounts.
 - `members`: community members with contact details, birthday, and indigent flag.
 - `dependents`: dependents attached to members.
+- `officers`: purok officer positions linked to members.
 - `contributions`: member contributions with `week_start`, `amount`, and optional remarks.
 - `expenses`: dated expense records with category, description, amount, and creator.
 - `incomes`: dated income records with source, description, amount, and optional rental link.
@@ -401,6 +405,7 @@ Current tests include Breeze-generated authentication/profile coverage plus focu
 - Rental create/update/return/delete workflows
 - User-to-member account linking
 - Filament member resource access
+- Filament officer resource access
 - Filament contribution grid access and toggle behavior
 - Filament dashboard summary access and totals
 - Filament filterable dashboard summary access and totals
