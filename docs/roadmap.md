@@ -4,7 +4,7 @@ This roadmap separates what is already working in the current app from what stil
 
 ## Current Status Summary
 
-Purok currently has a working Laravel MVC foundation with authenticated CRUD screens for members, contributions, finances, inventory, rentals, certificate logs, dashboard summaries, and reports. Filament 4 has been introduced for the back office. Filament now covers members, dependents, contribution record CRUD, the contribution grid, expense CRUD, income CRUD, inventory CRUD, rental CRUD, certificate log CRUD, dashboard summary stats, the filterable dashboard summary page, the cash-flow report page, and the contribution report page. The first member-facing portal profile screen is implemented.
+Purok currently has a working Laravel MVC foundation with authenticated CRUD screens for members, contributions, finances, inventory, rentals, certificate logs, dashboard summaries, and reports. Filament 4 has been introduced for the back office. Filament now covers members, dependents, contribution record CRUD, the contribution grid, expense CRUD, income CRUD, inventory CRUD, rental CRUD, certificate log CRUD, dashboard summary stats, the filterable dashboard summary page, reports landing, the cash-flow report page, and the contribution report page. The first member-facing portal profile screen is implemented.
 
 ## Done
 
@@ -116,6 +116,7 @@ Purok currently has a working Laravel MVC foundation with authenticated CRUD scr
 - Filterable dashboard summary is available in Filament.
 - Filament dashboard summary access has focused feature tests.
 - Reports landing page exists.
+- Reports landing page is available in Filament.
 - Cash flow report exists.
 - Cash flow report totals are extracted to `BuildCashFlowReport`.
 - Cash flow report is available in Filament.
@@ -134,7 +135,7 @@ Purok currently has a working Laravel MVC foundation with authenticated CRUD scr
 - Livewire 4 is optional and should only be introduced when a backend or member portal workflow clearly benefits from it.
 - Filament 4 is installed and used for the admin panel.
 - Filament Resources and pages are implemented for members, dependents, contribution records, the contribution grid, expenses, incomes, inventory, rentals, and certificate logs.
-- Remaining back-office Filament work for dashboard and reports is the reports landing page.
+- Back-office dashboard and report pages are now available in Filament.
 - Member self-service screens are currently Blade/controller-based; moving them to Livewire is optional, not required.
 
 ### Architecture Refactor
@@ -239,6 +240,7 @@ Current gaps:
 - Filament finance resource access tests exist.
 - Filament dashboard summary tests exist.
 - Filament filterable dashboard summary tests exist.
+- Filament reports landing tests exist.
 - Filament cash-flow report tests exist.
 - Member/dependent import tests exist.
 - Member/dependent export tests exist.

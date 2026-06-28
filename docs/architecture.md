@@ -83,6 +83,7 @@ Filament routes:
 - `/admin` serves the Filament back-office panel.
 - `/admin` includes `App\Filament\Widgets\DashboardStatsOverview` for current-year summary stats.
 - `/admin/dashboard-summary` uses `App\Filament\Pages\DashboardSummary`.
+- `/admin/reports` uses `App\Filament\Pages\Reports`.
 - `/admin/members` uses `App\Filament\Resources\Members\MemberResource`.
 - `/admin/members/{record}/edit` allows member edits and dependent management through a relation manager.
 - `/admin/expenses` uses `App\Filament\Resources\Expenses\ExpenseResource`.
@@ -309,6 +310,7 @@ Flow:
 - `DashboardController` delegates dashboard totals to `BuildDashboardSummary`.
 - `DashboardStatsOverview` reuses `BuildDashboardSummary` for the Filament dashboard's current-year stats.
 - `DashboardSummary` reuses `BuildDashboardSummary` for a filterable Filament dashboard summary page.
+- `Reports` provides a Filament reports landing page and shows only report links allowed for the current user.
 - Cash flow report totals incomes, contributions, expenses, and net cash flow.
 - `Reports\CashFlowController@index` delegates cash-flow totals to `BuildCashFlowReport`.
 - `CashFlowReport` reuses `BuildCashFlowReport` for the Filament cash-flow report page.
@@ -403,6 +405,7 @@ Current tests include Breeze-generated authentication/profile coverage plus focu
 - Filament contribution grid access and toggle behavior
 - Filament dashboard summary access and totals
 - Filament filterable dashboard summary access and totals
+- Filament reports landing access
 - Filament cash-flow report access and totals
 - Contribution report totals and Filament access
 

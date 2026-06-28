@@ -225,6 +225,42 @@
     font-size: 12px;
 }
 
+.purok-link-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 16px;
+}
+
+.purok-link-card {
+    display: block;
+    min-height: 132px;
+    border: 1px solid rgb(229 231 235);
+    border-radius: 8px;
+    padding: 20px;
+    background: white;
+    text-decoration: none;
+    transition: background-color 150ms ease, border-color 150ms ease, transform 150ms ease;
+}
+
+.purok-link-card:hover {
+    border-color: rgb(217 119 6);
+    background: rgb(255 251 235);
+    transform: translateY(-1px);
+}
+
+.purok-link-title {
+    color: rgb(17 24 39);
+    font-size: 16px;
+    font-weight: 700;
+}
+
+.purok-link-description {
+    margin-top: 8px;
+    color: rgb(107 114 128);
+    font-size: 13px;
+    line-height: 1.5;
+}
+
 @media (prefers-color-scheme: dark) {
     .purok-fi-label {
         color: rgb(229 231 235);
@@ -270,6 +306,23 @@
     .purok-stat-note {
         color: rgb(156 163 175);
     }
+
+    .purok-link-card {
+        border-color: rgb(31 41 55);
+        background: rgb(3 7 18);
+    }
+
+    .purok-link-card:hover {
+        background: rgb(17 24 39);
+    }
+
+    .purok-link-title {
+        color: white;
+    }
+
+    .purok-link-description {
+        color: rgb(156 163 175);
+    }
 }
 
 @media (max-width: 900px) {
@@ -285,6 +338,10 @@
 
     .purok-stat-grid {
         grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .purok-link-grid {
+        grid-template-columns: 1fr;
     }
 }
 
