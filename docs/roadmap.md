@@ -43,6 +43,7 @@ Purok currently has a working Laravel MVC foundation with authenticated CRUD scr
 - CSV member/dependent export exists.
 - CSV member/dependent export is extracted to `App\Actions\Exports\ExportMembers`.
 - CSV member/dependent export has focused feature tests.
+- Legacy member create and update persistence is extracted to `App\Actions\Members\CreateMember` and `App\Actions\Members\UpdateMember`.
 - Member deletion cascades to dependents through database constraints.
 - Legacy member create, update, show, delete, dependent replacement, and role boundary behavior has focused feature tests.
 - Filament `MemberResource` is implemented for back-office list/create/edit workflows.
@@ -83,6 +84,7 @@ Purok currently has a working Laravel MVC foundation with authenticated CRUD scr
 - Expense records store the creating user.
 - Income records can be linked to rentals.
 - Income sources and expense categories are centralized in shared support classes.
+- Legacy income and expense create, update, and delete persistence is extracted to Actions.
 - Legacy income and expense create, update, delete, and role boundary behavior has focused feature tests.
 
 ### Inventory And Rentals
@@ -164,6 +166,8 @@ Purok currently has a working Laravel MVC foundation with authenticated CRUD scr
 - The first Action extraction exists for member/dependent import.
 - Rental workflow Actions exist for create, update, return, and delete.
 - Certificate log Actions exist for legacy create, update, delete, member search, and list filtering workflows.
+- Member create and update Actions exist for legacy member/dependent persistence.
+- Income and expense create, update, and delete Actions exist for legacy finance persistence.
 - Contribution rules are extracted to `ContributionService`.
 - Contribution record/create/delete workflows are partially Action-based.
 - `ContributionService` is implemented; other service extractions remain pending.

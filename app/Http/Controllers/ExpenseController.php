@@ -1,7 +1,12 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Http\Controllers;
 
+use App\Actions\Expenses\CreateExpense;
+use App\Actions\Expenses\DeleteExpense;
+use App\Actions\Expenses\UpdateExpense;
 use App\Actions\Exports\ExportExpenses;
 use App\Actions\Imports\ImportExpenses;
 use App\Models\Expense;
@@ -35,22 +40,16 @@ class ExpenseController extends Controller
         return ExpenseCategories::values();
     }
 
-    public function store(Request $request)
+    public function store(Request $request, CreateExpense $createExpense)
     {
-        $request->validate([
+        $validated = $request->validate([
             'date' => 'required|date',
             'category' => 'required|string|max:255',
             'description' => 'nullable|string',
             'amount' => 'required|numeric|min:0',
         ]);
 
-        Expense::create([
-            'date' => $request->date,
-            'category' => $request->category,
-            'description' => $request->description,
-            'amount' => $request->amount,
-            'created_by' => auth()->id(),
-        ]);
+        $createExpense->execute($validated, $request->user());
 
         return redirect()->route('expenses.index')
             ->with('success', 'Expense added successfully.');
@@ -65,24 +64,24 @@ class ExpenseController extends Controller
         //return view('expenses.update', compact('expense'));
     }
 
-    public function update(Request $request, Expense $expense)
+    public function update(Request $request, Expense $expense, UpdateExpense $updateExpense)
     {
-        $request->validate([
+        $validated = $request->validate([
             'date' => 'required|date',
             'category' => 'required|string|max:255',
             'description' => 'nullable|string',
             'amount' => 'required|numeric|min:0',
         ]);
 
-        $expense->update($request->only('date', 'category', 'description', 'amount'));
+        $updateExpense->execute($expense, $validated);
 
         return redirect()->route('expenses.index')
             ->with('success', 'Expense updated successfully.');
     }
 
-    public function destroy(Expense $expense)
+    public function destroy(Expense $expense, DeleteExpense $deleteExpense)
     {
-        $expense->delete();
+        $deleteExpense->execute($expense);
 
         return redirect()->route('expenses.index')
             ->with('success', 'Expense deleted successfully.');

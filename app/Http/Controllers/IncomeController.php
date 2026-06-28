@@ -1,9 +1,14 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Http\Controllers;
 
 use App\Actions\Exports\ExportIncomes;
 use App\Actions\Imports\ImportIncomes;
+use App\Actions\Incomes\CreateIncome;
+use App\Actions\Incomes\DeleteIncome;
+use App\Actions\Incomes\UpdateIncome;
 use App\Models\Income;
 use App\Support\Finance\IncomeSources;
 use Illuminate\Http\Request;
@@ -34,21 +39,16 @@ class IncomeController extends Controller
         ]);
     }
 
-    public function store(Request $request)
+    public function store(Request $request, CreateIncome $createIncome)
     {
-        $request->validate([
+        $validated = $request->validate([
             'date' => 'required|date',
             'source' => 'required|string|max:255',
             'description' => 'nullable|string',
             'amount' => 'required|numeric|min:0',
         ]);
 
-        Income::create([
-            'date' => $request->date,
-            'source' => $request->source,
-            'description' => $request->description,
-            'amount' => $request->amount,
-        ]);
+        $createIncome->execute($validated);
 
         return redirect()->route('incomes.index')
             ->with('success', 'Income added successfully.');
@@ -63,24 +63,24 @@ class IncomeController extends Controller
         ]);
     }
 
-    public function update(Request $request, Income $Income)
+    public function update(Request $request, Income $Income, UpdateIncome $updateIncome)
     {
-        $request->validate([
+        $validated = $request->validate([
             'date' => 'required|date',
             'source' => 'required|string|max:255',
             'description' => 'nullable|string',
             'amount' => 'required|numeric|min:0',
         ]);
 
-        $Income->update($request->only('date', 'source', 'description', 'amount'));
+        $updateIncome->execute($Income, $validated);
 
         return redirect()->route('incomes.index')
             ->with('success', 'Income updated successfully.');
     }
 
-    public function destroy(Income $Income)
+    public function destroy(Income $Income, DeleteIncome $deleteIncome)
     {
-        $Income->delete();
+        $deleteIncome->execute($Income);
 
         return redirect()->route('incomes.index')
             ->with('success', 'Income deleted successfully.');

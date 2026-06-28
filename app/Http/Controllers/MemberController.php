@@ -1,9 +1,13 @@
-<?php 
+<?php
+
+declare(strict_types=1);
 
 namespace App\Http\Controllers;
 
 use App\Actions\Exports\ExportMembers;
 use App\Actions\Imports\ImportMembers;
+use App\Actions\Members\CreateMember;
+use App\Actions\Members\UpdateMember;
 use App\Models\Member;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\StreamedResponse;
@@ -31,7 +35,7 @@ class MemberController extends Controller
         return view('members.create');
     }
 
-    public function store(Request $request)
+    public function store(Request $request, CreateMember $createMember)
     {
         $validated = $request->validate([
             'name'      => 'required|string|max:255',
@@ -43,22 +47,11 @@ class MemberController extends Controller
             'dependents.*.relationship' => 'nullable|string|max:255',
         ]);
 
-        $member = Member::create([
-            'name'     => $validated['name'],
-            'phone'    => $validated['phone'] ?? null,
-            'email'    => $validated['email'] ?? null,
+        $createMember->execute([
+            ...$validated,
             'indigent' => $request->boolean('indigent'),
-            'birthday' => $validated['birthday'] ?? null,
+            'dependents' => $request->input('dependents', []),
         ]);
-
-        foreach ($request->dependents ?? [] as $dep) {
-            if (!empty($dep['name'])) {
-                $member->dependents()->create([
-                    'name' => $dep['name'],
-                    'relationship' => $dep['relationship'] ?? null,
-                ]);
-            }
-        }
 
         return redirect()
             ->route('members.index')
@@ -77,7 +70,7 @@ class MemberController extends Controller
         return view('members.edit', compact('member'));
     }
 
-    public function update(Request $request, Member $member)
+    public function update(Request $request, Member $member, UpdateMember $updateMember)
     {
         $validated = $request->validate([
             'name'      => 'required|string|max:255',
@@ -89,24 +82,11 @@ class MemberController extends Controller
             'dependents.*.relationship' => 'nullable|string|max:255',
         ]);
 
-        $member->update([
-            'name'     => $validated['name'],
-            'phone'    => $validated['phone'] ?? null,
-            'email'    => $validated['email'] ?? null,
+        $updateMember->execute($member, [
+            ...$validated,
             'indigent' => $request->boolean('indigent'),
-            'birthday' => $validated['birthday'] ?? null,
+            'dependents' => $request->input('dependents', []),
         ]);
-
-        // Reset dependents
-        $member->dependents()->delete();
-        foreach ($request->dependents ?? [] as $dep) {
-            if (!empty($dep['name'])) {
-                $member->dependents()->create([
-                    'name' => $dep['name'],
-                    'relationship' => $dep['relationship'] ?? null,
-                ]);
-            }
-        }
 
         return redirect()
             ->route('members.index')

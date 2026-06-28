@@ -138,8 +138,8 @@ Flow:
 
 - `MemberController@index` searches members by name, counts dependents, sorts by name, and paginates.
 - `create` and `edit` views collect member fields and dependent rows.
-- `store` creates a member and any provided dependents.
-- `update` updates member data, deletes all existing dependents, then recreates dependents from the submitted form.
+- `store` validates input and delegates member/dependent creation to `App\Actions\Members\CreateMember`.
+- `update` validates input and delegates member updates plus dependent replacement to `App\Actions\Members\UpdateMember`.
 - `destroy` deletes the member.
 - Legacy member create, update, show, delete, dependent replacement, and role boundary behavior has focused feature tests.
 - `import` accepts a CSV file and delegates member/dependent parsing and persistence to `App\Actions\Imports\ImportMembers`.
@@ -154,7 +154,7 @@ Flow:
 - `PurokCertificateResource` provides Filament back-office CRUD for certificate logs.
 - `ContributionResource` provides Filament back-office CRUD for individual contribution records.
 - `MemberPortalController` allows member-role users linked through `users.member_id` to update their own phone, email, birthday, and dependents.
-- `UpdateMemberProfile` and `SyncMemberDependents` keep member self-service persistence outside the controller.
+- `CreateMember`, `UpdateMember`, `UpdateMemberProfile`, and `SyncMemberDependents` keep member persistence workflows outside controllers.
 - `CreateMemberPortalAccount` creates or updates a member-role user account for the selected member from the Filament member edit page.
 - `BuildMemberContributionStatus` builds the member portal's own-record contribution summary and filtered full history using `ContributionService`.
 
@@ -219,6 +219,7 @@ Flow:
 - `ExpenseController` provides CRUD screens for expense records.
 - Expense categories are centralized in `ExpenseCategories`.
 - Expenses store the authenticated user's ID in `created_by`.
+- Legacy income and expense create, update, and delete persistence is extracted to `App\Actions\Incomes` and `App\Actions\Expenses`.
 - `IncomeResource` and `ExpenseResource` provide Filament CRUD screens for finance records.
 - `IncomeSources` and `ExpenseCategories` provide shared option lists for old Blade controllers and Filament forms.
 - Legacy income and expense create, update, delete, and role boundary behavior has focused feature tests.
