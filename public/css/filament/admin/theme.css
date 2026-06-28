@@ -261,6 +261,307 @@
     line-height: 1.5;
 }
 
+.purok-alert {
+    border: 1px solid rgb(187 247 208);
+    border-radius: 8px;
+    padding: 14px 16px;
+    background: rgb(240 253 244);
+    color: rgb(22 101 52);
+    font-size: 14px;
+    font-weight: 600;
+}
+
+.purok-exchange-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 16px;
+}
+
+.purok-exchange-card {
+    display: grid;
+    gap: 18px;
+    border: 1px solid rgb(229 231 235);
+    border-radius: 8px;
+    padding: 20px;
+    background: white;
+}
+
+.purok-exchange-form {
+    display: grid;
+    gap: 12px;
+}
+
+.purok-file-input {
+    width: 100%;
+    min-height: 42px;
+    border: 1px solid rgb(209 213 219);
+    border-radius: 8px;
+    padding: 8px 10px;
+    background: white;
+    color: rgb(17 24 39);
+    font-size: 14px;
+}
+
+.purok-error {
+    color: rgb(220 38 38);
+    font-size: 12px;
+    font-weight: 600;
+}
+
+.purok-report-header {
+    display: flex;
+    justify-content: space-between;
+    gap: 16px;
+    align-items: flex-start;
+    border: 1px solid rgb(229 231 235);
+    border-radius: 8px;
+    padding: 20px;
+    background: white;
+}
+
+.purok-report-title {
+    color: rgb(17 24 39);
+    font-size: 22px;
+    font-weight: 700;
+    line-height: 1.25;
+}
+
+.purok-report-period {
+    margin-top: 6px;
+    color: rgb(107 114 128);
+    font-size: 14px;
+}
+
+.purok-report-total {
+    min-width: 220px;
+    border: 1px solid rgb(229 231 235);
+    border-radius: 8px;
+    padding: 14px 16px;
+    background: rgb(255 251 235);
+    text-align: right;
+}
+
+.purok-report-total span {
+    display: block;
+    color: rgb(146 64 14);
+    font-size: 12px;
+    font-weight: 700;
+    text-transform: uppercase;
+}
+
+.purok-report-total strong {
+    display: block;
+    margin-top: 6px;
+    color: rgb(17 24 39);
+    font-size: 20px;
+}
+
+.purok-report-section {
+    overflow: hidden;
+}
+
+.purok-report-scroll {
+    overflow-x: auto;
+    overflow-y: hidden;
+}
+
+.purok-report-table {
+    width: 100%;
+    min-width: 680px;
+    border-collapse: separate;
+    border-spacing: 0;
+    color: rgb(55 65 81);
+    font-size: 14px;
+}
+
+.purok-report-table th,
+.purok-report-table td {
+    border-bottom: 1px solid rgb(229 231 235);
+    padding: 16px 18px;
+}
+
+.purok-report-table td:last-child {
+    width: 220px;
+}
+
+.purok-report-band th {
+    background: rgb(249 250 251);
+    color: rgb(75 85 99);
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: .03em;
+    text-align: left;
+    text-transform: uppercase;
+}
+
+.purok-report-amount {
+    color: rgb(17 24 39);
+    font-weight: 700;
+    text-align: right;
+    white-space: nowrap;
+}
+
+.purok-report-danger {
+    color: rgb(220 38 38);
+}
+
+.purok-report-total-row td {
+    border-bottom: 0;
+    background: rgb(17 24 39);
+    color: white;
+    font-size: 15px;
+    font-weight: 700;
+}
+
+.purok-signature-grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 40px;
+    padding: 22px 10px 0;
+}
+
+.purok-signature-line {
+    padding-top: 34px;
+    border-top: 1px solid rgb(75 85 99);
+}
+
+.purok-signature-line span {
+    display: block;
+    color: rgb(107 114 128);
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+}
+
+.purok-signature-line strong {
+    display: block;
+    margin-top: 4px;
+    color: rgb(17 24 39);
+    font-size: 13px;
+}
+
+.purok-contribution-report-table {
+    width: 100%;
+    min-width: max-content;
+    border-collapse: separate;
+    border-spacing: 0;
+    font-size: 14px;
+}
+
+.purok-contribution-report-table th,
+.purok-contribution-report-table td {
+    border-bottom: 1px solid rgb(229 231 235);
+    vertical-align: middle;
+    white-space: nowrap;
+}
+
+.purok-report-member-heading,
+.purok-report-member-cell {
+    position: sticky;
+    left: 0;
+    z-index: 10;
+    min-width: 260px;
+    max-width: 320px;
+    border-right: 1px solid rgb(229 231 235);
+    background: white;
+    text-align: left;
+}
+
+.purok-report-member-heading {
+    top: 0;
+    z-index: 30;
+    padding: 16px 18px;
+    background: rgb(249 250 251);
+    color: rgb(75 85 99);
+    font-size: 12px;
+    font-weight: 700;
+    text-transform: uppercase;
+}
+
+.purok-report-member-cell {
+    overflow: hidden;
+    padding: 15px 18px;
+    color: rgb(17 24 39);
+    font-weight: 700;
+    text-overflow: ellipsis;
+}
+
+.purok-report-week-heading {
+    position: sticky;
+    top: 0;
+    z-index: 20;
+    min-width: 112px;
+    padding: 14px 12px;
+    background: rgb(249 250 251);
+    color: rgb(75 85 99);
+    font-size: 12px;
+    font-weight: 700;
+    text-align: center;
+}
+
+.purok-report-week-cell {
+    min-width: 112px;
+    padding: 13px 12px;
+    text-align: center;
+}
+
+.purok-report-total-heading,
+.purok-report-total-cell {
+    position: sticky;
+    right: 0;
+    z-index: 10;
+    min-width: 150px;
+    border-left: 1px solid rgb(229 231 235);
+    background: rgb(249 250 251);
+    text-align: right;
+}
+
+.purok-report-total-heading {
+    top: 0;
+    z-index: 30;
+    padding: 16px 18px;
+    color: rgb(75 85 99);
+    font-size: 12px;
+    font-weight: 700;
+    text-transform: uppercase;
+}
+
+.purok-report-total-cell {
+    padding: 15px 18px;
+    color: rgb(17 24 39);
+    font-weight: 700;
+}
+
+.purok-contribution-report-table tbody tr:hover .purok-report-member-cell,
+.purok-contribution-report-table tbody tr:hover .purok-report-week-cell,
+.purok-contribution-report-table tbody tr:hover .purok-report-total-cell {
+    background: rgb(255 251 235);
+}
+
+.purok-paid-badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 58px;
+    min-height: 28px;
+    border-radius: 999px;
+    background: rgb(220 252 231);
+    color: rgb(22 101 52);
+    font-size: 12px;
+    font-weight: 700;
+}
+
+.purok-unpaid-mark {
+    color: rgb(156 163 175);
+    font-weight: 700;
+}
+
+.purok-report-footer {
+    color: rgb(107 114 128);
+    font-size: 12px;
+    text-align: right;
+}
+
 @media (prefers-color-scheme: dark) {
     .purok-fi-label {
         color: rgb(229 231 235);
@@ -323,6 +624,75 @@
     .purok-link-description {
         color: rgb(156 163 175);
     }
+
+    .purok-alert {
+        border-color: rgb(22 101 52);
+        background: rgb(5 46 22);
+        color: rgb(187 247 208);
+    }
+
+    .purok-exchange-card {
+        border-color: rgb(31 41 55);
+        background: rgb(3 7 18);
+    }
+
+    .purok-file-input {
+        border-color: rgb(55 65 81);
+        background: rgb(17 24 39);
+        color: white;
+    }
+
+    .purok-report-header,
+    .purok-report-table,
+    .purok-report-member-heading,
+    .purok-report-member-cell,
+    .purok-report-week-heading,
+    .purok-report-total-heading,
+    .purok-report-total-cell {
+        border-color: rgb(31 41 55);
+        background: rgb(3 7 18);
+    }
+
+    .purok-report-title,
+    .purok-report-total strong,
+    .purok-report-amount,
+    .purok-signature-line strong,
+    .purok-report-member-cell,
+    .purok-report-total-cell {
+        color: white;
+    }
+
+    .purok-report-period,
+    .purok-signature-line span,
+    .purok-report-footer {
+        color: rgb(156 163 175);
+    }
+
+    .purok-report-total {
+        border-color: rgb(55 65 81);
+        background: rgb(17 24 39);
+    }
+
+    .purok-report-band th,
+    .purok-report-week-heading,
+    .purok-report-member-heading,
+    .purok-report-total-heading {
+        background: rgb(17 24 39);
+        color: rgb(209 213 219);
+    }
+
+    .purok-contribution-report-table th,
+    .purok-contribution-report-table td,
+    .purok-report-table th,
+    .purok-report-table td {
+        border-color: rgb(31 41 55);
+    }
+
+    .purok-contribution-report-table tbody tr:hover .purok-report-member-cell,
+    .purok-contribution-report-table tbody tr:hover .purok-report-week-cell,
+    .purok-contribution-report-table tbody tr:hover .purok-report-total-cell {
+        background: rgb(17 24 39);
+    }
 }
 
 @media (max-width: 900px) {
@@ -343,6 +713,25 @@
     .purok-link-grid {
         grid-template-columns: 1fr;
     }
+
+    .purok-exchange-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .purok-report-header {
+        display: grid;
+    }
+
+    .purok-report-total {
+        width: 100%;
+        min-width: 0;
+        text-align: left;
+    }
+
+    .purok-signature-grid {
+        grid-template-columns: 1fr;
+        gap: 24px;
+    }
 }
 
 @media (max-width: 640px) {
@@ -354,5 +743,96 @@
 
     .purok-stat-grid {
         grid-template-columns: 1fr;
+    }
+
+    .purok-report-title {
+        font-size: 19px;
+    }
+
+    .purok-report-member-heading,
+    .purok-report-member-cell {
+        min-width: 220px;
+    }
+}
+
+@media print {
+    @page {
+        margin: .6cm;
+    }
+
+    body {
+        background: white !important;
+    }
+
+    body * {
+        visibility: hidden !important;
+    }
+
+    .purok-print-area,
+    .purok-print-area * {
+        visibility: visible !important;
+    }
+
+    .purok-print-area {
+        position: absolute !important;
+        top: 0 !important;
+        left: 0 !important;
+        display: block !important;
+        width: 100% !important;
+        padding: 0 !important;
+    }
+
+    .purok-print-area .fi-section,
+    .purok-print-area .fi-section-content-ctn,
+    .purok-print-area .fi-section-content {
+        display: block !important;
+        max-width: none !important;
+        padding: 0 !important;
+        box-shadow: none !important;
+    }
+
+    .purok-report-header,
+    .purok-stat-card,
+    .purok-report-section {
+        border-color: rgb(209 213 219) !important;
+        background: white !important;
+        color: black !important;
+        break-inside: avoid;
+    }
+
+    .purok-report-scroll {
+        overflow: visible !important;
+    }
+
+    .purok-report-table,
+    .purok-contribution-report-table {
+        min-width: 100% !important;
+        font-size: 10px;
+    }
+
+    .purok-report-member-heading,
+    .purok-report-member-cell,
+    .purok-report-week-heading,
+    .purok-report-total-heading,
+    .purok-report-total-cell {
+        position: static;
+        background: white !important;
+        color: black !important;
+    }
+
+    .purok-report-week-heading,
+    .purok-report-week-cell {
+        min-width: 0;
+        padding: 6px 4px;
+    }
+
+    .purok-paid-badge {
+        min-width: 0;
+        background: transparent !important;
+        color: black !important;
+    }
+
+    .purok-signature-grid {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
     }
 }

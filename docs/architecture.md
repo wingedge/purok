@@ -93,6 +93,7 @@ Filament routes:
 - `/admin/purok-certificates` uses `App\Filament\Resources\PurokCertificates\PurokCertificateResource`.
 - `/admin/contributions` uses `App\Filament\Resources\Contributions\ContributionResource`.
 - `/admin/contribution-grid` uses `App\Filament\Pages\ContributionGrid`.
+- `/admin/data-exchange` uses `App\Filament\Pages\DataExchange`.
 - `/admin/reports/cash-flow` uses `App\Filament\Pages\CashFlowReport`.
 - `/admin/reports/contributions` uses `App\Filament\Pages\ContributionReport`.
 
@@ -223,7 +224,7 @@ Flow:
 Current concerns:
 
 - Source and category values should eventually move to enums, configuration, lookup tables, or another explicit domain structure.
-- Finance controllers still serve old Blade CRUD and import/export routes while the Filament migration continues.
+- Finance controllers still serve old Blade CRUD and import/export routes for compatibility while Filament parity is verified.
 - Income and expense source/category options are duplicated between the old controllers and Filament form classes.
 
 ### Inventory And Rentals
@@ -344,6 +345,7 @@ Current state:
 - Income CSV export exists in `App\Actions\Exports\ExportIncomes`.
 - Rental CSV import exists in `App\Actions\Imports\ImportRentals`.
 - Rental CSV export exists in `App\Actions\Exports\ExportRentals`.
+- `DataExchange` provides the Filament CSV import/export page and delegates to the same Actions.
 
 Recommended architecture:
 
@@ -408,6 +410,7 @@ Current tests include Breeze-generated authentication/profile coverage plus focu
 - Filament reports landing access
 - Filament cash-flow report access and totals
 - Contribution report totals and Filament access
+- Filament data exchange access, import, and export behavior
 
 There are no dedicated tests yet for:
 
@@ -429,14 +432,6 @@ The biggest gap is that the app's business workflows currently live in controlle
 
 Recommended extraction candidates:
 
-- `ImportExpenses`
-- `ExportExpenses`
-- `ImportIncomes`
-- `ExportIncomes`
-- `ImportRentals`
-- `ExportRentals`
 - `DeleteContribution`
-- `BuildDashboardSummary`
-- `BuildCashFlowReport`
 
 These should be introduced incrementally, with focused tests around each moved workflow.

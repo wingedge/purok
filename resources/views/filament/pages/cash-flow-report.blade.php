@@ -1,5 +1,5 @@
 <x-filament-panels::page>
-    <form method="GET" class="fi-section mb-6">
+    <form method="GET" class="fi-section print:hidden">
         <div class="fi-section-content-ctn">
             <div class="fi-section-content">
                 <div class="purok-fi-filters" style="--purok-fi-filter-columns: 2;">
@@ -28,78 +28,100 @@
                         <button type="submit" class="fi-btn fi-size-md fi-color-primary">
                             Apply
                         </button>
+
+                        <button type="button" onclick="window.print()" class="fi-btn fi-size-md fi-color-gray">
+                            Print
+                        </button>
                     </div>
                 </div>
             </div>
         </div>
     </form>
 
-    <div class="grid gap-4 md:grid-cols-3">
-        <div class="fi-section">
+    <div class="purok-print-area">
+        <div class="purok-report-header">
+            <div>
+                <h2 class="purok-report-title">Cash Flow Statement</h2>
+                <p class="purok-report-period">
+                    Period:
+                    {{ $month ? \Carbon\Carbon::createFromDate($year, $month, 1)->format('F Y') : $year }}
+                </p>
+            </div>
+        </div>
+
+        <div class="purok-stat-grid">
+            <div class="purok-stat-card">
+                <p class="purok-stat-label">Total Inflow</p>
+                <p class="purok-stat-value purok-stat-value-success">PHP {{ number_format($report['totalInflow'], 2) }}</p>
+                <p class="purok-stat-note">Incomes plus member contributions</p>
+            </div>
+
+            <div class="purok-stat-card">
+                <p class="purok-stat-label">Total Outflow</p>
+                <p class="purok-stat-value purok-stat-value-danger">PHP {{ number_format($report['expenseTotal'], 2) }}</p>
+                <p class="purok-stat-note">Expenses recorded for the selected period</p>
+            </div>
+
+            <div class="purok-stat-card">
+                <p class="purok-stat-label">Net Cash Flow</p>
+                <p class="purok-stat-value {{ $report['netCashFlow'] >= 0 ? 'purok-stat-value-success' : 'purok-stat-value-danger' }}">
+                    PHP {{ number_format($report['netCashFlow'], 2) }}
+                </p>
+                <p class="purok-stat-note">Total inflow less outflow</p>
+            </div>
+        </div>
+
+        <div class="fi-section purok-report-section">
             <div class="fi-section-content-ctn">
                 <div class="fi-section-content">
-                    <p class="text-sm font-medium text-gray-500 dark:text-gray-400">Total Inflow</p>
-                    <p class="mt-2 text-2xl font-semibold text-success-600">PHP {{ number_format($report['totalInflow'], 2) }}</p>
+                    <div class="purok-report-scroll">
+                        <table class="purok-report-table">
+                            <tbody>
+                                <tr class="purok-report-band">
+                                    <th colspan="2">
+                                        Cash Inflows
+                                    </th>
+                                </tr>
+                                <tr>
+                                    <td>Cash on Hand / Incomes / Rentals / Donations / Funding</td>
+                                    <td class="purok-report-amount">PHP {{ number_format($report['incomeTotal'], 2) }}</td>
+                                </tr>
+                                <tr>
+                                    <td>Member Contributions</td>
+                                    <td class="purok-report-amount">PHP {{ number_format($report['contributionTotal'], 2) }}</td>
+                                </tr>
+                                <tr class="purok-report-band">
+                                    <th colspan="2">
+                                        Cash Outflows
+                                    </th>
+                                </tr>
+                                <tr>
+                                    <td>Purok Expenses</td>
+                                    <td class="purok-report-amount purok-report-danger">PHP {{ number_format($report['expenseTotal'], 2) }}</td>
+                                </tr>
+                                <tr class="purok-report-total-row">
+                                    <td>Net Cash Flow</td>
+                                    <td class="purok-report-amount">PHP {{ number_format($report['netCashFlow'], 2) }}</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
             </div>
         </div>
 
-        <div class="fi-section">
-            <div class="fi-section-content-ctn">
-                <div class="fi-section-content">
-                    <p class="text-sm font-medium text-gray-500 dark:text-gray-400">Total Outflow</p>
-                    <p class="mt-2 text-2xl font-semibold text-danger-600">PHP {{ number_format($report['expenseTotal'], 2) }}</p>
-                </div>
+        <div class="purok-signature-grid">
+            <div class="purok-signature-line">
+                <span>Prepared By</span>
+                <strong>Purok Treasurer</strong>
             </div>
-        </div>
-
-        <div class="fi-section">
-            <div class="fi-section-content-ctn">
-                <div class="fi-section-content">
-                    <p class="text-sm font-medium text-gray-500 dark:text-gray-400">Net Cash Flow</p>
-                    <p class="mt-2 text-2xl font-semibold {{ $report['netCashFlow'] >= 0 ? 'text-success-600' : 'text-danger-600' }}">
-                        PHP {{ number_format($report['netCashFlow'], 2) }}
-                    </p>
-                </div>
+            <div class="purok-signature-line">
+                <span>Audited By</span>
+                <strong>Purok Auditor</strong>
             </div>
-        </div>
-    </div>
-
-    <div class="fi-section">
-        <div class="fi-section-content-ctn">
-            <div class="fi-section-content">
-                <div class="overflow-x-auto">
-                    <table class="w-full text-sm">
-                        <tbody class="divide-y divide-gray-200 dark:divide-gray-800">
-                            <tr>
-                                <th colspan="2" class="bg-gray-50 px-4 py-3 text-left text-xs font-semibold uppercase text-gray-600 dark:bg-gray-900 dark:text-gray-300">
-                                    Cash Inflows
-                                </th>
-                            </tr>
-                            <tr>
-                                <td class="px-4 py-3 text-gray-700 dark:text-gray-200">Cash on Hand / Incomes / Rentals / Donations / Funding</td>
-                                <td class="px-4 py-3 text-right font-medium">PHP {{ number_format($report['incomeTotal'], 2) }}</td>
-                            </tr>
-                            <tr>
-                                <td class="px-4 py-3 text-gray-700 dark:text-gray-200">Member Contributions</td>
-                                <td class="px-4 py-3 text-right font-medium">PHP {{ number_format($report['contributionTotal'], 2) }}</td>
-                            </tr>
-                            <tr>
-                                <th colspan="2" class="bg-gray-50 px-4 py-3 text-left text-xs font-semibold uppercase text-gray-600 dark:bg-gray-900 dark:text-gray-300">
-                                    Cash Outflows
-                                </th>
-                            </tr>
-                            <tr>
-                                <td class="px-4 py-3 text-gray-700 dark:text-gray-200">Purok Expenses</td>
-                                <td class="px-4 py-3 text-right font-medium text-danger-600">PHP {{ number_format($report['expenseTotal'], 2) }}</td>
-                            </tr>
-                            <tr>
-                                <td class="px-4 py-3 text-base font-semibold text-gray-900 dark:text-white">Net Cash Flow</td>
-                                <td class="px-4 py-3 text-right text-base font-semibold">PHP {{ number_format($report['netCashFlow'], 2) }}</td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
+            <div class="purok-signature-line">
+                <span>Approved By</span>
+                <strong>Purok President</strong>
             </div>
         </div>
     </div>

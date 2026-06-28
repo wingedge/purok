@@ -4,7 +4,7 @@ This roadmap separates what is already working in the current app from what stil
 
 ## Current Status Summary
 
-Purok currently has a working Laravel MVC foundation with authenticated CRUD screens for members, contributions, finances, inventory, rentals, certificate logs, dashboard summaries, and reports. Filament 4 has been introduced for the back office. Filament now covers members, dependents, contribution record CRUD, the contribution grid, expense CRUD, income CRUD, inventory CRUD, rental CRUD, certificate log CRUD, dashboard summary stats, the filterable dashboard summary page, reports landing, the cash-flow report page, and the contribution report page. The first member-facing portal profile screen is implemented.
+Purok currently has a working Laravel MVC foundation with authenticated CRUD screens for members, contributions, finances, inventory, rentals, certificate logs, dashboard summaries, and reports. Filament 4 has been introduced for the back office. Filament now covers members, dependents, contribution record CRUD, the contribution grid, expense CRUD, income CRUD, inventory CRUD, rental CRUD, certificate log CRUD, dashboard summary stats, the filterable dashboard summary page, reports landing, the cash-flow report page, the contribution report page, and CSV import/export operations. The first member-facing portal profile screen is implemented.
 
 ## Done
 
@@ -126,6 +126,15 @@ Purok currently has a working Laravel MVC foundation with authenticated CRUD scr
 - Contribution report is available in Filament.
 - Contribution report totals and Filament access have focused feature tests.
 
+### Imports And Exports
+
+- Member/dependent CSV import/export is implemented through Actions.
+- Expense CSV import/export is implemented through Actions.
+- Income CSV import/export is implemented through Actions.
+- Rental CSV import/export is implemented through Actions.
+- Back-office CSV import/export operations are available in Filament.
+- Filament data exchange access, import, and export flows have focused feature tests.
+
 ## Not Done
 
 ### Stack Direction
@@ -135,7 +144,7 @@ Purok currently has a working Laravel MVC foundation with authenticated CRUD scr
 - Livewire 4 is optional and should only be introduced when a backend or member portal workflow clearly benefits from it.
 - Filament 4 is installed and used for the admin panel.
 - Filament Resources and pages are implemented for members, dependents, contribution records, the contribution grid, expenses, incomes, inventory, rentals, and certificate logs.
-- Back-office dashboard and report pages are now available in Filament.
+- Back-office dashboard, report, and import/export pages are now available in Filament.
 - Member self-service screens are currently Blade/controller-based; moving them to Livewire is optional, not required.
 
 ### Architecture Refactor
@@ -186,14 +195,15 @@ Target import/export scope from `AGENTS.md`:
 - Incomes
 - Rentals
 
-Current gaps:
+Current state and gaps:
 
-- Shared import/export architecture is not implemented.
+- Shared import/export architecture is partially implemented through focused Actions.
 - Current CSV member/dependent import is action-based.
 - Current CSV member/dependent export is action-based.
 - Expense import/export is implemented.
 - Income import/export is implemented.
 - Rental import/export is implemented.
+- Filament import/export operations page is implemented.
 - Member/dependent import returns an `ImportResult` summary.
 - Expense import validation/reporting is implemented.
 - Income import validation/reporting is implemented.
@@ -242,6 +252,7 @@ Current gaps:
 - Filament filterable dashboard summary tests exist.
 - Filament reports landing tests exist.
 - Filament cash-flow report tests exist.
+- Filament data exchange tests exist.
 - Member/dependent import tests exist.
 - Member/dependent export tests exist.
 - Contribution amount and accounting-period tests exist.
@@ -263,5 +274,5 @@ Current gaps:
 ## Suggested Next Steps
 
 1. Decide whether to replace staff-set temporary passwords with email invitations or account claiming tokens.
-2. Continue migrating dashboard and reports into Filament.
+2. Review which old Blade/controller back-office routes can be retired after Filament parity is verified.
 3. Add more `docs/features/` documents as each feature area is refactored.

@@ -8,7 +8,7 @@
         $end = $report['end'];
     @endphp
 
-    <form method="GET" class="fi-section mb-6 print:hidden">
+    <form method="GET" class="fi-section print:hidden">
         <div class="fi-section-content-ctn">
             <div class="fi-section-content">
                 <div class="purok-fi-filters purok-fi-filters-compact">
@@ -57,66 +57,75 @@
         </div>
     </form>
 
-    <div class="fi-section">
-        <div class="fi-section-content-ctn">
-            <div class="fi-section-content">
-                <div class="mb-6 text-center">
-                    <h2 class="text-xl font-semibold text-gray-950 dark:text-white">Member Contributions</h2>
-                    <p class="mt-1 text-sm text-gray-500 dark:text-gray-400">
-                        Period: {{ $start->format('M Y') }} - {{ $end->format('M Y') }}
-                    </p>
-                    <p class="mt-2 text-sm font-semibold text-primary-600">
-                        Total Contributions: PHP {{ number_format($report['reportTotal'], 2) }}
-                    </p>
-                </div>
+    <div class="purok-print-area">
+        <div class="purok-report-header">
+            <div>
+                <h2 class="purok-report-title">Member Contributions</h2>
+                <p class="purok-report-period">
+                    Period: {{ $start->format('M Y') }} - {{ $end->format('M Y') }}
+                </p>
+            </div>
+            <div class="purok-report-total">
+                <span>Report Total</span>
+                <strong>Total Contributions: PHP {{ number_format($report['reportTotal'], 2) }}</strong>
+            </div>
+        </div>
 
-                <div class="overflow-x-auto">
-                    <table class="w-full border-collapse text-sm">
-                        <thead>
-                            <tr>
-                                <th class="border-b-2 border-gray-300 px-3 py-3 text-left text-xs font-semibold uppercase text-gray-600 dark:border-gray-700 dark:text-gray-300">Member</th>
-                                @foreach ($weeks as $week)
-                                    <th class="border-b-2 border-gray-300 px-2 py-3 text-center text-xs font-semibold text-gray-600 dark:border-gray-700 dark:text-gray-300">
-                                        {{ $week->format('M d') }}
-                                    </th>
-                                @endforeach
-                                <th class="border-b-2 border-gray-300 bg-gray-50 px-3 py-3 text-right text-xs font-semibold uppercase text-gray-700 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-200">Total</th>
-                            </tr>
-                        </thead>
-                        <tbody class="divide-y divide-gray-100 dark:divide-gray-800">
-                            @forelse ($members as $member)
+        <div class="fi-section purok-report-section">
+            <div class="fi-section-content-ctn">
+                <div class="fi-section-content">
+                    <div class="purok-report-scroll">
+                        <table class="purok-contribution-report-table">
+                            <thead>
                                 <tr>
-                                    <td class="whitespace-nowrap border-r border-gray-100 px-3 py-3 font-medium text-gray-950 dark:border-gray-800 dark:text-white">{{ $member->name }}</td>
+                                    <th class="purok-report-member-heading">Member</th>
                                     @foreach ($weeks as $week)
-                                        @php
-                                            $weekString = $week->toDateString();
-                                            $contribution = $member->contributions->first(
-                                                fn ($item) => $item->week_start->toDateString() === $weekString,
-                                            );
-                                        @endphp
-                                        <td class="px-2 py-3 text-center">
-                                            @if ($contribution)
-                                                <span class="font-semibold text-success-600">Paid</span>
-                                            @else
-                                                <span class="text-gray-400">-</span>
-                                            @endif
-                                        </td>
+                                        <th class="purok-report-week-heading">
+                                            {{ $week->format('M d') }}
+                                        </th>
                                     @endforeach
-                                    <td class="border-l border-gray-100 bg-gray-50 px-3 py-3 text-right font-semibold text-gray-950 dark:border-gray-800 dark:bg-gray-900 dark:text-white">
-                                        PHP {{ number_format($memberTotals[$member->id] ?? 0, 2) }}
-                                    </td>
+                                    <th class="purok-report-total-heading">Total</th>
                                 </tr>
-                            @empty
-                                <tr>
-                                    <td colspan="{{ $weeks->count() + 2 }}" class="px-4 py-10 text-center text-gray-500 dark:text-gray-400">
-                                        No contribution records found for this period.
-                                    </td>
-                                </tr>
-                            @endforelse
-                        </tbody>
-                    </table>
+                            </thead>
+                            <tbody>
+                                @forelse ($members as $member)
+                                    <tr>
+                                        <td class="purok-report-member-cell">{{ $member->name }}</td>
+                                        @foreach ($weeks as $week)
+                                            @php
+                                                $weekString = $week->toDateString();
+                                                $contribution = $member->contributions->first(
+                                                    fn ($item) => $item->week_start->toDateString() === $weekString,
+                                                );
+                                            @endphp
+                                            <td class="purok-report-week-cell">
+                                                @if ($contribution)
+                                                    <span class="purok-paid-badge">Paid</span>
+                                                @else
+                                                    <span class="purok-unpaid-mark">-</span>
+                                                @endif
+                                            </td>
+                                        @endforeach
+                                        <td class="purok-report-total-cell">
+                                            PHP {{ number_format($memberTotals[$member->id] ?? 0, 2) }}
+                                        </td>
+                                    </tr>
+                                @empty
+                                    <tr>
+                                        <td colspan="{{ $weeks->count() + 2 }}" class="purok-empty">
+                                            No contribution records found for this period.
+                                        </td>
+                                    </tr>
+                                @endforelse
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
             </div>
+        </div>
+
+        <div class="purok-report-footer">
+            Generated: {{ now()->format('Y-m-d H:i') }}
         </div>
     </div>
 </x-filament-panels::page>

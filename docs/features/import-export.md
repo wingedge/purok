@@ -89,7 +89,7 @@ Current implementation:
 
 - Expense CSV export lives in `App\Actions\Exports\ExportExpenses`.
 - Expense CSV import lives in `App\Actions\Imports\ImportExpenses`.
-- `ExpenseController` validates uploaded CSV files and delegates import/export work to Actions.
+- `ExpenseController` and Filament `DataExchange` validate uploaded CSV files and delegate import/export work to Actions.
 - Imported expenses record the authenticated user as `created_by`.
 
 ### Target Import Columns
@@ -128,7 +128,7 @@ Current implementation:
 
 - Income CSV export lives in `App\Actions\Exports\ExportIncomes`.
 - Income CSV import lives in `App\Actions\Imports\ImportIncomes`.
-- `IncomeController` validates uploaded CSV files and delegates import/export work to Actions.
+- `IncomeController` and Filament `DataExchange` validate uploaded CSV files and delegate import/export work to Actions.
 - `rental_id` is optional and must reference an existing rental when provided.
 
 ### Target Import Columns
@@ -168,7 +168,7 @@ Current implementation:
 
 - Rental CSV export lives in `App\Actions\Exports\ExportRentals`.
 - Rental CSV import lives in `App\Actions\Imports\ImportRentals`.
-- `RentalController` validates uploaded CSV files and delegates import/export work to Actions.
+- `RentalController` and Filament `DataExchange` validate uploaded CSV files and delegate import/export work to Actions.
 - Active imported rentals use the rental creation workflow, decrement inventory, and create linked income.
 - Returned imported rentals are treated as historical rentals, create linked income, and do not decrement current inventory.
 
