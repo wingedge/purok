@@ -29,3 +29,4 @@ Homestead.json
 .phpactor.json
 auth.json
 backup_env/.env.bak
+deploy.sh
