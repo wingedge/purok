@@ -186,8 +186,8 @@ Purok currently has a working Laravel MVC foundation with authenticated CRUD scr
 
 - Initial role-based route access is implemented with gates and route middleware.
 - Filament panel access is restricted to admin, treasurer, and staff users.
-- Member, income, expense, inventory, rental, and certificate log model policies are implemented and preserve the current gate-based role rules.
-- Full policies are not implemented yet for reports, contributions, users, officers, or every remaining domain model.
+- Member, income, expense, inventory, rental, certificate log, contribution, officer, and user model policies are implemented and preserve the current gate-based role rules.
+- Reports still use gates and page/route-level checks rather than model policies.
 - Staff/treasurer/admin permissions are documented in `docs/features/authorization.md` and partially enforced in code.
 - Member-role users are blocked from Filament admin access.
 - Member portal permissions are implemented for the first profile/dependent self-service screen.

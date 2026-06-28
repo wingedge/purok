@@ -10,8 +10,8 @@ This document defines the intended role and permission model for Purok. The appl
 - Certificate routes require both authentication and email verification.
 - Named gates are registered in `AuthServiceProvider`.
 - Main business routes use `can:` middleware for the first permission boundaries.
-- Model policies are implemented for members, incomes, expenses, inventory, rentals, and certificate logs.
-- Full policies are not implemented yet for every remaining domain model.
+- Model policies are implemented for members, incomes, expenses, inventory, rentals, certificate logs, contributions, officers, and users.
+- Report access still uses gates and page/route-level checks rather than model policies.
 - Users can be linked to member records through `users.member_id`.
 - Filament admin panel access is restricted to admin, treasurer, and staff users.
 - Admin-only user and role management is available in Filament at `/admin/users`.

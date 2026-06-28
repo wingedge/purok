@@ -66,10 +66,10 @@ Current authorization state:
 - Roles exist at the model/database level.
 - User/member account linking exists through `users.member_id`.
 - Initial named gates are registered in `AuthServiceProvider`.
-- Member, income, expense, inventory, rental, and certificate log model policies are registered and delegate to the existing gate-based role rules.
+- Member, income, expense, inventory, rental, certificate log, contribution, officer, and user model policies are registered and delegate to the existing gate-based role rules.
 - Main route groups and actions use `can:` middleware for admin, treasurer, and staff boundaries.
 - Filament panel access blocks member-role users from the back-office panel.
-- Full model policies are not implemented yet for every remaining domain model.
+- Report access still uses gates and page/route-level checks rather than model policies.
 
 The target role/permission model is documented in `docs/features/authorization.md`.
 

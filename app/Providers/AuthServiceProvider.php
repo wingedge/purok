@@ -5,19 +5,24 @@ declare(strict_types=1);
 namespace App\Providers;
 
 use App\Enums\UserRole;
+use App\Models\Contribution;
 use App\Models\Expense;
 use App\Models\Income;
 use App\Models\Inventory;
 use App\Models\Member;
+use App\Models\Officer;
 use App\Models\PurokCertificate;
 use App\Models\Rental;
 use App\Models\User;
+use App\Policies\ContributionPolicy;
 use App\Policies\ExpensePolicy;
 use App\Policies\IncomePolicy;
 use App\Policies\InventoryPolicy;
 use App\Policies\MemberPolicy;
+use App\Policies\OfficerPolicy;
 use App\Policies\PurokCertificatePolicy;
 use App\Policies\RentalPolicy;
+use App\Policies\UserPolicy;
 use Illuminate\Foundation\Support\Providers\AuthServiceProvider as ServiceProvider;
 use Illuminate\Support\Facades\Gate;
 
@@ -35,6 +40,9 @@ class AuthServiceProvider extends ServiceProvider
         Inventory::class => InventoryPolicy::class,
         Rental::class => RentalPolicy::class,
         PurokCertificate::class => PurokCertificatePolicy::class,
+        Contribution::class => ContributionPolicy::class,
+        Officer::class => OfficerPolicy::class,
+        User::class => UserPolicy::class,
     ];
 
     /**

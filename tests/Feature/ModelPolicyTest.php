@@ -5,10 +5,12 @@ declare(strict_types=1);
 namespace Tests\Feature;
 
 use App\Enums\UserRole;
+use App\Models\Contribution;
 use App\Models\Expense;
 use App\Models\Income;
 use App\Models\Inventory;
 use App\Models\Member;
+use App\Models\Officer;
 use App\Models\PurokCertificate;
 use App\Models\Rental;
 use App\Models\User;
@@ -139,6 +141,59 @@ class ModelPolicyTest extends TestCase
         $this->assertTrue($staff->can('delete', $certificate));
         $this->assertFalse($treasurer->can('view', $certificate));
         $this->assertFalse($treasurer->can('create', PurokCertificate::class));
+    }
+
+    public function test_contribution_policy_preserves_existing_role_rules(): void
+    {
+        $treasurer = $this->userWithRole(UserRole::Treasurer);
+        $staff = $this->userWithRole(UserRole::Staff);
+        $member = Member::create(['name' => 'Maria Santos']);
+        $contribution = Contribution::create([
+            'member_id' => $member->id,
+            'week_start' => '2026-06-07',
+            'amount' => '10.00',
+        ]);
+
+        $this->assertTrue($treasurer->can('view', $contribution));
+        $this->assertTrue($treasurer->can('create', Contribution::class));
+        $this->assertTrue($treasurer->can('update', $contribution));
+        $this->assertTrue($treasurer->can('delete', $contribution));
+        $this->assertFalse($staff->can('view', $contribution));
+        $this->assertFalse($staff->can('create', Contribution::class));
+    }
+
+    public function test_officer_policy_preserves_existing_role_rules(): void
+    {
+        $staff = $this->userWithRole(UserRole::Staff);
+        $treasurer = $this->userWithRole(UserRole::Treasurer);
+        $member = Member::create(['name' => 'Maria Santos']);
+        $officer = Officer::create([
+            'member_id' => $member->id,
+            'position' => 'President',
+            'term_start' => '2026-01-01',
+            'is_active' => true,
+        ]);
+
+        $this->assertTrue($staff->can('view', $officer));
+        $this->assertTrue($staff->can('create', Officer::class));
+        $this->assertTrue($staff->can('update', $officer));
+        $this->assertTrue($staff->can('delete', $officer));
+        $this->assertFalse($treasurer->can('view', $officer));
+        $this->assertFalse($treasurer->can('create', Officer::class));
+    }
+
+    public function test_user_policy_preserves_existing_role_rules(): void
+    {
+        $admin = $this->userWithRole(UserRole::Admin);
+        $staff = $this->userWithRole(UserRole::Staff);
+        $targetUser = $this->userWithRole(UserRole::Treasurer);
+
+        $this->assertTrue($admin->can('view', $targetUser));
+        $this->assertTrue($admin->can('create', User::class));
+        $this->assertTrue($admin->can('update', $targetUser));
+        $this->assertTrue($admin->can('delete', $targetUser));
+        $this->assertFalse($staff->can('view', $targetUser));
+        $this->assertFalse($staff->can('create', User::class));
     }
 
     private function userWithRole(UserRole $role): User
