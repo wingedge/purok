@@ -3,9 +3,7 @@
 namespace Tests\Feature;
 
 use App\Actions\Exports\ExportIncomes;
-use App\Enums\UserRole;
 use App\Models\Income;
-use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
@@ -44,31 +42,6 @@ class ExportIncomesTest extends TestCase
         $this->assertSame('', $rows[1][5]);
     }
 
-    public function test_export_route_downloads_csv_for_treasurer(): void
-    {
-        Income::create([
-            'date' => '2026-06-15',
-            'source' => 'Donation / Fund Drive',
-            'description' => 'Community donation',
-            'amount' => 250.50,
-        ]);
-
-        $response = $this->actingAs($this->userWithRole(UserRole::Treasurer))
-            ->get(route('incomes.export'));
-
-        $response->assertOk();
-        $response->assertHeader('content-type', 'text/csv; charset=UTF-8');
-        $this->assertStringContainsString('incomes-', $response->headers->get('content-disposition'));
-        $this->assertStringContainsString('Community donation', $response->streamedContent());
-    }
-
-    public function test_export_route_is_forbidden_for_staff(): void
-    {
-        $this->actingAs($this->userWithRole(UserRole::Staff))
-            ->get(route('incomes.export'))
-            ->assertForbidden();
-    }
-
     /**
      * @return array<int, array<int, string|null>>
      */
@@ -77,10 +50,4 @@ class ExportIncomesTest extends TestCase
         return array_map('str_getcsv', array_filter(preg_split('/\r\n|\r|\n/', trim($csv)) ?: []));
     }
 
-    private function userWithRole(UserRole $role): User
-    {
-        return User::factory()->create([
-            'role' => $role->value,
-        ]);
-    }
 }

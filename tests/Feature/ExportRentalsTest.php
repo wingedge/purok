@@ -3,11 +3,9 @@
 namespace Tests\Feature;
 
 use App\Actions\Exports\ExportRentals;
-use App\Enums\UserRole;
 use App\Models\Income;
 use App\Models\Inventory;
 use App\Models\Rental;
-use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
@@ -55,27 +53,6 @@ class ExportRentalsTest extends TestCase
         $this->assertSame((string) $income->id, $rows[1][10]);
     }
 
-    public function test_export_route_downloads_csv_for_staff(): void
-    {
-        $inventory = $this->inventory();
-        $this->rental($inventory);
-
-        $response = $this->actingAs($this->userWithRole(UserRole::Staff))
-            ->get(route('rentals.export'));
-
-        $response->assertOk();
-        $response->assertHeader('content-type', 'text/csv; charset=UTF-8');
-        $this->assertStringContainsString('rentals-', $response->headers->get('content-disposition'));
-        $this->assertStringContainsString('Maria Santos', $response->streamedContent());
-    }
-
-    public function test_export_route_is_forbidden_for_treasurer(): void
-    {
-        $this->actingAs($this->userWithRole(UserRole::Treasurer))
-            ->get(route('rentals.export'))
-            ->assertForbidden();
-    }
-
     /**
      * @return array<int, array<int, string|null>>
      */
@@ -106,10 +83,4 @@ class ExportRentalsTest extends TestCase
         ]);
     }
 
-    private function userWithRole(UserRole $role): User
-    {
-        return User::factory()->create([
-            'role' => $role->value,
-        ]);
-    }
 }

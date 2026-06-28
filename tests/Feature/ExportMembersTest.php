@@ -3,9 +3,7 @@
 namespace Tests\Feature;
 
 use App\Actions\Exports\ExportMembers;
-use App\Enums\UserRole;
 use App\Models\Member;
-use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
@@ -54,26 +52,6 @@ class ExportMembersTest extends TestCase
         $this->assertSame('Daughter|Son', $rows[1][7]);
     }
 
-    public function test_export_route_downloads_csv_for_staff(): void
-    {
-        Member::create(['name' => 'Exported Member']);
-
-        $response = $this->actingAs($this->userWithRole(UserRole::Staff))
-            ->get(route('members.export'));
-
-        $response->assertOk();
-        $response->assertHeader('content-type', 'text/csv; charset=UTF-8');
-        $this->assertStringContainsString('members-', $response->headers->get('content-disposition'));
-        $this->assertStringContainsString('Exported Member', $response->streamedContent());
-    }
-
-    public function test_export_route_is_forbidden_for_treasurer(): void
-    {
-        $this->actingAs($this->userWithRole(UserRole::Treasurer))
-            ->get(route('members.export'))
-            ->assertForbidden();
-    }
-
     /**
      * @return array<int, array<int, string|null>>
      */
@@ -82,10 +60,4 @@ class ExportMembersTest extends TestCase
         return array_map('str_getcsv', array_filter(preg_split('/\r\n|\r|\n/', trim($csv)) ?: []));
     }
 
-    private function userWithRole(UserRole $role): User
-    {
-        return User::factory()->create([
-            'role' => $role->value,
-        ]);
-    }
 }

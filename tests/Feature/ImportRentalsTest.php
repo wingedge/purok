@@ -3,11 +3,8 @@
 namespace Tests\Feature;
 
 use App\Actions\Imports\ImportRentals;
-use App\Enums\UserRole;
 use App\Models\Inventory;
-use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Http\UploadedFile;
 use Tests\TestCase;
 
 class ImportRentalsTest extends TestCase
@@ -103,43 +100,6 @@ class ImportRentalsTest extends TestCase
         $this->assertDatabaseCount('rentals', 0);
     }
 
-    public function test_import_route_imports_csv_for_staff(): void
-    {
-        $inventory = $this->inventory(availableQuantity: 10);
-        $file = UploadedFile::fake()->createWithContent(
-            'rentals.csv',
-            "inventory_id,renter_name,renter_contact,quantity,rent_date,amount,status,return_date\n{$inventory->id},Maria Santos,09170000000,2,2026-06-15,300.00,rented,\n",
-        );
-
-        $this->actingAs($this->userWithRole(UserRole::Staff))
-            ->post(route('rentals.import'), [
-                'csv_file' => $file,
-            ])
-            ->assertRedirect(route('rentals.index'))
-            ->assertSessionHas('success');
-
-        $this->assertSame(8, $inventory->refresh()->available_quantity);
-        $this->assertDatabaseHas('rentals', [
-            'inventory_id' => $inventory->id,
-            'renter_name' => 'Maria Santos',
-            'quantity' => 2,
-        ]);
-    }
-
-    public function test_import_route_is_forbidden_for_treasurer(): void
-    {
-        $file = UploadedFile::fake()->createWithContent(
-            'rentals.csv',
-            "inventory_id,renter_name,renter_contact,quantity,rent_date,amount,status,return_date\n1,Maria Santos,09170000000,2,2026-06-15,300.00,rented,\n",
-        );
-
-        $this->actingAs($this->userWithRole(UserRole::Treasurer))
-            ->post(route('rentals.import'), [
-                'csv_file' => $file,
-            ])
-            ->assertForbidden();
-    }
-
     /**
      * @param array<int, array<int, string>> $rows
      */
@@ -167,10 +127,4 @@ class ImportRentalsTest extends TestCase
         ]);
     }
 
-    private function userWithRole(UserRole $role): User
-    {
-        return User::factory()->create([
-            'role' => $role->value,
-        ]);
-    }
 }

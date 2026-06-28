@@ -64,7 +64,7 @@ class FilamentCashFlowReportTest extends TestCase
             ->assertForbidden();
     }
 
-    public function test_old_cash_flow_report_uses_shared_action_totals(): void
+    public function test_old_cash_flow_report_redirects_to_filament_report(): void
     {
         Income::create([
             'date' => '2026-06-15',
@@ -75,8 +75,7 @@ class FilamentCashFlowReportTest extends TestCase
 
         $this->actingAs($this->userWithRole(UserRole::Treasurer))
             ->get('/reports/cashflow?year=2026&month=6')
-            ->assertOk()
-            ->assertSee('500.00');
+            ->assertRedirect('/admin/reports/cash-flow?year=2026&month=6');
     }
 
     private function userWithRole(UserRole $role): User

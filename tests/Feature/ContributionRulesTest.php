@@ -3,10 +3,11 @@
 namespace Tests\Feature;
 
 use App\Actions\Contributions\DeleteContribution;
-use App\Enums\UserRole;
+use App\Actions\Contributions\RecordContribution;
+use App\Actions\Dashboard\BuildDashboardSummary;
+use App\Actions\Reports\BuildCashFlowReport;
 use App\Models\Contribution;
 use App\Models\Member;
-use App\Models\User;
 use App\Services\ContributionService;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
@@ -40,16 +41,9 @@ class ContributionRulesTest extends TestCase
             'indigent' => false,
         ]);
 
-        $this->actingAs($this->userWithRole(UserRole::Treasurer))
-            ->postJson(route('contributions.store'), [
-                'member_id' => $member->id,
-                'week_start' => '2026-06-07',
-            ])
-            ->assertOk()
-            ->assertJson([
-                'success' => true,
-                'amount' => 10,
-            ]);
+        $contribution = app(RecordContribution::class)->execute($member, '2026-06-07');
+
+        $this->assertSame(10.0, (float) $contribution->amount);
 
         $this->assertDatabaseHas('contributions', [
             'member_id' => $member->id,
@@ -80,7 +74,7 @@ class ContributionRulesTest extends TestCase
         ]);
     }
 
-    public function test_delete_contribution_route_uses_delete_action(): void
+    public function test_old_contribution_mutation_routes_are_not_available(): void
     {
         $member = Member::create([
             'name' => 'Contributor',
@@ -93,39 +87,23 @@ class ContributionRulesTest extends TestCase
             'amount' => 10,
         ]);
 
-        $this->actingAs($this->userWithRole(UserRole::Treasurer))
-            ->deleteJson(route('contributions.destroy'), [
+        $this->deleteJson('/contributions', [
                 'member_id' => $member->id,
                 'week_start' => '2026-06-07',
             ])
-            ->assertOk()
-            ->assertJson([
-                'success' => true,
-                'amount' => 10,
-            ]);
-
-        $this->assertDatabaseMissing('contributions', [
-            'member_id' => $member->id,
-            'week_start' => '2026-06-07',
-        ]);
+            ->assertMethodNotAllowed();
     }
 
-    public function test_delete_contribution_route_returns_not_found_for_missing_record(): void
+    public function test_delete_contribution_action_returns_null_for_missing_record(): void
     {
         $member = Member::create([
             'name' => 'Contributor',
             'indigent' => false,
         ]);
 
-        $this->actingAs($this->userWithRole(UserRole::Treasurer))
-            ->deleteJson(route('contributions.destroy'), [
-                'member_id' => $member->id,
-                'week_start' => '2026-06-07',
-            ])
-            ->assertNotFound()
-            ->assertJson([
-                'success' => false,
-            ]);
+        $amount = app(DeleteContribution::class)->execute($member->id, '2026-06-07');
+
+        $this->assertNull($amount);
     }
 
     public function test_dashboard_contribution_totals_use_week_start_for_accounting_period(): void
@@ -139,13 +117,11 @@ class ContributionRulesTest extends TestCase
             'updated_at' => '2026-01-15 12:00:00',
         ]);
 
-        $response = $this->actingAs($this->userWithRole(UserRole::Admin))
-            ->get(route('dashboard', ['year' => 2025]));
+        $summary = app(BuildDashboardSummary::class)->execute(2025);
 
-        $response->assertOk();
-        $response->assertViewHas('totalContributions', 10.0);
-        $response->assertViewHas('thisYearContributions', 10.0);
-        $response->assertViewHas('contributorsCount', 1);
+        $this->assertSame(10.0, $summary['totalContributions']);
+        $this->assertSame(10.0, $summary['thisYearContributions']);
+        $this->assertSame(1, $summary['contributorsCount']);
     }
 
     public function test_cashflow_contribution_total_uses_week_start_for_accounting_period(): void
@@ -159,18 +135,9 @@ class ContributionRulesTest extends TestCase
             'updated_at' => '2026-01-15 12:00:00',
         ]);
 
-        $response = $this->actingAs($this->userWithRole(UserRole::Treasurer))
-            ->get(route('reports.cashflow', ['year' => 2025, 'month' => 2]));
+        $report = app(BuildCashFlowReport::class)->execute(2025, 2);
 
-        $response->assertOk();
-        $response->assertViewHas('contributionTotal', 10.0);
-        $response->assertViewHas('netCashFlow', 10.0);
-    }
-
-    private function userWithRole(UserRole $role): User
-    {
-        return User::factory()->create([
-            'role' => $role->value,
-        ]);
+        $this->assertSame(10.0, $report['contributionTotal']);
+        $this->assertSame(10.0, $report['netCashFlow']);
     }
 }

@@ -5,6 +5,10 @@ declare(strict_types=1);
 namespace Tests\Feature;
 
 use App\Actions\Certificates\ListPurokCertificates;
+use App\Actions\Certificates\CreatePurokCertificate;
+use App\Actions\Certificates\DeletePurokCertificate;
+use App\Actions\Certificates\SearchCertificateMembers;
+use App\Actions\Certificates\UpdatePurokCertificate;
 use App\Enums\UserRole;
 use App\Models\Dependent;
 use App\Models\Member;
@@ -17,17 +21,15 @@ class PurokCertificateWorkflowTest extends TestCase
 {
     use RefreshDatabase;
 
-    public function test_staff_can_create_certificate_log_through_legacy_route(): void
+    public function test_create_certificate_action_creates_certificate_log(): void
     {
         $member = Member::create(['name' => 'Maria Santos']);
 
-        $this->actingAs($this->userWithRole(UserRole::Staff))
-            ->post(route('purok_certificates.store'), [
-                'member_id' => $member->id,
-                'request_date' => '2026-06-15',
-                'purpose' => 'Scholarship',
-            ])
-            ->assertRedirect(route('purok_certificates.index'));
+        app(CreatePurokCertificate::class)->execute([
+            'member_id' => $member->id,
+            'request_date' => '2026-06-15',
+            'purpose' => 'Scholarship',
+        ]);
 
         $this->assertDatabaseHas('purok_certificates', [
             'member_id' => $member->id,
@@ -36,7 +38,7 @@ class PurokCertificateWorkflowTest extends TestCase
         ]);
     }
 
-    public function test_staff_can_update_certificate_log_through_legacy_route(): void
+    public function test_update_certificate_action_updates_certificate_log(): void
     {
         $member = Member::create(['name' => 'Maria Santos']);
         $certificate = PurokCertificate::create([
@@ -45,13 +47,11 @@ class PurokCertificateWorkflowTest extends TestCase
             'purpose' => 'Scholarship',
         ]);
 
-        $this->actingAs($this->userWithRole(UserRole::Staff))
-            ->patch(route('purok_certificates.update', $certificate), [
-                'member_id' => $member->id,
-                'request_date' => '2026-06-20',
-                'purpose' => 'Employment',
-            ])
-            ->assertRedirect(route('purok_certificates.index'));
+        app(UpdatePurokCertificate::class)->execute($certificate, [
+            'member_id' => $member->id,
+            'request_date' => '2026-06-20',
+            'purpose' => 'Employment',
+        ]);
 
         $this->assertDatabaseHas('purok_certificates', [
             'id' => $certificate->id,
@@ -60,7 +60,7 @@ class PurokCertificateWorkflowTest extends TestCase
         ]);
     }
 
-    public function test_staff_can_delete_certificate_log_through_legacy_route(): void
+    public function test_delete_certificate_action_deletes_certificate_log(): void
     {
         $member = Member::create(['name' => 'Maria Santos']);
         $certificate = PurokCertificate::create([
@@ -69,16 +69,14 @@ class PurokCertificateWorkflowTest extends TestCase
             'purpose' => 'Scholarship',
         ]);
 
-        $this->actingAs($this->userWithRole(UserRole::Staff))
-            ->delete(route('purok_certificates.destroy', $certificate))
-            ->assertRedirect(route('purok_certificates.index'));
+        app(DeletePurokCertificate::class)->execute($certificate);
 
         $this->assertDatabaseMissing('purok_certificates', [
             'id' => $certificate->id,
         ]);
     }
 
-    public function test_treasurer_cannot_create_update_or_delete_certificate_logs(): void
+    public function test_old_certificate_mutation_routes_are_not_available(): void
     {
         $member = Member::create(['name' => 'Maria Santos']);
         $certificate = PurokCertificate::create([
@@ -86,27 +84,25 @@ class PurokCertificateWorkflowTest extends TestCase
             'request_date' => '2026-06-15',
             'purpose' => 'Scholarship',
         ]);
-        $treasurer = $this->userWithRole(UserRole::Treasurer);
-
-        $this->actingAs($treasurer)
-            ->post(route('purok_certificates.store'), [
+        $response = $this->actingAs($this->userWithRole(UserRole::Staff))
+            ->post('/purok_certificates', [
                 'member_id' => $member->id,
                 'request_date' => '2026-06-20',
                 'purpose' => 'Employment',
-            ])
-            ->assertForbidden();
+            ]);
+        $this->assertContains($response->getStatusCode(), [404, 405]);
 
-        $this->actingAs($treasurer)
-            ->patch(route('purok_certificates.update', $certificate), [
+        $response = $this->actingAs($this->userWithRole(UserRole::Staff))
+            ->patch("/purok_certificates/{$certificate->id}", [
                 'member_id' => $member->id,
                 'request_date' => '2026-06-20',
                 'purpose' => 'Employment',
-            ])
-            ->assertForbidden();
+            ]);
+        $this->assertContains($response->getStatusCode(), [404, 405]);
 
-        $this->actingAs($treasurer)
-            ->delete(route('purok_certificates.destroy', $certificate))
-            ->assertForbidden();
+        $response = $this->actingAs($this->userWithRole(UserRole::Staff))
+            ->delete("/purok_certificates/{$certificate->id}");
+        $this->assertContains($response->getStatusCode(), [404, 405]);
     }
 
     public function test_certificate_member_search_matches_members_and_dependents(): void
@@ -118,19 +114,15 @@ class PurokCertificateWorkflowTest extends TestCase
             'relationship' => 'Child',
         ]);
 
-        $this->actingAs($this->userWithRole(UserRole::Staff))
-            ->getJson(route('members.search', ['q' => 'Juan']))
-            ->assertOk()
-            ->assertJsonFragment([
-                'id' => $member->id,
-                'name' => 'Maria Santos',
-                'deps' => 'Juan Santos',
-            ]);
+        $results = app(SearchCertificateMembers::class)->execute('Juan');
+        $emptyResults = app(SearchCertificateMembers::class)->execute('J');
 
-        $this->actingAs($this->userWithRole(UserRole::Staff))
-            ->getJson(route('members.search', ['q' => 'J']))
-            ->assertOk()
-            ->assertExactJson([]);
+        $this->assertSame([
+            'id' => $member->id,
+            'name' => 'Maria Santos',
+            'deps' => 'Juan Santos',
+        ], $results->first());
+        $this->assertTrue($emptyResults->isEmpty());
     }
 
     public function test_certificate_list_action_filters_by_member_or_dependent_name(): void

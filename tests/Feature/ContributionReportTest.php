@@ -60,7 +60,7 @@ class ContributionReportTest extends TestCase
         $this->assertFalse($report['members']->contains('id', $indigent->id));
     }
 
-    public function test_old_contribution_report_uses_shared_action_totals(): void
+    public function test_old_contribution_report_redirects_to_filament_report(): void
     {
         $member = Member::create([
             'name' => 'Maria Santos',
@@ -74,10 +74,7 @@ class ContributionReportTest extends TestCase
 
         $this->actingAs($this->userWithRole(UserRole::Staff))
             ->get('/reports/contributions?year=2026&start_month=6&end_month=6')
-            ->assertOk()
-            ->assertSee('Maria Santos')
-            ->assertSee('10.00')
-            ->assertSee('Jun 2026 - Jun 2026');
+            ->assertRedirect('/admin/reports/contributions?year=2026&start_month=6&end_month=6');
     }
 
     public function test_staff_can_view_filament_contribution_report(): void

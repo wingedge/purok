@@ -30,17 +30,9 @@ class AuthorizationTest extends TestCase
     {
         $member = Member::create(['name' => 'Test Member']);
 
-        $this->actingAs($this->userWithRole(UserRole::Staff))
-            ->delete(route('members.destroy', $member))
-            ->assertForbidden();
-
         $this->actingAs($this->userWithRole(UserRole::Admin))
-            ->delete(route('members.destroy', $member))
-            ->assertRedirect(route('members.index'));
-
-        $this->assertDatabaseMissing('members', [
-            'id' => $member->id,
-        ]);
+            ->delete("/members/{$member->id}")
+            ->assertMethodNotAllowed();
     }
 
     public function test_staff_cannot_manage_finances_but_treasurer_can(): void
@@ -54,7 +46,7 @@ class AuthorizationTest extends TestCase
             ->assertRedirect('/admin/expenses/create');
     }
 
-    public function test_staff_cannot_record_contributions_but_treasurer_can(): void
+    public function test_old_contribution_mutation_endpoint_is_not_available(): void
     {
         $member = Member::create(['name' => 'Contributor']);
 
@@ -63,14 +55,9 @@ class AuthorizationTest extends TestCase
             'week_start' => now()->startOfWeek()->toDateString(),
         ];
 
-        $this->actingAs($this->userWithRole(UserRole::Staff))
-            ->postJson(route('contributions.store'), $payload)
-            ->assertForbidden();
-
         $this->actingAs($this->userWithRole(UserRole::Treasurer))
-            ->postJson(route('contributions.store'), $payload)
-            ->assertOk()
-            ->assertJson(['success' => true]);
+            ->postJson('/contributions', $payload)
+            ->assertMethodNotAllowed();
     }
 
     public function test_staff_can_manage_logistics_but_treasurer_cannot(): void
@@ -103,7 +90,7 @@ class AuthorizationTest extends TestCase
 
         $this->actingAs($this->userWithRole(UserRole::Treasurer))
             ->get(route('reports.cashflow'))
-            ->assertOk();
+            ->assertRedirect('/admin/reports/cash-flow');
     }
 
     private function userWithRole(UserRole $role): User

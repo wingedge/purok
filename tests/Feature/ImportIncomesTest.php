@@ -3,13 +3,10 @@
 namespace Tests\Feature;
 
 use App\Actions\Imports\ImportIncomes;
-use App\Enums\UserRole;
 use App\Models\Income;
 use App\Models\Inventory;
 use App\Models\Rental;
-use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Http\UploadedFile;
 use Tests\TestCase;
 
 class ImportIncomesTest extends TestCase
@@ -85,42 +82,6 @@ class ImportIncomesTest extends TestCase
         $this->assertDatabaseCount('incomes', 0);
     }
 
-    public function test_import_route_imports_csv_for_treasurer(): void
-    {
-        $file = UploadedFile::fake()->createWithContent(
-            'incomes.csv',
-            "date,source,description,amount,rental_id\n2026-06-15,Donation / Fund Drive,Community donation,250.50,\n",
-        );
-
-        $this->actingAs($this->userWithRole(UserRole::Treasurer))
-            ->post(route('incomes.import'), [
-                'csv_file' => $file,
-            ])
-            ->assertRedirect(route('incomes.index'))
-            ->assertSessionHas('success');
-
-        $this->assertDatabaseHas('incomes', [
-            'date' => '2026-06-15 00:00:00',
-            'source' => 'Donation / Fund Drive',
-            'description' => 'Community donation',
-            'amount' => 250.50,
-        ]);
-    }
-
-    public function test_import_route_is_forbidden_for_staff(): void
-    {
-        $file = UploadedFile::fake()->createWithContent(
-            'incomes.csv',
-            "date,source,description,amount,rental_id\n2026-06-15,Donation / Fund Drive,Community donation,250.50,\n",
-        );
-
-        $this->actingAs($this->userWithRole(UserRole::Staff))
-            ->post(route('incomes.import'), [
-                'csv_file' => $file,
-            ])
-            ->assertForbidden();
-    }
-
     /**
      * @param array<int, array<int, string>> $rows
      */
@@ -157,10 +118,4 @@ class ImportIncomesTest extends TestCase
         ]);
     }
 
-    private function userWithRole(UserRole $role): User
-    {
-        return User::factory()->create([
-            'role' => $role->value,
-        ]);
-    }
 }
