@@ -75,6 +75,8 @@ Purok currently has a working Laravel MVC foundation with authenticated CRUD scr
 - The monthly/yearly contribution grid is available in Filament.
 - Filament contribution resource access has focused feature tests.
 - Filament contribution grid access and toggle behavior have focused feature tests.
+- Contribution CSV import/export is implemented through Actions and Filament `DataExchange`.
+- Contribution CSV import/export has focused feature tests.
 
 ### Finances
 
@@ -139,12 +141,15 @@ Purok currently has a working Laravel MVC foundation with authenticated CRUD scr
 - Contribution report totals are extracted to `BuildContributionReport`.
 - Contribution report is available in Filament.
 - Contribution report totals and Filament access have focused feature tests.
+- Contribution report Excel export is available from Filament.
+- Contribution report Excel export has focused feature tests.
 
 ### Imports And Exports
 
 - Member/dependent CSV import/export is implemented through Actions.
 - Expense CSV import/export is implemented through Actions.
 - Income CSV import/export is implemented through Actions.
+- Contribution CSV import/export is implemented through Actions.
 - Inventory CSV import/export is implemented through Actions.
 - Rental CSV import/export is implemented through Actions.
 - Back-office CSV import/export operations are available in Filament.
@@ -218,6 +223,7 @@ Target import/export scope from `AGENTS.md`:
 - Members and dependents
 - Expenses
 - Incomes
+- Contributions
 - Inventory
 - Rentals
 
@@ -228,6 +234,7 @@ Current state and gaps:
 - Current CSV member/dependent export is action-based.
 - Expense import/export is implemented.
 - Income import/export is implemented.
+- Contribution import/export is implemented.
 - Inventory import/export is implemented.
 - Rental import/export is implemented.
 - Filament import/export operations page is implemented.
@@ -261,8 +268,9 @@ Current state and gaps:
 
 ### Reporting
 
-- Structured report exports are not implemented.
-- Browser print/save-PDF support exists for some report views, but it is not a formal export workflow.
+- Contribution report Excel export is implemented.
+- Structured exports for other reports are not implemented.
+- Browser print/save-PDF support exists for some report views, but it is not the primary contribution report export workflow.
 - Contribution report query logic is extracted to `BuildContributionReport`.
 - Report filters are basic.
 - Dashboard summary, cash-flow report, and contribution report totals have focused tests.
@@ -286,8 +294,10 @@ Current state and gaps:
 - Legacy income and expense CRUD tests exist.
 - Rental inventory synchronization tests exist.
 - Rental import/export tests exist.
+- Contribution import/export tests exist.
 - Legacy certificate log create, update, delete, member search, and list filtering tests exist.
 - Contribution report total tests exist.
+- Contribution report Excel export tests exist.
 
 ### Documentation
 

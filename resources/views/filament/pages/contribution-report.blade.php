@@ -48,9 +48,15 @@
                             Apply
                         </button>
 
-                        {{-- <button type="button" onclick="window.print()" class="fi-btn fi-size-md fi-color-gray">
-                            Print
-                        </button> --}}
+                        <button
+                            type="button"
+                            wire:click="exportExcel"
+                            wire:loading.attr="disabled"
+                            wire:target="exportExcel"
+                            class="fi-btn fi-size-md fi-color-gray"
+                        >
+                            Generate Excel
+                        </button>
                     </div>
                 </div>
             </div>

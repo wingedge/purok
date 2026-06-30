@@ -181,6 +181,8 @@ Flow:
 - `destroy` removes one member/week contribution.
 - `RecordContribution` centralizes creating/updating a contribution with the correct service-calculated amount.
 - `DeleteContribution` centralizes deleting a contribution by member and week while returning the removed amount.
+- `ImportContributions` imports contribution CSV rows and reuses `RecordContribution` so import behavior follows the same amount rule as manual recording.
+- `ExportContributions` exports contribution CSV rows with member ID, member name, week, amount, remarks, and timestamps.
 - `ContributionResource` uses `RecordContribution` for Filament contribution record creation and updates.
 - `BuildContributionGrid` centralizes the monthly/yearly grid date range, non-indigent member query, visible contribution eager loading, and yearly total calculation.
 - `ContributionGrid` provides the Filament operational grid and reuses `RecordContribution` when toggling payments on and `DeleteContribution` when toggling payments off.
@@ -320,11 +322,12 @@ Flow:
 - Contributions report generates weekly columns and lists member contributions over a selected range.
 - `Reports\CashFlowController@contributions` delegates contribution report totals to `BuildContributionReport`.
 - `ContributionReport` reuses `BuildContributionReport` for the Filament contribution report page.
+- `ExportContributionReport` generates an Excel workbook download from the Filament contribution report using the same report filters.
 
 Current concerns:
 
 - The old dashboard route redirects to Filament; the Filament dashboard summary page owns the back-office dashboard workflow.
-- Browser print styles exist for some reports, but structured exports are not implemented yet.
+- Browser print styles exist for some reports; contribution reporting now has a structured Excel export, while other report exports remain pending.
 
 ### Imports And Exports
 
@@ -333,6 +336,7 @@ The target import/export scope from `AGENTS.md` is Purok-specific:
 - Filament member CRUD
 - Expenses
 - Incomes
+- Contributions
 - Inventory
 - Rentals
 
@@ -346,6 +350,8 @@ Current state:
 - Expense CSV export exists in `App\Actions\Exports\ExportExpenses`.
 - Income CSV import exists in `App\Actions\Imports\ImportIncomes`.
 - Income CSV export exists in `App\Actions\Exports\ExportIncomes`.
+- Contribution CSV import exists in `App\Actions\Imports\ImportContributions`.
+- Contribution CSV export exists in `App\Actions\Exports\ExportContributions`.
 - Inventory CSV import exists in `App\Actions\Imports\ImportInventories`.
 - Inventory CSV export exists in `App\Actions\Exports\ExportInventories`.
 - Rental CSV import exists in `App\Actions\Imports\ImportRentals`.
@@ -355,7 +361,7 @@ Current state:
 Recommended architecture:
 
 - Keep import/export parsing, validation, persistence, and file generation outside controllers.
-- Use focused Actions or Services such as `ImportMembers`, `ExportMembers`, `ImportExpenses`, `ExportExpenses`, `ImportIncomes`, `ExportIncomes`, `ImportInventories`, `ExportInventories`, `ImportRentals`, and `ExportRentals`.
+- Use focused Actions or Services such as `ImportMembers`, `ExportMembers`, `ImportExpenses`, `ExportExpenses`, `ImportIncomes`, `ExportIncomes`, `ImportContributions`, `ExportContributions`, `ImportInventories`, `ExportInventories`, `ImportRentals`, and `ExportRentals`.
 - Use DTOs or validated row objects for imported rows so controllers, Livewire components, or Filament actions do not pass raw arrays deep into business logic.
 - Treat exports as query-backed reports with explicit columns and stable formats.
 - Record import results with created, updated, skipped, and failed row counts before expanding imports beyond members.
@@ -407,6 +413,7 @@ Current tests include Breeze-generated authentication/profile coverage plus focu
 - Role-based route authorization
 - Member/dependent import and export
 - Contribution rules and accounting-period totals
+- Contribution CSV import/export
 - Rental create/update/return/delete workflows
 - User-to-member account linking
 - Filament member resource access
@@ -417,6 +424,7 @@ Current tests include Breeze-generated authentication/profile coverage plus focu
 - Filament reports landing access
 - Filament cash-flow report access and totals
 - Contribution report totals and Filament access
+- Contribution report Excel export
 - Filament data exchange access, import, and export behavior
 
 The most important legacy CRUD workflows now have focused tests; remaining testing should be added as new refactors or behavior changes are introduced.

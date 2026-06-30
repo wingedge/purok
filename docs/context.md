@@ -41,6 +41,8 @@ Goal is to revamp and improve the flow, use filament for all of the backend and 
 - Admins can create back-office users, assign roles, and link accounts to member/officer records from `/admin/users`.
 - Member users can view read-only contribution status for their own record in the portal.
 - Member portal email updates sync to the linked login account, and members can change or reset their account password.
+- Contribution CSV import/export is implemented through Actions and Filament `DataExchange`.
+- Contribution report Excel export is available from the Filament contribution report page.
 - Expense CSV import/export is implemented through Actions and Filament `DataExchange`.
 - Income CSV import/export is implemented through Actions and Filament `DataExchange`.
 - Inventory CSV import/export is implemented through Actions and Filament `DataExchange`.

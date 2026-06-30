@@ -27,6 +27,16 @@ final readonly class ImportResult
         );
     }
 
+    public function withUpdated(int $count = 1): self
+    {
+        return new self(
+            created: $this->created,
+            updated: $this->updated + $count,
+            skipped: $this->skipped,
+            failedRows: $this->failedRows,
+        );
+    }
+
     public function withSkipped(int $count = 1): self
     {
         return new self(

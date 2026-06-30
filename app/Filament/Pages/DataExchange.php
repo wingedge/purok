@@ -4,11 +4,13 @@ declare(strict_types=1);
 
 namespace App\Filament\Pages;
 
+use App\Actions\Exports\ExportContributions;
 use App\Actions\Exports\ExportExpenses;
 use App\Actions\Exports\ExportIncomes;
 use App\Actions\Exports\ExportInventories;
 use App\Actions\Exports\ExportMembers;
 use App\Actions\Exports\ExportRentals;
+use App\Actions\Imports\ImportContributions;
 use App\Actions\Imports\ImportExpenses;
 use App\Actions\Imports\ImportIncomes;
 use App\Actions\Imports\ImportInventories;
@@ -47,6 +49,8 @@ class DataExchange extends Page
 
     public ?TemporaryUploadedFile $incomesCsv = null;
 
+    public ?TemporaryUploadedFile $contributionsCsv = null;
+
     public ?TemporaryUploadedFile $inventoriesCsv = null;
 
     public ?TemporaryUploadedFile $rentalsCsv = null;
@@ -57,6 +61,7 @@ class DataExchange extends Page
     {
         return static::canManageMembers()
             || static::canManageFinances()
+            || static::canManageContributions()
             || static::canManageInventory()
             || static::canManageRentals();
     }
@@ -69,6 +74,11 @@ class DataExchange extends Page
     public static function canManageFinances(): bool
     {
         return auth()->user()?->can('manage-finances') ?? false;
+    }
+
+    public static function canManageContributions(): bool
+    {
+        return auth()->user()?->can('manage-contributions') ?? false;
     }
 
     public static function canManageInventory(): bool
@@ -145,6 +155,28 @@ class DataExchange extends Page
         Gate::authorize('manage-finances');
 
         return $this->downloadCsv($exportIncomes->execute(), 'incomes');
+    }
+
+    public function importContributions(ImportContributions $importContributions): void
+    {
+        Gate::authorize('manage-contributions');
+
+        $this->validateOnly('contributionsCsv', [
+            'contributionsCsv' => ['required', 'file', 'mimes:csv,txt'],
+        ]);
+
+        $this->runImport('Contributions imported', fn (): string => $importContributions
+            ->execute($this->contributionsCsv?->getRealPath() ?? '')
+            ->summary());
+
+        $this->contributionsCsv = null;
+    }
+
+    public function exportContributions(ExportContributions $exportContributions): StreamedResponse
+    {
+        Gate::authorize('manage-contributions');
+
+        return $this->downloadCsv($exportContributions->execute(), 'contributions');
     }
 
     public function importInventories(ImportInventories $importInventories): void

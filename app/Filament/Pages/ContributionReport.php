@@ -4,10 +4,12 @@ declare(strict_types=1);
 
 namespace App\Filament\Pages;
 
+use App\Actions\Exports\ExportContributionReport;
 use App\Actions\Reports\BuildContributionReport;
 use BackedEnum;
 use Filament\Pages\Page;
 use Filament\Support\Icons\Heroicon;
+use Symfony\Component\HttpFoundation\StreamedResponse;
 use UnitEnum;
 
 class ContributionReport extends Page
@@ -51,6 +53,22 @@ class ContributionReport extends Page
             $this->year,
             $this->startMonth,
             $this->endMonth,
+        );
+    }
+
+    public function exportExcel(ExportContributionReport $exportContributionReport): StreamedResponse
+    {
+        $workbook = $exportContributionReport->execute(
+            $this->year,
+            $this->startMonth,
+            $this->endMonth,
+        );
+
+        return response()->streamDownload(
+            fn () => print $workbook,
+            'contribution-report-'.$this->year.'-'.str_pad((string) $this->startMonth, 2, '0', STR_PAD_LEFT)
+                .'-'.str_pad((string) $this->endMonth, 2, '0', STR_PAD_LEFT).'.xlsx',
+            ['Content-Type' => 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'],
         );
     }
 }

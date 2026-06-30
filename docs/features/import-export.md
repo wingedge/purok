@@ -12,6 +12,7 @@ This document defines the target import/export contracts for the Purok back-offi
 - Filament `DataExchange` delegates member CSV export work to the export action.
 - Expense import/export is implemented.
 - Income import/export is implemented.
+- Contribution import/export is implemented.
 - Inventory import/export is implemented.
 - Rental import/export is implemented.
 - Member/dependent import returns an `ImportResult` with created, updated, skipped, and failed counts.
@@ -163,6 +164,51 @@ Rules:
 - `created_at`
 - `updated_at`
 
+## Contributions
+
+Current implementation:
+
+- Contribution CSV export lives in `App\Actions\Exports\ExportContributions`.
+- Contribution CSV import lives in `App\Actions\Imports\ImportContributions`.
+- Filament `DataExchange` validates uploaded CSV files and delegates contribution import/export work to Actions.
+- Imports reuse `RecordContribution` so the contribution amount rule remains centralized in `ContributionService`.
+- Existing member/week records are updated; new member/week records are created.
+
+### Target Import Columns
+
+Required:
+
+- `week_start`
+- Either `member_id` or `member_name`
+
+Optional:
+
+- `remarks`
+- `id`
+- `amount`
+- `created_at`
+- `updated_at`
+
+Rules:
+
+- `week_start` must use `YYYY-MM-DD`.
+- `member_id` must reference an existing member when provided.
+- `member_name` may be used when it matches exactly one existing member.
+- `amount` is not trusted on import; the stored amount is calculated by `ContributionService`.
+- Duplicate member/week imports update the existing contribution remarks and recalculated amount.
+- Failed rows include row number, original data, and validation errors.
+
+### Target Export Columns
+
+- `id`
+- `member_id`
+- `member_name`
+- `week_start`
+- `amount`
+- `remarks`
+- `created_at`
+- `updated_at`
+
 ## Rentals
 
 Current implementation:
@@ -260,6 +306,8 @@ Rules:
 - `App\Actions\Exports\ExportExpenses`
 - `App\Actions\Imports\ImportIncomes`
 - `App\Actions\Exports\ExportIncomes`
+- `App\Actions\Imports\ImportContributions`
+- `App\Actions\Exports\ExportContributions`
 - `App\Actions\Imports\ImportInventories`
 - `App\Actions\Exports\ExportInventories`
 - `App\Actions\Imports\ImportRentals`
@@ -273,3 +321,4 @@ Rules:
 2. Income export and import are implemented.
 3. Inventory export and import are implemented.
 4. Rental export and import are implemented.
+5. Contribution export and import are implemented.

@@ -4,6 +4,7 @@ namespace Tests\Feature;
 
 use App\Enums\UserRole;
 use App\Filament\Pages\DataExchange;
+use App\Models\Contribution;
 use App\Models\Expense;
 use App\Models\Inventory;
 use App\Models\Member;
@@ -36,6 +37,7 @@ class FilamentDataExchangePageTest extends TestCase
             ->assertOk()
             ->assertSee('Expenses')
             ->assertSee('Incomes')
+            ->assertSee('Contributions')
             ->assertDontSee('Members And Dependents')
             ->assertDontSee('Inventory')
             ->assertDontSee('Rentals');
@@ -98,6 +100,30 @@ class FilamentDataExchangePageTest extends TestCase
             ->assertForbidden();
     }
 
+    public function test_treasurer_can_import_contributions_from_filament_page(): void
+    {
+        $member = Member::create([
+            'name' => 'Maria Santos',
+            'indigent' => false,
+        ]);
+
+        Livewire::actingAs($this->userWithRole(UserRole::Treasurer))
+            ->test(DataExchange::class)
+            ->set('contributionsCsv', UploadedFile::fake()->createWithContent(
+                'contributions.csv',
+                "member_id,member_name,week_start,remarks\n{$member->id},,2026-06-07,June collection\n",
+            ))
+            ->call('importContributions')
+            ->assertHasNoErrors()
+            ->assertSet('lastImportSummary', 'Created: 1. Updated: 0. Skipped: 0. Failed: 0.');
+
+        $this->assertDatabaseHas('contributions', [
+            'member_id' => $member->id,
+            'week_start' => '2026-06-07',
+            'remarks' => 'June collection',
+        ]);
+    }
+
     public function test_staff_can_import_inventories_from_filament_page(): void
     {
         Livewire::actingAs($this->userWithRole(UserRole::Staff))
@@ -133,6 +159,24 @@ class FilamentDataExchangePageTest extends TestCase
             ->test(DataExchange::class)
             ->call('exportExpenses')
             ->assertFileDownloaded('expenses-'.now()->format('Y-m-d').'.csv');
+    }
+
+    public function test_treasurer_can_export_contributions_from_filament_page(): void
+    {
+        $member = Member::create([
+            'name' => 'Exported Member',
+            'indigent' => false,
+        ]);
+        Contribution::create([
+            'member_id' => $member->id,
+            'week_start' => '2026-06-07',
+            'amount' => 10,
+        ]);
+
+        Livewire::actingAs($this->userWithRole(UserRole::Treasurer))
+            ->test(DataExchange::class)
+            ->call('exportContributions')
+            ->assertFileDownloaded('contributions-'.now()->format('Y-m-d').'.csv');
     }
 
     public function test_staff_can_export_members_from_filament_page(): void

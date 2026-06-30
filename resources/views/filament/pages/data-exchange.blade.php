@@ -77,6 +77,32 @@
                     </div>
                 </div>
             </section>
+
+        @endcan
+
+        @can('manage-contributions')
+            <section class="purok-exchange-card">
+                <div>
+                    <h2 class="purok-link-title">Contributions</h2>
+                    <p class="purok-link-description">Import or export weekly member contribution CSV records.</p>
+                </div>
+
+                <div class="purok-exchange-form">
+                    <input type="file" wire:model="contributionsCsv" accept=".csv,text/csv,text/plain" class="purok-file-input">
+                    @error('contributionsCsv')
+                        <p class="purok-error">{{ $message }}</p>
+                    @enderror
+
+                    <div class="purok-fi-actions">
+                        <button type="button" wire:click="importContributions" wire:loading.attr="disabled" class="fi-btn fi-color-primary fi-size-md">
+                            Import CSV
+                        </button>
+                        <button type="button" wire:click="exportContributions" wire:loading.attr="disabled" class="fi-btn fi-color-gray fi-size-md">
+                            Export CSV
+                        </button>
+                    </div>
+                </div>
+            </section>
         @endcan
 
         @can('manage-inventory')
