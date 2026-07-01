@@ -162,9 +162,9 @@ Dashboard behavior:
 
 ## Imports And Exports
 
-Import/export can be added after the core workflow is stable.
+Import/export is available through Filament `DataExchange`.
 
-Recommended exports:
+Supported exports:
 
 - Community funding events CSV
 - Community funding donations CSV
@@ -180,6 +180,19 @@ Recommended event export columns:
 - `created_at`
 - `updated_at`
 
+Supported event import columns:
+
+- `id`
+- `name`
+- `description`
+- `deadline`
+- `goal_amount`
+- `actual_amount`
+- `created_at`
+- `updated_at`
+
+Rows with an existing `id` update that funding event. Rows without `id` create a new funding event. `actual_amount` is ignored on import because it is computed from donations.
+
 Recommended donation export columns:
 
 - `id`
@@ -192,6 +205,21 @@ Recommended donation export columns:
 - `remarks`
 - `created_at`
 - `updated_at`
+
+Supported donation import columns:
+
+- `id`
+- `community_funding_event_id`
+- `community_funding_event_name`
+- `member_id`
+- `member_name`
+- `amount`
+- `received_at`
+- `remarks`
+- `created_at`
+- `updated_at`
+
+Rows with an existing `id` update that donation. Rows without `id` create a new donation.
 
 ## Tests
 
@@ -218,4 +246,4 @@ Add focused tests for:
 8. Update dashboard totals if total funds should include community funding.
 9. Add focused tests.
 10. Update `docs/context.md`, `docs/architecture.md`, `docs/roadmap.md`, and `docs/features/authorization.md`.
-11. Add import/export later if needed.
+11. Add import/export later if needed. Done.

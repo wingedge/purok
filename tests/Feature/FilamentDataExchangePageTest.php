@@ -4,6 +4,8 @@ namespace Tests\Feature;
 
 use App\Enums\UserRole;
 use App\Filament\Pages\DataExchange;
+use App\Models\CommunityFundingDonation;
+use App\Models\CommunityFundingEvent;
 use App\Models\Contribution;
 use App\Models\Expense;
 use App\Models\Inventory;
@@ -38,6 +40,8 @@ class FilamentDataExchangePageTest extends TestCase
             ->assertSee('Expenses')
             ->assertSee('Incomes')
             ->assertSee('Contributions')
+            ->assertSee('Community Funding Events')
+            ->assertSee('Community Funding Donations')
             ->assertDontSee('Members And Dependents')
             ->assertDontSee('Inventory')
             ->assertDontSee('Rentals');
@@ -124,6 +128,56 @@ class FilamentDataExchangePageTest extends TestCase
         ]);
     }
 
+    public function test_treasurer_can_import_community_funding_events_from_filament_page(): void
+    {
+        Livewire::actingAs($this->userWithRole(UserRole::Treasurer))
+            ->test(DataExchange::class)
+            ->set('communityFundingEventsCsv', UploadedFile::fake()->createWithContent(
+                'community-funding-events.csv',
+                "name,description,deadline,goal_amount\nStreet Light Fund,Barangay street lights,2026-08-01,5000\nEmergency Fund,Open-ended support,,\n",
+            ))
+            ->call('importCommunityFundingEvents')
+            ->assertHasNoErrors()
+            ->assertSet('lastImportSummary', 'Created: 2. Updated: 0. Skipped: 0. Failed: 0.');
+
+        $this->assertDatabaseHas('community_funding_events', [
+            'name' => 'Street Light Fund',
+            'goal_amount' => '5000.00',
+        ]);
+        $this->assertDatabaseHas('community_funding_events', [
+            'name' => 'Emergency Fund',
+            'goal_amount' => null,
+        ]);
+    }
+
+    public function test_treasurer_can_import_community_funding_donations_from_filament_page(): void
+    {
+        $event = CommunityFundingEvent::create([
+            'name' => 'Street Light Fund',
+            'goal_amount' => 5000,
+        ]);
+        $member = Member::create([
+            'name' => 'Maria Santos',
+        ]);
+
+        Livewire::actingAs($this->userWithRole(UserRole::Treasurer))
+            ->test(DataExchange::class)
+            ->set('communityFundingDonationsCsv', UploadedFile::fake()->createWithContent(
+                'community-funding-donations.csv',
+                "community_funding_event_id,community_funding_event_name,member_id,member_name,amount,received_at,remarks\n{$event->id},,{$member->id},,250,2026-06-15,First donation\n",
+            ))
+            ->call('importCommunityFundingDonations')
+            ->assertHasNoErrors()
+            ->assertSet('lastImportSummary', 'Created: 1. Updated: 0. Skipped: 0. Failed: 0.');
+
+        $this->assertDatabaseHas('community_funding_donations', [
+            'community_funding_event_id' => $event->id,
+            'member_id' => $member->id,
+            'amount' => '250.00',
+            'remarks' => 'First donation',
+        ]);
+    }
+
     public function test_staff_can_import_inventories_from_filament_page(): void
     {
         Livewire::actingAs($this->userWithRole(UserRole::Staff))
@@ -177,6 +231,31 @@ class FilamentDataExchangePageTest extends TestCase
             ->test(DataExchange::class)
             ->call('exportContributions')
             ->assertFileDownloaded('contributions-'.now()->format('Y-m-d').'.csv');
+    }
+
+    public function test_treasurer_can_export_community_funding_from_filament_page(): void
+    {
+        $event = CommunityFundingEvent::create([
+            'name' => 'Exported Funding',
+            'goal_amount' => 5000,
+        ]);
+        $member = Member::create(['name' => 'Exported Member']);
+        CommunityFundingDonation::create([
+            'community_funding_event_id' => $event->id,
+            'member_id' => $member->id,
+            'amount' => 250,
+            'received_at' => '2026-06-15',
+        ]);
+
+        Livewire::actingAs($this->userWithRole(UserRole::Treasurer))
+            ->test(DataExchange::class)
+            ->call('exportCommunityFundingEvents')
+            ->assertFileDownloaded('community-funding-events-'.now()->format('Y-m-d').'.csv');
+
+        Livewire::actingAs($this->userWithRole(UserRole::Treasurer))
+            ->test(DataExchange::class)
+            ->call('exportCommunityFundingDonations')
+            ->assertFileDownloaded('community-funding-donations-'.now()->format('Y-m-d').'.csv');
     }
 
     public function test_staff_can_export_members_from_filament_page(): void

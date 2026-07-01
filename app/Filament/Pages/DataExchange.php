@@ -5,12 +5,16 @@ declare(strict_types=1);
 namespace App\Filament\Pages;
 
 use App\Actions\Exports\ExportContributions;
+use App\Actions\Exports\ExportCommunityFundingDonations;
+use App\Actions\Exports\ExportCommunityFundingEvents;
 use App\Actions\Exports\ExportExpenses;
 use App\Actions\Exports\ExportIncomes;
 use App\Actions\Exports\ExportInventories;
 use App\Actions\Exports\ExportMembers;
 use App\Actions\Exports\ExportRentals;
 use App\Actions\Imports\ImportContributions;
+use App\Actions\Imports\ImportCommunityFundingDonations;
+use App\Actions\Imports\ImportCommunityFundingEvents;
 use App\Actions\Imports\ImportExpenses;
 use App\Actions\Imports\ImportIncomes;
 use App\Actions\Imports\ImportInventories;
@@ -51,6 +55,10 @@ class DataExchange extends Page
 
     public ?TemporaryUploadedFile $contributionsCsv = null;
 
+    public ?TemporaryUploadedFile $communityFundingEventsCsv = null;
+
+    public ?TemporaryUploadedFile $communityFundingDonationsCsv = null;
+
     public ?TemporaryUploadedFile $inventoriesCsv = null;
 
     public ?TemporaryUploadedFile $rentalsCsv = null;
@@ -62,6 +70,7 @@ class DataExchange extends Page
         return static::canManageMembers()
             || static::canManageFinances()
             || static::canManageContributions()
+            || static::canManageCommunityFunding()
             || static::canManageInventory()
             || static::canManageRentals();
     }
@@ -79,6 +88,11 @@ class DataExchange extends Page
     public static function canManageContributions(): bool
     {
         return auth()->user()?->can('manage-contributions') ?? false;
+    }
+
+    public static function canManageCommunityFunding(): bool
+    {
+        return auth()->user()?->can('manage-community-funding') ?? false;
     }
 
     public static function canManageInventory(): bool
@@ -177,6 +191,50 @@ class DataExchange extends Page
         Gate::authorize('manage-contributions');
 
         return $this->downloadCsv($exportContributions->execute(), 'contributions');
+    }
+
+    public function importCommunityFundingEvents(ImportCommunityFundingEvents $importEvents): void
+    {
+        Gate::authorize('manage-community-funding');
+
+        $this->validateOnly('communityFundingEventsCsv', [
+            'communityFundingEventsCsv' => ['required', 'file', 'mimes:csv,txt'],
+        ]);
+
+        $this->runImport('Community funding events imported', fn (): string => $importEvents
+            ->execute($this->communityFundingEventsCsv?->getRealPath() ?? '')
+            ->summary());
+
+        $this->communityFundingEventsCsv = null;
+    }
+
+    public function exportCommunityFundingEvents(ExportCommunityFundingEvents $exportEvents): StreamedResponse
+    {
+        Gate::authorize('manage-community-funding');
+
+        return $this->downloadCsv($exportEvents->execute(), 'community-funding-events');
+    }
+
+    public function importCommunityFundingDonations(ImportCommunityFundingDonations $importDonations): void
+    {
+        Gate::authorize('manage-community-funding');
+
+        $this->validateOnly('communityFundingDonationsCsv', [
+            'communityFundingDonationsCsv' => ['required', 'file', 'mimes:csv,txt'],
+        ]);
+
+        $this->runImport('Community funding donations imported', fn (): string => $importDonations
+            ->execute($this->communityFundingDonationsCsv?->getRealPath() ?? '')
+            ->summary());
+
+        $this->communityFundingDonationsCsv = null;
+    }
+
+    public function exportCommunityFundingDonations(ExportCommunityFundingDonations $exportDonations): StreamedResponse
+    {
+        Gate::authorize('manage-community-funding');
+
+        return $this->downloadCsv($exportDonations->execute(), 'community-funding-donations');
     }
 
     public function importInventories(ImportInventories $importInventories): void

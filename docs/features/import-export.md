@@ -13,6 +13,8 @@ This document defines the target import/export contracts for the Purok back-offi
 - Expense import/export is implemented.
 - Income import/export is implemented.
 - Contribution import/export is implemented.
+- Community funding event import/export is implemented.
+- Community funding donation import/export is implemented.
 - Inventory import/export is implemented.
 - Rental import/export is implemented.
 - Member/dependent import returns an `ImportResult` with created, updated, skipped, and failed counts.
@@ -209,6 +211,86 @@ Rules:
 - `created_at`
 - `updated_at`
 
+## Community Funding
+
+Current implementation:
+
+- Community funding event CSV export lives in `App\Actions\Exports\ExportCommunityFundingEvents`.
+- Community funding event CSV import lives in `App\Actions\Imports\ImportCommunityFundingEvents`.
+- Community funding donation CSV export lives in `App\Actions\Exports\ExportCommunityFundingDonations`.
+- Community funding donation CSV import lives in `App\Actions\Imports\ImportCommunityFundingDonations`.
+- Filament `DataExchange` validates uploaded CSV files and delegates community funding import/export work to Actions.
+
+### Event Import Columns
+
+Required:
+
+- `name`
+
+Optional:
+
+- `id`
+- `description`
+- `deadline`
+- `goal_amount`
+- `actual_amount`
+- `created_at`
+- `updated_at`
+
+Rules:
+
+- `deadline` must use `YYYY-MM-DD` when provided.
+- `goal_amount` may be blank. When provided, it must be zero or greater.
+- `actual_amount` is ignored on import because actual funding totals are computed from donations.
+- Rows with an existing `id` update that event; rows without `id` create a new event.
+
+### Event Export Columns
+
+- `id`
+- `name`
+- `description`
+- `deadline`
+- `goal_amount`
+- `actual_amount`
+- `created_at`
+- `updated_at`
+
+### Donation Import Columns
+
+Required:
+
+- `amount`
+- `received_at`
+- Either `community_funding_event_id` or `community_funding_event_name`
+- Either `member_id` or `member_name`
+
+Optional:
+
+- `id`
+- `remarks`
+- `created_at`
+- `updated_at`
+
+Rules:
+
+- `received_at` must use `YYYY-MM-DD`.
+- `amount` must be greater than zero.
+- Event and member names must each match exactly one record when IDs are not provided.
+- Rows with an existing `id` update that donation; rows without `id` create a new donation.
+
+### Donation Export Columns
+
+- `id`
+- `community_funding_event_id`
+- `community_funding_event_name`
+- `member_id`
+- `member_name`
+- `amount`
+- `received_at`
+- `remarks`
+- `created_at`
+- `updated_at`
+
 ## Rentals
 
 Current implementation:
@@ -308,6 +390,10 @@ Rules:
 - `App\Actions\Exports\ExportIncomes`
 - `App\Actions\Imports\ImportContributions`
 - `App\Actions\Exports\ExportContributions`
+- `App\Actions\Imports\ImportCommunityFundingEvents`
+- `App\Actions\Exports\ExportCommunityFundingEvents`
+- `App\Actions\Imports\ImportCommunityFundingDonations`
+- `App\Actions\Exports\ExportCommunityFundingDonations`
 - `App\Actions\Imports\ImportInventories`
 - `App\Actions\Exports\ExportInventories`
 - `App\Actions\Imports\ImportRentals`
@@ -322,3 +408,4 @@ Rules:
 3. Inventory export and import are implemented.
 4. Rental export and import are implemented.
 5. Contribution export and import are implemented.
+6. Community funding event and donation export/import are implemented.

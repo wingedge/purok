@@ -86,6 +86,7 @@ Purok currently has a working Laravel MVC foundation with authenticated CRUD scr
 - Community funding event and donation workflows are extracted to Actions.
 - `CommunityFundingService` centralizes accounting-period funding totals.
 - Community funding event and donation management is available in Filament.
+- Community funding event and donation CSV import/export is implemented through Actions and Filament `DataExchange`.
 - Community funding is included in cash-flow report inflow and dashboard total funds.
 - Community funding authorization and workflow behavior have focused feature tests.
 
@@ -162,6 +163,7 @@ Purok currently has a working Laravel MVC foundation with authenticated CRUD scr
 - Expense CSV import/export is implemented through Actions.
 - Income CSV import/export is implemented through Actions.
 - Contribution CSV import/export is implemented through Actions.
+- Community funding event and donation CSV import/export is implemented through Actions.
 - Inventory CSV import/export is implemented through Actions.
 - Rental CSV import/export is implemented through Actions.
 - Back-office CSV import/export operations are available in Filament.
@@ -263,7 +265,7 @@ Current state and gaps:
 - Income and expense category/source values are centralized but still stored as plain strings.
 - Contribution amount rules are centralized but not configurable.
 - Cash on hand/opening balance workflow is not clearly modeled.
-- Community funding import/export is not implemented yet.
+- Community funding import/export is implemented for events and donations.
 
 ### Inventory And Rental Improvements
 

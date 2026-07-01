@@ -105,6 +105,54 @@
             </section>
         @endcan
 
+        @can('manage-community-funding')
+            <section class="purok-exchange-card">
+                <div>
+                    <h2 class="purok-link-title">Community Funding Events</h2>
+                    <p class="purok-link-description">Import or export community funding drives, goals, and deadlines.</p>
+                </div>
+
+                <div class="purok-exchange-form">
+                    <input type="file" wire:model="communityFundingEventsCsv" accept=".csv,text/csv,text/plain" class="purok-file-input">
+                    @error('communityFundingEventsCsv')
+                        <p class="purok-error">{{ $message }}</p>
+                    @enderror
+
+                    <div class="purok-fi-actions">
+                        <button type="button" wire:click="importCommunityFundingEvents" wire:loading.attr="disabled" class="fi-btn fi-color-primary fi-size-md">
+                            Import CSV
+                        </button>
+                        <button type="button" wire:click="exportCommunityFundingEvents" wire:loading.attr="disabled" class="fi-btn fi-color-gray fi-size-md">
+                            Export CSV
+                        </button>
+                    </div>
+                </div>
+            </section>
+
+            <section class="purok-exchange-card">
+                <div>
+                    <h2 class="purok-link-title">Community Funding Donations</h2>
+                    <p class="purok-link-description">Import or export member donations recorded under funding drives.</p>
+                </div>
+
+                <div class="purok-exchange-form">
+                    <input type="file" wire:model="communityFundingDonationsCsv" accept=".csv,text/csv,text/plain" class="purok-file-input">
+                    @error('communityFundingDonationsCsv')
+                        <p class="purok-error">{{ $message }}</p>
+                    @enderror
+
+                    <div class="purok-fi-actions">
+                        <button type="button" wire:click="importCommunityFundingDonations" wire:loading.attr="disabled" class="fi-btn fi-color-primary fi-size-md">
+                            Import CSV
+                        </button>
+                        <button type="button" wire:click="exportCommunityFundingDonations" wire:loading.attr="disabled" class="fi-btn fi-color-gray fi-size-md">
+                            Export CSV
+                        </button>
+                    </div>
+                </div>
+            </section>
+        @endcan
+
         @can('manage-inventory')
             <section class="purok-exchange-card">
                 <div>

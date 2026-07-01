@@ -43,6 +43,7 @@ Goal is to revamp and improve the flow, use filament for all of the backend and 
 - Member users can view read-only contribution status for their own record in the portal.
 - Member portal email updates sync to the linked login account, and members can change or reset their account password.
 - Contribution CSV import/export is implemented through Actions and Filament `DataExchange`.
+- Community funding event and donation CSV import/export is implemented through Actions and Filament `DataExchange`.
 - Contribution report Excel export is available from the Filament contribution report page.
 - Community funding donations are included in cash-flow and dashboard total funds.
 - Expense CSV import/export is implemented through Actions and Filament `DataExchange`.
