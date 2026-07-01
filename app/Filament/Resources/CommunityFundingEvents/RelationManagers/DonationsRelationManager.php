@@ -54,6 +54,7 @@ class DonationsRelationManager extends RelationManager
     public function table(Table $table): Table
     {
         return $table
+            ->heading($this->donationsTableHeading())
             ->recordTitleAttribute('member.name')
             ->columns([
                 TextColumn::make('member.name')
@@ -108,5 +109,14 @@ class DonationsRelationManager extends RelationManager
                     DeleteBulkAction::make(),
                 ]),
             ]);
+    }
+
+    private function donationsTableHeading(): string
+    {
+        $total = (float) $this->getOwnerRecord()
+            ->donations()
+            ->sum('amount');
+
+        return 'Donations - Total: PHP '.number_format($total, 2);
     }
 }
