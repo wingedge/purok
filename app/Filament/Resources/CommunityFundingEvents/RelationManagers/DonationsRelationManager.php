@@ -44,6 +44,7 @@ class DonationsRelationManager extends RelationManager
                     ->required(),
                 DatePicker::make('received_at')
                     ->label('Date Received')
+                    ->default(fn (): ?string => $this->getOwnerRecord()->deadline?->format('Y-m-d'))
                     ->required(),
                 Textarea::make('remarks')
                     ->maxLength(65535)
