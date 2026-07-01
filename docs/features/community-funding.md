@@ -41,7 +41,7 @@ Columns:
 Rules:
 
 - `name` is required.
-- `goal_amount` is required and must be zero or greater.
+- `goal_amount` is optional. When provided, it must be zero or greater.
 - `deadline` is optional unless the workflow later requires every funding drive to have a deadline.
 - Actual amount is computed from donations, not stored.
 
@@ -102,7 +102,7 @@ Event form fields:
 - Name
 - Description or purpose
 - Deadline
-- Goal amount
+- Goal amount, optional
 
 Event table columns:
 

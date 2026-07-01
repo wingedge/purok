@@ -4,6 +4,8 @@ namespace Tests\Feature;
 
 use App\Actions\Reports\BuildCashFlowReport;
 use App\Enums\UserRole;
+use App\Models\CommunityFundingDonation;
+use App\Models\CommunityFundingEvent;
 use App\Models\Contribution;
 use App\Models\Expense;
 use App\Models\Income;
@@ -37,23 +39,75 @@ class FilamentCashFlowReportTest extends TestCase
             'week_start' => '2026-06-07',
             'amount' => 10,
         ]);
+        $event = CommunityFundingEvent::create([
+            'name' => 'Street Light Fund',
+            'goal_amount' => 1000,
+        ]);
+        $cleanupEvent = CommunityFundingEvent::create([
+            'name' => 'Cleanup Drive Fund',
+            'goal_amount' => 500,
+        ]);
+        CommunityFundingDonation::create([
+            'community_funding_event_id' => $event->id,
+            'member_id' => $member->id,
+            'amount' => 200,
+            'received_at' => '2026-06-18',
+        ]);
+        CommunityFundingDonation::create([
+            'community_funding_event_id' => $event->id,
+            'member_id' => $member->id,
+            'amount' => 75,
+            'received_at' => '2026-07-01',
+        ]);
+        CommunityFundingDonation::create([
+            'community_funding_event_id' => $cleanupEvent->id,
+            'member_id' => $member->id,
+            'amount' => 50,
+            'received_at' => '2026-06-20',
+        ]);
 
         $report = app(BuildCashFlowReport::class)->execute(2026, 6);
 
         $this->assertSame(500.0, $report['incomeTotal']);
         $this->assertSame(10.0, $report['contributionTotal']);
+        $this->assertSame(250.0, $report['communityFundingTotal']);
+        $this->assertSame([
+            [
+                'name' => 'Cleanup Drive Fund',
+                'total' => 50.0,
+            ],
+            [
+                'name' => 'Street Light Fund',
+                'total' => 200.0,
+            ],
+        ], $report['communityFundingEventTotals']);
         $this->assertSame(125.0, $report['expenseTotal']);
-        $this->assertSame(510.0, $report['totalInflow']);
-        $this->assertSame(385.0, $report['netCashFlow']);
+        $this->assertSame(760.0, $report['totalInflow']);
+        $this->assertSame(635.0, $report['netCashFlow']);
     }
 
     public function test_treasurer_can_view_filament_cash_flow_report(): void
     {
+        $member = Member::create(['name' => 'Maria Santos']);
+        $event = CommunityFundingEvent::create([
+            'name' => 'Street Light Fund',
+            'goal_amount' => 1000,
+        ]);
+        CommunityFundingDonation::create([
+            'community_funding_event_id' => $event->id,
+            'member_id' => $member->id,
+            'amount' => 200,
+            'received_at' => '2026-06-18',
+        ]);
+
         $this->actingAs($this->userWithRole(UserRole::Treasurer))
             ->get('/admin/reports/cash-flow?year=2026&month=6')
             ->assertOk()
             ->assertSee('Cash Flow')
             ->assertSee('Total Inflow')
+            ->assertSee('Community Funding')
+            ->assertSee('Street Light Fund')
+            ->assertSee('PHP 200.00')
             ->assertSee('Net Cash Flow');
     }
 

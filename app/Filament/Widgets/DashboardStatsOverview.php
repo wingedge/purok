@@ -25,7 +25,9 @@ class DashboardStatsOverview extends StatsOverviewWidget
                 ->color('gray'),
             Stat::make('Current Funds', $this->money($summary['totalFunds']))
                 ->color($summary['totalFunds'] >= 0 ? 'success' : 'danger'),
-            Stat::make('Income + Contributions', $this->money($summary['totalIncomes'] + $summary['totalContributions']))
+            Stat::make('Total Inflow', $this->money(
+                $summary['totalIncomes'] + $summary['totalContributions'] + $summary['totalCommunityFunding']
+            ))
                 ->description('For '.now()->year)
                 ->color('success'),
             Stat::make('Expenses', $this->money($summary['totalExpenses']))

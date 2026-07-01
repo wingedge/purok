@@ -10,7 +10,7 @@ This document defines the intended role and permission model for Purok. The appl
 - Certificate routes require both authentication and email verification.
 - Named gates are registered in `AuthServiceProvider`.
 - Main business routes use `can:` middleware for the first permission boundaries.
-- Model policies are implemented for members, incomes, expenses, inventory, rentals, certificate logs, contributions, officers, and users.
+- Model policies are implemented for members, incomes, expenses, inventory, rentals, certificate logs, contributions, community funding, officers, and users.
 - Report access still uses gates and page/route-level checks rather than model policies.
 - Users can be linked to member records through `users.member_id`.
 - Filament admin panel access is restricted to admin, treasurer, and staff users.
@@ -32,6 +32,7 @@ Allowed:
 - Manage purok officers.
 - Import and export members and dependents.
 - Manage contributions.
+- Manage community funding events and donations.
 - Manage incomes and expenses.
 - Import and export incomes and expenses.
 - Manage inventory and rentals.
@@ -49,6 +50,7 @@ Allowed:
 - View members and dependents.
 - View contributions.
 - Manage contributions.
+- Manage community funding events and donations.
 - Manage incomes and expenses.
 - Import and export incomes and expenses.
 - View rentals and linked rental income.
@@ -82,6 +84,7 @@ Not allowed by default:
 
 - Manage users and roles.
 - Manage income and expense records directly.
+- Manage community funding events and donations.
 - Export sensitive financial reports unless explicitly approved later.
 
 ### Member
@@ -114,6 +117,8 @@ Not allowed:
 | Officers | Yes | No | Yes | No |
 | Contributions view | Yes | Yes | Yes | Own status later |
 | Contributions manage | Yes | Yes | No | No |
+| Community funding view | Yes | Yes | No | No |
+| Community funding manage | Yes | Yes | No | No |
 | Incomes | Yes | Yes | No | No |
 | Expenses | Yes | Yes | No | No |
 | Income/expense import/export | Yes | Yes | No | No |

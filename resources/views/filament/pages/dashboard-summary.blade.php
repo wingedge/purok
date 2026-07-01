@@ -62,15 +62,15 @@
             ])>
                 PHP {{ number_format((float) $summary['totalFunds'], 2) }}
             </p>
-            <p class="purok-stat-note">Income plus contributions minus expenses</p>
+            <p class="purok-stat-note">Income, contributions, and funding minus expenses</p>
         </div>
 
         <div class="purok-stat-card">
-            <p class="purok-stat-label">Total Income</p>
+            <p class="purok-stat-label">Total Inflow</p>
             <p class="purok-stat-value purok-stat-value-success">
-                PHP {{ number_format((float) ($summary['totalIncomes'] + $summary['totalContributions']), 2) }}
+                PHP {{ number_format((float) ($summary['totalIncomes'] + $summary['totalContributions'] + $summary['totalCommunityFunding']), 2) }}
             </p>
-            <p class="purok-stat-note">Income records and member contributions</p>
+            <p class="purok-stat-note">Income records, member contributions, and community funding</p>
         </div>
 
         <div class="purok-stat-card">

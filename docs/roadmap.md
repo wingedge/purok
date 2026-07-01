@@ -4,7 +4,7 @@ This roadmap separates what is already working in the current app from what stil
 
 ## Current Status Summary
 
-Purok currently has a working Laravel MVC foundation with authenticated CRUD screens for members, contributions, finances, inventory, rentals, certificate logs, dashboard summaries, and reports. Filament 4 has been introduced for the back office. Filament now covers members, dependents, contribution record CRUD, the contribution grid, expense CRUD, income CRUD, inventory CRUD, rental CRUD, certificate log CRUD, dashboard summary stats, the filterable dashboard summary page, reports landing, the cash-flow report page, the contribution report page, and CSV import/export operations. The first member-facing portal profile screen is implemented.
+Purok currently has a working Laravel MVC foundation with authenticated CRUD screens for members, contributions, community funding, finances, inventory, rentals, certificate logs, dashboard summaries, and reports. Filament 4 has been introduced for the back office. Filament now covers members, dependents, contribution record CRUD, the contribution grid, community funding event and donation management, expense CRUD, income CRUD, inventory CRUD, rental CRUD, certificate log CRUD, dashboard summary stats, the filterable dashboard summary page, reports landing, the cash-flow report page, the contribution report page, and CSV import/export operations. The first member-facing portal profile screen is implemented.
 
 ## Done
 
@@ -78,6 +78,17 @@ Purok currently has a working Laravel MVC foundation with authenticated CRUD scr
 - Contribution CSV import/export is implemented through Actions and Filament `DataExchange`.
 - Contribution CSV import/export has focused feature tests.
 
+### Community Funding
+
+- `community_funding_events` table exists.
+- `community_funding_donations` table exists.
+- Community funding actual amounts are computed from donation records.
+- Community funding event and donation workflows are extracted to Actions.
+- `CommunityFundingService` centralizes accounting-period funding totals.
+- Community funding event and donation management is available in Filament.
+- Community funding is included in cash-flow report inflow and dashboard total funds.
+- Community funding authorization and workflow behavior have focused feature tests.
+
 ### Finances
 
 - `incomes` table exists.
@@ -125,7 +136,7 @@ Purok currently has a working Laravel MVC foundation with authenticated CRUD scr
 ### Dashboard And Reports
 
 - Authenticated dashboard exists.
-- Dashboard summarizes members, income, contributions, expenses, contributors, rentals, and total funds.
+- Dashboard summarizes members, income, contributions, community funding, expenses, contributors, rentals, and total funds.
 - Dashboard supports year and optional month filtering.
 - Dashboard summary query logic is extracted to `BuildDashboardSummary`.
 - Filament dashboard shows current-year summary stats.
@@ -135,6 +146,7 @@ Purok currently has a working Laravel MVC foundation with authenticated CRUD scr
 - Reports landing page is available in Filament.
 - Cash flow report exists.
 - Cash flow report totals are extracted to `BuildCashFlowReport`.
+- Cash flow report includes community funding as a separate inflow row.
 - Cash flow report is available in Filament.
 - Filament cash-flow report access and totals have focused feature tests.
 - Contribution report exists.
@@ -166,7 +178,7 @@ Purok currently has a working Laravel MVC foundation with authenticated CRUD scr
 - PHP 8.3+ is preferred, but the current PHP requirement can remain if there are no compatibility issues.
 - Livewire 4 is optional and should only be introduced when a backend or member portal workflow clearly benefits from it.
 - Filament 4 is installed and used for the admin panel.
-- Filament Resources and pages are implemented for members, dependents, contribution records, the contribution grid, expenses, incomes, inventory, rentals, and certificate logs.
+- Filament Resources and pages are implemented for members, dependents, contribution records, the contribution grid, community funding events and donations, expenses, incomes, inventory, rentals, and certificate logs.
 - Back-office dashboard, report, and import/export pages are now available in Filament.
 - Old Blade back-office entry points redirect to Filament. Old back-office mutation, import, export, and report-detail compatibility routes have been removed from public access.
 - Member self-service screens are currently Blade/controller-based; moving them to Livewire is optional, not required.
@@ -181,7 +193,7 @@ Purok currently has a working Laravel MVC foundation with authenticated CRUD scr
 - Member, income, and expense list Actions exist for legacy index query logic.
 - Contribution rules are extracted to `ContributionService`.
 - Contribution record/create/delete workflows are partially Action-based.
-- `ContributionService` is implemented; other service extractions remain pending.
+- `ContributionService` and `CommunityFundingService` are implemented; other service extractions remain pending.
 - Repositories are not implemented.
 - Import result DTOs are implemented for member/dependent import.
 - A `UserRole` enum is implemented.
@@ -193,7 +205,7 @@ Purok currently has a working Laravel MVC foundation with authenticated CRUD scr
 
 - Initial role-based route access is implemented with gates and route middleware.
 - Filament panel access is restricted to admin, treasurer, and staff users.
-- Member, income, expense, inventory, rental, certificate log, contribution, officer, and user model policies are implemented and preserve the current gate-based role rules.
+- Member, income, expense, inventory, rental, certificate log, contribution, community funding, officer, and user model policies are implemented and preserve the current gate-based role rules.
 - Reports still use gates and page/route-level checks rather than model policies.
 - Staff/treasurer/admin permissions are documented in `docs/features/authorization.md` and partially enforced in code.
 - Member-role users are blocked from Filament admin access.
@@ -251,6 +263,7 @@ Current state and gaps:
 - Income and expense category/source values are centralized but still stored as plain strings.
 - Contribution amount rules are centralized but not configurable.
 - Cash on hand/opening balance workflow is not clearly modeled.
+- Community funding import/export is not implemented yet.
 
 ### Inventory And Rental Improvements
 
@@ -273,7 +286,7 @@ Current state and gaps:
 - Browser print/save-PDF support exists for some report views, but it is not the primary contribution report export workflow.
 - Contribution report query logic is extracted to `BuildContributionReport`.
 - Report filters are basic.
-- Dashboard summary, cash-flow report, and contribution report totals have focused tests.
+- Dashboard summary, cash-flow report, community funding, and contribution report totals have focused tests.
 - No printable report layout is documented.
 
 ### Testing
@@ -295,6 +308,7 @@ Current state and gaps:
 - Rental inventory synchronization tests exist.
 - Rental import/export tests exist.
 - Contribution import/export tests exist.
+- Community funding workflow and authorization tests exist.
 - Legacy certificate log create, update, delete, member search, and list filtering tests exist.
 - Contribution report total tests exist.
 - Contribution report Excel export tests exist.

@@ -40,6 +40,11 @@ class Member extends Model
         return $this->hasMany(Contribution::class);
     }
 
+    public function communityFundingDonations()
+    {
+        return $this->hasMany(CommunityFundingDonation::class);
+    }
+
     public function officerRecords()
     {
         return $this->hasMany(Officer::class);

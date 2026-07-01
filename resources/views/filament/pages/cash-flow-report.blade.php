@@ -53,7 +53,7 @@
             <div class="purok-stat-card">
                 <p class="purok-stat-label">Total Inflow</p>
                 <p class="purok-stat-value purok-stat-value-success">PHP {{ number_format($report['totalInflow'], 2) }}</p>
-                <p class="purok-stat-note">Incomes plus member contributions</p>
+                <p class="purok-stat-note">Incomes, member contributions, and community funding</p>
             </div>
 
             <div class="purok-stat-card">
@@ -83,13 +83,24 @@
                                     </th>
                                 </tr>
                                 <tr>
-                                    <td>Cash on Hand / Incomes / Rentals / Donations / Funding</td>
+                                    <td>Cash on Hand / Incomes / Rentals / Donations</td>
                                     <td class="purok-report-amount">PHP {{ number_format($report['incomeTotal'], 2) }}</td>
                                 </tr>
                                 <tr>
                                     <td>Member Contributions</td>
                                     <td class="purok-report-amount">PHP {{ number_format($report['contributionTotal'], 2) }}</td>
                                 </tr>
+                                <tr class="purok-report-band">
+                                    <th colspan="2">
+                                        Cash Inflows (Community Funding)
+                                    </th>
+                                </tr>
+                                @foreach ($report['communityFundingEventTotals'] as $fundingEventTotal)
+                                    <tr>
+                                        <td>{{ $fundingEventTotal['name'] }}</td>
+                                        <td class="purok-report-amount">PHP {{ number_format($fundingEventTotal['total'], 2) }}</td>
+                                    </tr>
+                                @endforeach
                                 <tr class="purok-report-band">
                                     <th colspan="2">
                                         Cash Outflows

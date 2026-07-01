@@ -43,6 +43,7 @@ Feature contracts live under `docs/features/`. Current contracts:
 - `docs/features/import-export.md`
 - `docs/features/member-portal.md`
 - `docs/features/officers.md`
+- `docs/features/community-funding.md`
 
 ## Authentication And Users
 
@@ -66,7 +67,7 @@ Current authorization state:
 - Roles exist at the model/database level.
 - User/member account linking exists through `users.member_id`.
 - Initial named gates are registered in `AuthServiceProvider`.
-- Member, income, expense, inventory, rental, certificate log, contribution, officer, and user model policies are registered and delegate to the existing gate-based role rules.
+- Member, income, expense, inventory, rental, certificate log, contribution, community funding, officer, and user model policies are registered and delegate to the existing gate-based role rules.
 - Main route groups and actions use `can:` middleware for admin, treasurer, and staff boundaries.
 - Filament panel access blocks member-role users from the back-office panel.
 - Report access still uses gates and page/route-level checks rather than model policies.
@@ -96,6 +97,7 @@ Filament routes:
 - `/admin/purok-certificates` uses `App\Filament\Resources\PurokCertificates\PurokCertificateResource`.
 - `/admin/contributions` uses `App\Filament\Resources\Contributions\ContributionResource`.
 - `/admin/contribution-grid` uses `App\Filament\Pages\ContributionGrid`.
+- `/admin/community-funding-events` uses `App\Filament\Resources\CommunityFundingEvents\CommunityFundingEventResource`.
 - `/admin/data-exchange` uses `App\Filament\Pages\DataExchange`.
 - `/admin/reports/cash-flow` uses `App\Filament\Pages\CashFlowReport`.
 - `/admin/reports/contributions` uses `App\Filament\Pages\ContributionReport`.
@@ -149,6 +151,7 @@ Flow:
 - `RentalResource` provides Filament back-office CRUD for rental records.
 - `PurokCertificateResource` provides Filament back-office CRUD for certificate logs.
 - `ContributionResource` provides Filament back-office CRUD for individual contribution records.
+- A member has many community funding donations.
 - `MemberPortalController` allows member-role users linked through `users.member_id` to update their own phone, email, birthday, and dependents.
 - `CreateMember`, `UpdateMember`, `DeleteMember`, `UpdateMemberProfile`, and `SyncMemberDependents` keep member persistence workflows outside controllers.
 - `CreateMemberPortalAccount` creates or updates a member-role user account for the selected member from the Filament member edit page.
@@ -197,6 +200,34 @@ Current concerns:
 
 - Contribution amount is still a fixed rule and is not configurable yet.
 - The old Blade contribution grid template remains in the tree temporarily, but the public route redirects to the Filament operational grid.
+
+### Community Funding
+
+Models:
+
+- `CommunityFundingEvent`
+- `CommunityFundingDonation`
+
+Relationships:
+
+- A community funding event has many donations.
+- A community funding donation belongs to one event.
+- A community funding donation belongs to one member.
+- A member has many community funding donations.
+
+Flow:
+
+- `CommunityFundingEventResource` provides Filament back-office event list/create/edit workflows.
+- `DonationsRelationManager` records donations from the funding event edit screen.
+- Event persistence is handled by `CreateCommunityFundingEvent`, `UpdateCommunityFundingEvent`, and `DeleteCommunityFundingEvent`.
+- Donation persistence is handled by `RecordCommunityFundingDonation`, `UpdateCommunityFundingDonation`, and `DeleteCommunityFundingDonation`.
+- `actual_amount` is not stored on events; it is computed from `community_funding_donations.amount`.
+- `CommunityFundingService` provides accounting-period donation totals for dashboard and cash-flow reporting.
+
+Business rule:
+
+- Admins and treasurers can manage community funding through the back office.
+- Staff and member users cannot access community funding screens by default.
 
 ### Income And Expenses
 
@@ -310,13 +341,13 @@ Action:
 
 Flow:
 
-- Dashboard summarizes members, incomes, contributions, expenses, contributors, rentals, and total funds.
+- Dashboard summarizes members, incomes, contributions, community funding, expenses, contributors, rentals, and total funds.
 - Dashboard supports `year` and optional `month` filters.
 - `DashboardController` delegates dashboard totals to `BuildDashboardSummary`.
 - `DashboardStatsOverview` reuses `BuildDashboardSummary` for the Filament dashboard's current-year stats.
 - `DashboardSummary` reuses `BuildDashboardSummary` for a filterable Filament dashboard summary page.
 - `Reports` provides a Filament reports landing page and shows only report links allowed for the current user.
-- Cash flow report totals incomes, contributions, expenses, and net cash flow.
+- Cash flow report totals incomes, contributions, community funding, expenses, and net cash flow.
 - `Reports\CashFlowController@index` delegates cash-flow totals to `BuildCashFlowReport`.
 - `CashFlowReport` reuses `BuildCashFlowReport` for the Filament cash-flow report page.
 - Contributions report generates weekly columns and lists member contributions over a selected range.
@@ -383,6 +414,8 @@ Core tables:
 - `inventories`: rentable or tracked items with total and available quantity plus rental rate.
 - `rentals`: rental records with inventory, renter details, quantity, dates, and status.
 - `purok_certificates`: certificate log entries tied to members.
+- `community_funding_events`: funding drives with name, optional description, optional deadline, and goal amount.
+- `community_funding_donations`: member donations tied to funding events.
 
 System tables:
 
@@ -395,6 +428,7 @@ Important constraints:
 
 - Dependents cascade when a member is deleted.
 - Contributions cascade when a member is deleted.
+- Community funding donations cascade when a member or funding event is deleted.
 - Rentals cascade when inventory is deleted.
 - Purok certificates cascade when a member is deleted.
 - Incomes null out `rental_id` when a rental is deleted, although the rental controller currently deletes linked income manually.
@@ -419,6 +453,7 @@ Current tests include Breeze-generated authentication/profile coverage plus focu
 - Filament member resource access
 - Filament officer resource access
 - Filament contribution grid access and toggle behavior
+- Community funding workflow, authorization, and Filament access
 - Filament dashboard summary access and totals
 - Filament filterable dashboard summary access and totals
 - Filament reports landing access

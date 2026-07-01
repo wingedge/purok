@@ -4,6 +4,8 @@ namespace Tests\Feature;
 
 use App\Actions\Dashboard\BuildDashboardSummary;
 use App\Enums\UserRole;
+use App\Models\CommunityFundingDonation;
+use App\Models\CommunityFundingEvent;
 use App\Models\Contribution;
 use App\Models\Expense;
 use App\Models\Income;
@@ -39,30 +41,43 @@ class FilamentDashboardTest extends TestCase
             'week_start' => '2026-06-07',
             'amount' => 10,
         ]);
+        $event = CommunityFundingEvent::create([
+            'name' => 'Street Light Fund',
+            'goal_amount' => 1000,
+        ]);
+        CommunityFundingDonation::create([
+            'community_funding_event_id' => $event->id,
+            'member_id' => $member->id,
+            'amount' => 200,
+            'received_at' => '2026-06-18',
+        ]);
         $inventory = Inventory::create([
             'item_name' => 'Chairs',
             'total_quantity' => 10,
             'available_quantity' => 8,
             'rental_rate' => 50,
         ]);
-        Rental::create([
+        $rental = Rental::create([
             'inventory_id' => $inventory->id,
             'renter_name' => 'Juan Santos',
             'renter_contact' => '09170000000',
             'quantity' => 2,
             'rent_date' => '2026-06-15',
             'status' => 'rented',
+        ]);
+        $rental->forceFill([
             'created_at' => '2026-06-15 12:00:00',
             'updated_at' => '2026-06-15 12:00:00',
-        ]);
+        ])->save();
 
         $summary = app(BuildDashboardSummary::class)->execute(2026, 6);
 
         $this->assertSame(1, $summary['totalMembers']);
         $this->assertSame(500.0, $summary['totalIncomes']);
         $this->assertSame(10.0, $summary['totalContributions']);
+        $this->assertSame(200.0, $summary['totalCommunityFunding']);
         $this->assertSame(150.0, $summary['totalExpenses']);
-        $this->assertSame(360.0, $summary['totalFunds']);
+        $this->assertSame(560.0, $summary['totalFunds']);
         $this->assertSame(1, $summary['contributorsCount']);
         $this->assertSame(1, $summary['totalRentals']);
     }

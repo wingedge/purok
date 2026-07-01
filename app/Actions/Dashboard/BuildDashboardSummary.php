@@ -8,12 +8,14 @@ use App\Models\Expense;
 use App\Models\Income;
 use App\Models\Member;
 use App\Models\Rental;
+use App\Services\CommunityFundingService;
 use App\Services\ContributionService;
 
 final class BuildDashboardSummary
 {
     public function __construct(
         private readonly ContributionService $contributions,
+        private readonly CommunityFundingService $communityFunding,
     ) {
     }
 
@@ -30,6 +32,7 @@ final class BuildDashboardSummary
             ->sum('amount');
 
         $totalContributions = $this->contributions->totalForAccountingPeriod($year, $month);
+        $totalCommunityFunding = $this->communityFunding->totalForAccountingPeriod($year, $month);
         $thisYearContributions = $this->contributions->totalForAccountingPeriod($year);
         $recentContributions = $this->contributions->recentRecordedTotal();
 
@@ -49,12 +52,13 @@ final class BuildDashboardSummary
             'totalMembers' => $totalMembers,
             'totalIncomes' => $totalIncomes,
             'totalContributions' => $totalContributions,
+            'totalCommunityFunding' => $totalCommunityFunding,
             'thisYearContributions' => $thisYearContributions,
             'recentContributions' => $recentContributions,
             'totalExpenses' => $totalExpenses,
             'contributorsCount' => $contributorsCount,
             'totalRentals' => $totalRentals,
-            'totalFunds' => ($totalIncomes + $totalContributions) - $totalExpenses,
+            'totalFunds' => ($totalIncomes + $totalContributions + $totalCommunityFunding) - $totalExpenses,
         ];
     }
 }

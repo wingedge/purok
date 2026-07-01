@@ -5,6 +5,8 @@ declare(strict_types=1);
 namespace App\Providers;
 
 use App\Enums\UserRole;
+use App\Models\CommunityFundingDonation;
+use App\Models\CommunityFundingEvent;
 use App\Models\Contribution;
 use App\Models\Expense;
 use App\Models\Income;
@@ -14,6 +16,8 @@ use App\Models\Officer;
 use App\Models\PurokCertificate;
 use App\Models\Rental;
 use App\Models\User;
+use App\Policies\CommunityFundingDonationPolicy;
+use App\Policies\CommunityFundingEventPolicy;
 use App\Policies\ContributionPolicy;
 use App\Policies\ExpensePolicy;
 use App\Policies\IncomePolicy;
@@ -35,6 +39,8 @@ class AuthServiceProvider extends ServiceProvider
      */
     protected $policies = [
         Member::class => MemberPolicy::class,
+        CommunityFundingEvent::class => CommunityFundingEventPolicy::class,
+        CommunityFundingDonation::class => CommunityFundingDonationPolicy::class,
         Expense::class => ExpensePolicy::class,
         Income::class => IncomePolicy::class,
         Inventory::class => InventoryPolicy::class,
@@ -71,6 +77,10 @@ class AuthServiceProvider extends ServiceProvider
         Gate::define('delete-members', fn (User $user): bool => false);
 
         Gate::define('manage-contributions', fn (User $user): bool => $user->role === UserRole::Treasurer->value);
+
+        Gate::define('view-community-funding', fn (User $user): bool => $user->role === UserRole::Treasurer->value);
+
+        Gate::define('manage-community-funding', fn (User $user): bool => $user->role === UserRole::Treasurer->value);
 
         Gate::define('manage-finances', fn (User $user): bool => $user->role === UserRole::Treasurer->value);
 

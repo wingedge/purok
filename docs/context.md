@@ -23,6 +23,7 @@ Goal is to revamp and improve the flow, use filament for all of the backend and 
 - Back-office certificate log CRUD has moved into Filament through `PurokCertificateResource`.
 - Back-office contribution record CRUD has moved into Filament through `ContributionResource`.
 - Back-office monthly/yearly contribution grid has moved into Filament through `ContributionGrid`.
+- Back-office community funding event and donation management is available in Filament through `CommunityFundingEventResource`.
 - Back-office dashboard summary stats are available in Filament through `DashboardStatsOverview`.
 - Back-office filterable dashboard summary has moved into Filament through `DashboardSummary`.
 - Back-office reports landing has moved into Filament through `Reports`.
@@ -43,6 +44,7 @@ Goal is to revamp and improve the flow, use filament for all of the backend and 
 - Member portal email updates sync to the linked login account, and members can change or reset their account password.
 - Contribution CSV import/export is implemented through Actions and Filament `DataExchange`.
 - Contribution report Excel export is available from the Filament contribution report page.
+- Community funding donations are included in cash-flow and dashboard total funds.
 - Expense CSV import/export is implemented through Actions and Filament `DataExchange`.
 - Income CSV import/export is implemented through Actions and Filament `DataExchange`.
 - Inventory CSV import/export is implemented through Actions and Filament `DataExchange`.
@@ -61,6 +63,7 @@ Using Filament:
 - Purok certificate log CRUD
 - Contribution record CRUD
 - Contribution grid page
+- Community funding events and donations
 - Dashboard summary stats
 - Filterable dashboard summary page
 - Reports landing page

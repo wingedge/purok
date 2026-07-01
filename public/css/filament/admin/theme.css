@@ -391,6 +391,11 @@
     width: 220px;
 }
 
+.purok-report-table td.purok-report-subrow-label {
+    padding-left: 48px;
+    color: rgb(75 85 99);
+}
+
 .purok-report-band th {
     background: rgb(249 250 251);
     color: rgb(75 85 99);
