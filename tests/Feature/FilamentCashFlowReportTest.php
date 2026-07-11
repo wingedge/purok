@@ -111,11 +111,12 @@ class FilamentCashFlowReportTest extends TestCase
             ->assertSee('Net Cash Flow');
     }
 
-    public function test_staff_cannot_view_filament_cash_flow_report(): void
+    public function test_staff_can_view_filament_cash_flow_report(): void
     {
         $this->actingAs($this->userWithRole(UserRole::Staff))
             ->get('/admin/reports/cash-flow')
-            ->assertForbidden();
+            ->assertOk()
+            ->assertSee('Cash Flow Statement');
     }
 
     public function test_old_cash_flow_report_redirects_to_filament_report(): void

@@ -45,6 +45,9 @@ Goal is to revamp and improve the flow, use filament for all of the backend and 
 - Contribution CSV import/export is implemented through Actions and Filament `DataExchange`.
 - Community funding event and donation CSV import/export is implemented through Actions and Filament `DataExchange`.
 - Contribution report Excel export is available from the Filament contribution report page.
+- Income and expense reports are available in Filament with yearly/monthly filters and Excel export.
+- Staff users can view and export the Filament cash flow, income, expense, and contribution reports.
+- Community funding reports can be generated and exported for a selected funding event.
 - Community funding donations are included in cash-flow and dashboard total funds.
 - Expense CSV import/export is implemented through Actions and Filament `DataExchange`.
 - Income CSV import/export is implemented through Actions and Filament `DataExchange`.

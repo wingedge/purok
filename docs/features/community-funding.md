@@ -160,6 +160,12 @@ Dashboard behavior:
 - If dashboard total funds represents available cash, include community funding in total inflow.
 - Add a dashboard stat only if it helps operational users; otherwise keep it inside cash-flow reporting.
 
+Dedicated event reporting:
+
+- `CommunityFundingReport` lets authorized report users select one funding event.
+- The report shows event goal, collected amount, remaining amount, progress, unique donor count, and donation details.
+- `ExportCommunityFundingReport` exports the selected event report to Excel.
+
 ## Imports And Exports
 
 Import/export is available through Filament `DataExchange`.

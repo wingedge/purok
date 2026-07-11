@@ -338,6 +338,8 @@ Action:
 - `BuildDashboardSummary`
 - `BuildCashFlowReport`
 - `BuildContributionReport`
+- `BuildFinancialRecordReport`
+- `BuildCommunityFundingReport`
 
 Flow:
 
@@ -354,11 +356,15 @@ Flow:
 - `Reports\CashFlowController@contributions` delegates contribution report totals to `BuildContributionReport`.
 - `ContributionReport` reuses `BuildContributionReport` for the Filament contribution report page.
 - `ExportContributionReport` generates an Excel workbook download from the Filament contribution report using the same report filters.
+- `IncomeReport` and `ExpenseReport` reuse `BuildFinancialRecordReport` for dated record lists and totals filtered by year or month.
+- `ExportFinancialRecordReport` generates Excel workbooks for both financial record reports using their active filters.
+- `CommunityFundingReport` uses `BuildCommunityFundingReport` to summarize one selected funding event and list its donations.
+- `ExportCommunityFundingReport` generates an Excel workbook for the selected funding event.
 
 Current concerns:
 
 - The old dashboard route redirects to Filament; the Filament dashboard summary page owns the back-office dashboard workflow.
-- Browser print styles exist for some reports; contribution reporting now has a structured Excel export, while other report exports remain pending.
+- Browser print styles and structured Excel exports are available for contribution, income, and expense reports.
 
 ### Imports And Exports
 

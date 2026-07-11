@@ -90,7 +90,10 @@ class AuthServiceProvider extends ServiceProvider
 
         Gate::define('manage-certificates', fn (User $user): bool => $user->role === UserRole::Staff->value);
 
-        Gate::define('view-cashflow-reports', fn (User $user): bool => $user->role === UserRole::Treasurer->value);
+        Gate::define('view-cashflow-reports', fn (User $user): bool => in_array($user->role, [
+            UserRole::Treasurer->value,
+            UserRole::Staff->value,
+        ], true));
 
         Gate::define('view-contribution-reports', fn (User $user): bool => in_array($user->role, [
             UserRole::Treasurer->value,
