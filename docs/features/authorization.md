@@ -79,7 +79,7 @@ Allowed:
 - Manage inventory and rentals.
 - Import and export rentals.
 - View basic reports needed for operations.
-- View and export cash flow, income, expense, community funding, and contribution reports.
+- View and export cash flow, income, expense, community funding, rental, and contribution reports.
 
 Not allowed by default:
 
@@ -128,7 +128,7 @@ Not allowed:
 | Rentals manage | Yes | No | Yes | No |
 | Rental import/export | Yes | No | Yes | No |
 | Certificate logs | Yes | No | Yes | No |
-| Cash flow, income, expense, and community funding reports | Yes | Yes | Yes | No |
+| Cash flow, income, expense, community funding, and rental reports | Yes | Yes | Yes | No |
 | Contribution reports | Yes | Yes | Yes | Own status later |
 
 ## Implementation Direction

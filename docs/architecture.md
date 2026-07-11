@@ -340,6 +340,7 @@ Action:
 - `BuildContributionReport`
 - `BuildFinancialRecordReport`
 - `BuildCommunityFundingReport`
+- `BuildRentalReport`
 
 Flow:
 
@@ -360,6 +361,8 @@ Flow:
 - `ExportFinancialRecordReport` generates Excel workbooks for both financial record reports using their active filters.
 - `CommunityFundingReport` uses `BuildCommunityFundingReport` to summarize one selected funding event and list its donations.
 - `ExportCommunityFundingReport` generates an Excel workbook for the selected funding event.
+- `RentalReport` uses `BuildRentalReport` to list rental activity and summarize quantities, active rentals, and linked rental income by year, month, and status.
+- `ExportRentalReport` generates an Excel workbook using the active rental report filters.
 
 Current concerns:
 

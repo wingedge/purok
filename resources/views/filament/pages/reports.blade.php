@@ -24,6 +24,13 @@
                     Review goals, progress, and donation details for a selected funding event.
                 </p>
             </a>
+
+            <a href="{{ url('/admin/reports/rentals') }}" class="purok-link-card">
+                <h2 class="purok-link-title">Rental Report</h2>
+                <p class="purok-link-description">
+                    Review rental activity, statuses, quantities, and income by year or month.
+                </p>
+            </a>
         @endcan
 
         @can('view-contribution-reports')
