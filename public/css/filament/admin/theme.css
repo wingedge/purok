@@ -43,8 +43,13 @@
 
 .purok-grid-scroll {
     max-height: 72vh;
+    max-height: 72dvh;
     overflow: auto;
     max-width: 100%;
+    isolation: isolate;
+    overscroll-behavior: contain;
+    position: relative;
+    touch-action: pan-x pan-y;
     -webkit-overflow-scrolling: touch;
 }
 
@@ -369,6 +374,10 @@
     max-width: 100%;
     overflow-x: auto;
     overflow-y: hidden;
+    isolation: isolate;
+    overscroll-behavior-inline: contain;
+    position: relative;
+    touch-action: pan-x pan-y;
     -webkit-overflow-scrolling: touch;
 }
 
@@ -574,142 +583,196 @@
     text-align: right;
 }
 
-@media (prefers-color-scheme: dark) {
-    .purok-fi-label {
+/*
+ * Filament's generated dark palette uses OKLCH values. Older iOS Safari
+ * versions ignore those declarations, so critical floating surfaces need an
+ * RGB fallback to avoid rendering as transparent.
+ */
+.fi-dropdown-panel,
+.fi-modal-window {
+    background-color: rgb(255 255 255);
+}
+
+.dark .fi-dropdown-panel,
+.dark .fi-modal-window,
+.dark .fi-section,
+.dark .fi-ta-ctn,
+.dark .fi-topbar {
+    background-color: rgb(24 24 27);
+}
+
+.fi-modal-window {
+    max-height: calc(100vh - 2rem);
+    max-height: calc(100dvh - 2rem);
+    -webkit-overflow-scrolling: touch;
+}
+
+.dark .purok-fi-label {
         color: rgb(229 231 235);
+}
+
+.dark .purok-member-heading,
+.dark .purok-week-heading {
+    border-color: rgb(31 41 55);
+    background: rgb(17 24 39);
+    color: rgb(209 213 219);
+}
+
+.dark .purok-member-cell {
+    border-color: rgb(31 41 55);
+    background: rgb(3 7 18);
+}
+
+.dark .purok-contribution-table tbody tr:hover .purok-member-cell,
+.dark .purok-contribution-table tbody tr:hover td {
+    background: rgb(17 24 39);
+}
+
+.dark .purok-member-name {
+    color: white;
+}
+
+.dark .purok-toggle {
+    border-color: rgb(55 65 81);
+    background: rgb(17 24 39);
+    color: rgb(209 213 219);
+}
+
+.dark .purok-toggle-paid {
+    border-color: rgb(22 163 74);
+    background: rgb(34 197 94);
+    color: white;
+}
+
+.dark .purok-stat-card {
+    border-color: rgb(31 41 55);
+    background: rgb(3 7 18);
+}
+
+.dark .purok-stat-value {
+    color: white;
+}
+
+.dark .purok-stat-value-success {
+    color: rgb(74 222 128);
+}
+
+.dark .purok-stat-value-danger,
+.dark .purok-report-danger {
+    color: rgb(248 113 113);
+}
+
+.dark .purok-stat-value-primary {
+    color: rgb(251 191 36);
+}
+
+.dark .purok-stat-label,
+.dark .purok-stat-note {
+    color: rgb(156 163 175);
+}
+
+.dark .purok-link-card {
+    border-color: rgb(31 41 55);
+    background: rgb(3 7 18);
+}
+
+.dark .purok-link-card:hover {
+    background: rgb(17 24 39);
+}
+
+.dark .purok-link-title {
+    color: white;
+}
+
+.dark .purok-link-description {
+    color: rgb(156 163 175);
+}
+
+.dark .purok-alert {
+    border-color: rgb(22 101 52);
+    background: rgb(5 46 22);
+    color: rgb(187 247 208);
+}
+
+.dark .purok-exchange-card {
+    border-color: rgb(31 41 55);
+    background: rgb(3 7 18);
+}
+
+.dark .purok-file-input {
+    border-color: rgb(55 65 81);
+    background: rgb(17 24 39);
+    color: white;
+}
+
+.dark .purok-report-header,
+.dark .purok-report-table,
+.dark .purok-report-member-heading,
+.dark .purok-report-member-cell,
+.dark .purok-report-week-heading,
+.dark .purok-report-total-heading,
+.dark .purok-report-total-cell {
+    border-color: rgb(31 41 55);
+    background: rgb(3 7 18);
+}
+
+.dark .purok-report-title,
+.dark .purok-report-total strong,
+.dark .purok-report-amount,
+.dark .purok-signature-line strong,
+.dark .purok-report-member-cell,
+.dark .purok-report-total-cell {
+    color: white;
+}
+
+.dark .purok-report-period,
+.dark .purok-signature-line span,
+.dark .purok-report-footer {
+    color: rgb(156 163 175);
+}
+
+.dark .purok-report-total {
+    border-color: rgb(55 65 81);
+    background: rgb(17 24 39);
+}
+
+.dark .purok-report-band th,
+.dark .purok-report-week-heading,
+.dark .purok-report-member-heading,
+.dark .purok-report-total-heading {
+    background: rgb(17 24 39);
+    color: rgb(209 213 219);
+}
+
+.dark .purok-contribution-report-table th,
+.dark .purok-contribution-report-table td,
+.dark .purok-report-table th,
+.dark .purok-report-table td {
+    border-color: rgb(31 41 55);
+}
+
+.dark .purok-contribution-report-table tbody tr:hover .purok-report-member-cell,
+.dark .purok-contribution-report-table tbody tr:hover .purok-report-week-cell,
+.dark .purok-contribution-report-table tbody tr:hover .purok-report-total-cell {
+    background: rgb(17 24 39);
+}
+
+@media (max-width: 63.999rem) {
+    .fi-sidebar {
+        height: 100vh;
+        height: 100dvh;
+        background-color: rgb(255 255 255);
     }
 
-    .purok-member-heading,
-    .purok-week-heading {
-        border-color: rgb(31 41 55);
-        background: rgb(17 24 39);
-        color: rgb(209 213 219);
+    .dark .fi-sidebar {
+        background-color: rgb(24 24 27);
     }
 
-    .purok-member-cell {
-        border-color: rgb(31 41 55);
-        background: rgb(3 7 18);
-    }
-
-    .purok-contribution-table tbody tr:hover .purok-member-cell,
-    .purok-contribution-table tbody tr:hover td {
-        background: rgb(17 24 39);
-    }
-
-    .purok-member-name {
-        color: white;
-    }
-
-    .purok-toggle {
-        border-color: rgb(55 65 81);
-        background: rgb(17 24 39);
-        color: rgb(209 213 219);
-    }
-
-    .purok-toggle-paid {
-        border-color: rgb(22 163 74);
-        background: rgb(34 197 94);
-        color: white;
-    }
-
-    .purok-stat-card {
-        border-color: rgb(31 41 55);
-        background: rgb(3 7 18);
-    }
-
-    .purok-stat-value {
-        color: white;
-    }
-
-    .purok-stat-label,
-    .purok-stat-note {
-        color: rgb(156 163 175);
-    }
-
-    .purok-link-card {
-        border-color: rgb(31 41 55);
-        background: rgb(3 7 18);
-    }
-
-    .purok-link-card:hover {
-        background: rgb(17 24 39);
-    }
-
-    .purok-link-title {
-        color: white;
-    }
-
-    .purok-link-description {
-        color: rgb(156 163 175);
-    }
-
-    .purok-alert {
-        border-color: rgb(22 101 52);
-        background: rgb(5 46 22);
-        color: rgb(187 247 208);
-    }
-
-    .purok-exchange-card {
-        border-color: rgb(31 41 55);
-        background: rgb(3 7 18);
-    }
-
-    .purok-file-input {
-        border-color: rgb(55 65 81);
-        background: rgb(17 24 39);
-        color: white;
-    }
-
-    .purok-report-header,
-    .purok-report-table,
-    .purok-report-member-heading,
-    .purok-report-member-cell,
-    .purok-report-week-heading,
-    .purok-report-total-heading,
-    .purok-report-total-cell {
-        border-color: rgb(31 41 55);
-        background: rgb(3 7 18);
-    }
-
-    .purok-report-title,
-    .purok-report-total strong,
-    .purok-report-amount,
-    .purok-signature-line strong,
-    .purok-report-member-cell,
-    .purok-report-total-cell {
-        color: white;
-    }
-
-    .purok-report-period,
-    .purok-signature-line span,
-    .purok-report-footer {
-        color: rgb(156 163 175);
-    }
-
-    .purok-report-total {
-        border-color: rgb(55 65 81);
-        background: rgb(17 24 39);
-    }
-
-    .purok-report-band th,
-    .purok-report-week-heading,
-    .purok-report-member-heading,
-    .purok-report-total-heading {
-        background: rgb(17 24 39);
-        color: rgb(209 213 219);
-    }
-
-    .purok-contribution-report-table th,
-    .purok-contribution-report-table td,
-    .purok-report-table th,
-    .purok-report-table td {
-        border-color: rgb(31 41 55);
-    }
-
-    .purok-contribution-report-table tbody tr:hover .purok-report-member-cell,
-    .purok-contribution-report-table tbody tr:hover .purok-report-week-cell,
-    .purok-contribution-report-table tbody tr:hover .purok-report-total-cell {
-        background: rgb(17 24 39);
+    .fi-sidebar-nav {
+        min-height: 0;
+        overscroll-behavior-y: contain;
+        padding-bottom: calc(2rem + env(safe-area-inset-bottom));
+        -webkit-overflow-scrolling: touch;
     }
 }
 
@@ -753,6 +816,14 @@
 }
 
 @media (max-width: 640px) {
+    .fi-body input:not([type="hidden"]):not([type="checkbox"]):not([type="radio"]),
+    .fi-body select,
+    .fi-body textarea,
+    .purok-fi-control,
+    .purok-file-input {
+        font-size: 16px;
+    }
+
     .purok-fi-filters,
     .purok-fi-filters-compact,
     .purok-fi-filters-wide {
