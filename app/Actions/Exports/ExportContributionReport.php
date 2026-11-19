@@ -15,8 +15,7 @@ final class ExportContributionReport
 {
     public function __construct(
         private readonly BuildContributionReport $buildContributionReport,
-    ) {
-    }
+    ) {}
 
     public function execute(int $year, int $startMonth, int $endMonth): string
     {
@@ -43,7 +42,7 @@ final class ExportContributionReport
             throw new RuntimeException('Unable to create a temporary workbook file.');
         }
 
-        $zip = new ZipArchive();
+        $zip = new ZipArchive;
 
         if ($zip->open($path, ZipArchive::OVERWRITE) !== true) {
             throw new RuntimeException('Unable to open a temporary workbook file.');
@@ -89,19 +88,22 @@ final class ExportContributionReport
         $rows[] = '<row r="3"><c r="A3" t="inlineStr" s="2"><is><t>'.$this->escape('Generated: '.now()->format('Y-m-d H:i')).'</t></is></c></row>';
         $rows[] = '<row r="4"><c r="A4" t="inlineStr" s="3"><is><t>Report Total</t></is></c><c r="B4" s="4"><v>'.number_format((float) $report['reportTotal'], 2, '.', '').'</v></c></row>';
 
-        $headerCells = ['<c r="A6" t="inlineStr" s="3"><is><t>Member</t></is></c>'];
+        $headerCells = [
+            '<c r="A6" t="inlineStr" s="3"><is><t>Member</t></is></c>',
+            '<c r="B6" t="inlineStr" s="3"><is><t>Total</t></is></c>',
+        ];
         foreach ($weeks as $index => $week) {
-            $column = $this->columnName($index + 2);
-            $headerCells[] = '<c r="'.$column.'6" t="inlineStr" s="3"><is><t>'.$this->escape($week->format('M d')).'</t></is></c>';
+            $column = $this->columnName($index + 3);
+            $headerCells[] = '<c r="'.$column.'6" t="inlineStr" s="8"><is><t>'.$this->escape($week->format('M d')).'</t></is></c>';
         }
-        $headerCells[] = '<c r="'.$lastColumn.'6" t="inlineStr" s="3"><is><t>Total</t></is></c>';
-        $rows[] = '<row r="6">'.implode('', $headerCells).'</row>';
+        $rows[] = '<row r="6" ht="52" customHeight="1">'.implode('', $headerCells).'</row>';
 
         $rowNumber = 7;
 
         foreach ($members as $member) {
             $cells = [
                 '<c r="A'.$rowNumber.'" t="inlineStr" s="5"><is><t>'.$this->escape((string) $member->name).'</t></is></c>',
+                '<c r="B'.$rowNumber.'" s="4"><v>'.number_format((float) ($report['memberTotals'][$member->id] ?? 0), 2, '.', '').'</v></c>',
             ];
 
             foreach ($weeks as $index => $week) {
@@ -109,15 +111,15 @@ final class ExportContributionReport
                 $contribution = $member->contributions->first(
                     fn ($item) => $item->week_start->toDateString() === $weekString,
                 );
-                $column = $this->columnName($index + 2);
+                $column = $this->columnName($index + 3);
                 $style = $contribution ? 6 : 7;
-                $text = $contribution ? 'Paid' : '-';
 
-                $cells[] = '<c r="'.$column.$rowNumber.'" t="inlineStr" s="'.$style.'"><is><t>'.$text.'</t></is></c>';
+                $cells[] = $contribution
+                    ? '<c r="'.$column.$rowNumber.'" t="inlineStr" s="'.$style.'"><is><t>✓</t></is></c>'
+                    : '<c r="'.$column.$rowNumber.'" s="'.$style.'"/>';
             }
 
-            $cells[] = '<c r="'.$lastColumn.$rowNumber.'" s="4"><v>'.number_format((float) ($report['memberTotals'][$member->id] ?? 0), 2, '.', '').'</v></c>';
-            $rows[] = '<row r="'.$rowNumber.'">'.implode('', $cells).'</row>';
+            $rows[] = '<row r="'.$rowNumber.'" ht="14" customHeight="1">'.implode('', $cells).'</row>';
             $rowNumber++;
         }
 
@@ -129,26 +131,30 @@ final class ExportContributionReport
 
         return '<?xml version="1.0" encoding="UTF-8" standalone="yes"?>'
             .'<worksheet xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main">'
+            .'<sheetPr><pageSetUpPr fitToPage="1"/></sheetPr>'
             .'<dimension ref="A1:'.$lastColumn.$lastRow.'"/>'
-            .'<sheetViews><sheetView workbookViewId="0"><pane xSplit="1" ySplit="6" topLeftCell="B7" activePane="bottomRight" state="frozen"/></sheetView></sheetViews>'
-            .'<sheetFormatPr defaultRowHeight="15"/>'
+            .'<sheetViews><sheetView workbookViewId="0"><pane xSplit="2" ySplit="6" topLeftCell="C7" activePane="bottomRight" state="frozen"/></sheetView></sheetViews>'
+            .'<sheetFormatPr defaultRowHeight="14"/>'
             .'<cols>'.$this->columns($weeks->count()).'</cols>'
             .'<sheetData>'.implode('', $rows).'</sheetData>'
             .'<autoFilter ref="A6:'.$lastColumn.$lastRow.'"/>'
             .'<mergeCells count="3"><mergeCell ref="A1:'.$lastColumn.'1"/><mergeCell ref="A2:'.$lastColumn.'2"/><mergeCell ref="A3:'.$lastColumn.'3"/></mergeCells>'
+            .'<printOptions horizontalCentered="1"/>'
+            .'<pageMargins left="0.2" right="0.2" top="0.35" bottom="0.35" header="0.15" footer="0.15"/>'
+            .'<pageSetup paperSize="9" orientation="landscape" fitToWidth="1" fitToHeight="1"/>'
             .'</worksheet>';
     }
 
     private function columns(int $weekCount): string
     {
-        $columns = ['<col min="1" max="1" width="32" customWidth="1"/>'];
+        $columns = [
+            '<col min="1" max="1" width="28" customWidth="1"/>',
+            '<col min="2" max="2" width="11" customWidth="1"/>',
+        ];
 
         if ($weekCount > 0) {
-            $columns[] = '<col min="2" max="'.($weekCount + 1).'" width="12" customWidth="1"/>';
+            $columns[] = '<col min="3" max="'.($weekCount + 2).'" width="3.2" customWidth="1"/>';
         }
-
-        $totalColumn = $weekCount + 2;
-        $columns[] = '<col min="'.$totalColumn.'" max="'.$totalColumn.'" width="14" customWidth="1"/>';
 
         return implode('', $columns);
     }
@@ -157,11 +163,11 @@ final class ExportContributionReport
     {
         return '<?xml version="1.0" encoding="UTF-8" standalone="yes"?>'
             .'<styleSheet xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main">'
-            .'<fonts count="3"><font><sz val="11"/><name val="Calibri"/></font><font><b/><sz val="16"/><name val="Calibri"/></font><font><b/><sz val="11"/><name val="Calibri"/></font></fonts>'
+            .'<fonts count="3"><font><sz val="9"/><name val="Calibri"/></font><font><b/><sz val="14"/><name val="Calibri"/></font><font><b/><sz val="9"/><name val="Calibri"/></font></fonts>'
             .'<fills count="4"><fill><patternFill patternType="none"/></fill><fill><patternFill patternType="gray125"/></fill><fill><patternFill patternType="solid"><fgColor rgb="FFF3F4F6"/><bgColor indexed="64"/></patternFill></fill><fill><patternFill patternType="solid"><fgColor rgb="FFDCFCE7"/><bgColor indexed="64"/></patternFill></fill></fills>'
             .'<borders count="2"><border><left/><right/><top/><bottom/><diagonal/></border><border><left style="thin"><color rgb="FFD1D5DB"/></left><right style="thin"><color rgb="FFD1D5DB"/></right><top style="thin"><color rgb="FFD1D5DB"/></top><bottom style="thin"><color rgb="FFD1D5DB"/></bottom><diagonal/></border></borders>'
             .'<cellStyleXfs count="1"><xf numFmtId="0" fontId="0" fillId="0" borderId="0"/></cellStyleXfs>'
-            .'<cellXfs count="8">'
+            .'<cellXfs count="9">'
             .'<xf numFmtId="0" fontId="0" fillId="0" borderId="0" xfId="0"/>'
             .'<xf numFmtId="0" fontId="1" fillId="0" borderId="0" xfId="0" applyFont="1"/>'
             .'<xf numFmtId="0" fontId="0" fillId="0" borderId="0" xfId="0"/>'
@@ -170,6 +176,7 @@ final class ExportContributionReport
             .'<xf numFmtId="0" fontId="0" fillId="0" borderId="1" xfId="0" applyBorder="1"/>'
             .'<xf numFmtId="0" fontId="2" fillId="3" borderId="1" xfId="0" applyFont="1" applyFill="1" applyBorder="1"><alignment horizontal="center"/></xf>'
             .'<xf numFmtId="0" fontId="0" fillId="0" borderId="1" xfId="0" applyBorder="1"><alignment horizontal="center"/></xf>'
+            .'<xf numFmtId="0" fontId="2" fillId="2" borderId="1" xfId="0" applyFont="1" applyFill="1" applyBorder="1"><alignment horizontal="center" vertical="center" textRotation="90"/></xf>'
             .'</cellXfs>'
             .'<cellStyles count="1"><cellStyle name="Normal" xfId="0" builtinId="0"/></cellStyles>'
             .'</styleSheet>';
@@ -180,6 +187,7 @@ final class ExportContributionReport
         return '<?xml version="1.0" encoding="UTF-8" standalone="yes"?>'
             .'<workbook xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main" xmlns:r="http://schemas.openxmlformats.org/officeDocument/2006/relationships">'
             .'<sheets><sheet name="Contributions" sheetId="1" r:id="rId1"/></sheets>'
+            .'<definedNames><definedName name="_xlnm.Print_Titles" localSheetId="0">&apos;Contributions&apos;!$1:$6,&apos;Contributions&apos;!$A:$B</definedName></definedNames>'
             .'</workbook>';
     }
 

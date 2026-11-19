@@ -116,14 +116,26 @@ class ContributionReportTest extends TestCase
         $workbook = app(ExportContributionReport::class)->execute(2026, 6, 6);
 
         $worksheet = $this->worksheetXml($workbook);
+        $workbookXml = $this->workbookXml($workbook);
 
         $this->assertStringContainsString('Member Contributions', $worksheet);
         $this->assertStringContainsString('Maria Santos', $worksheet);
         $this->assertStringContainsString('Jun 07', $worksheet);
-        $this->assertStringContainsString('Paid', $worksheet);
+        $this->assertStringContainsString('<c r="B7" s="4"><v>10.00</v></c>', $worksheet);
+        $this->assertStringContainsString('<c r="C7" t="inlineStr" s="6"><is><t>✓</t></is></c>', $worksheet);
+        $this->assertStringNotContainsString('Paid', $worksheet);
         $this->assertStringContainsString('<v>10.00</v>', $worksheet);
-        $this->assertStringContainsString('state="frozen"', $worksheet);
+        $this->assertStringContainsString('xSplit="2"', $worksheet);
+        $this->assertStringContainsString('width="3.2"', $worksheet);
+        $this->assertStringContainsString('<pageSetUpPr fitToPage="1"/>', $worksheet);
+        $this->assertStringContainsString('orientation="landscape" fitToWidth="1" fitToHeight="1"', $worksheet);
+        $this->assertStringContainsString('name="_xlnm.Print_Titles" localSheetId="0"', $workbookXml);
+        $this->assertStringContainsString(
+            '&apos;Contributions&apos;!$1:$6,&apos;Contributions&apos;!$A:$B',
+            $workbookXml,
+        );
         $this->assertWorksheetXmlIsLoadable($worksheet);
+        $this->assertWorksheetXmlIsLoadable($workbookXml);
     }
 
     public function test_contribution_report_excel_sanitizes_invalid_xml_text(): void
@@ -167,25 +179,35 @@ class ContributionReportTest extends TestCase
 
     private function worksheetXml(string $workbook): string
     {
+        return $this->archiveXml($workbook, 'xl/worksheets/sheet1.xml');
+    }
+
+    private function workbookXml(string $workbook): string
+    {
+        return $this->archiveXml($workbook, 'xl/workbook.xml');
+    }
+
+    private function archiveXml(string $workbook, string $entry): string
+    {
         $path = tempnam(sys_get_temp_dir(), 'contribution-report-test-');
         $this->assertNotFalse($path);
         file_put_contents($path, $workbook);
 
-        $zip = new ZipArchive();
+        $zip = new ZipArchive;
         $this->assertTrue($zip->open($path));
 
-        $worksheet = $zip->getFromName('xl/worksheets/sheet1.xml');
+        $xml = $zip->getFromName($entry);
         $zip->close();
         @unlink($path);
 
-        $this->assertNotFalse($worksheet);
+        $this->assertNotFalse($xml);
 
-        return (string) $worksheet;
+        return (string) $xml;
     }
 
     private function assertWorksheetXmlIsLoadable(string $worksheet): void
     {
-        $document = new \DOMDocument();
+        $document = new \DOMDocument;
 
         $this->assertTrue($document->loadXML($worksheet));
     }
