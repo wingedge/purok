@@ -183,10 +183,11 @@ Flow:
 - `store` creates or updates one contribution for a member/week pair.
 - `destroy` removes one member/week contribution.
 - `RecordContribution` centralizes creating/updating a contribution with the correct service-calculated amount.
+- `RecordContributionPayment` converts a lump-sum member payment into the earliest unpaid Sundays from the start of the selected year, prevents gaps and payment above the year-end remaining balance, and runs the batch in one transaction.
 - `DeleteContribution` centralizes deleting a contribution by member and week while returning the removed amount.
 - `ImportContributions` imports contribution CSV rows and reuses `RecordContribution` so import behavior follows the same amount rule as manual recording.
 - `ExportContributions` exports contribution CSV rows with member ID, member name, week, amount, remarks, and timestamps.
-- `ContributionResource` uses `RecordContribution` for Filament contribution record creation and updates.
+- `ContributionResource` uses `RecordContributionPayment` to create one or more weekly records from a payment amount and uses `RecordContribution` for individual record updates.
 - `BuildContributionGrid` centralizes the monthly/yearly grid date range, non-indigent member query, visible contribution eager loading, and yearly total calculation.
 - `ContributionGrid` provides the Filament operational grid and reuses `RecordContribution` when toggling payments on and `DeleteContribution` when toggling payments off.
 

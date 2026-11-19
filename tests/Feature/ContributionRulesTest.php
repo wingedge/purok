@@ -4,6 +4,7 @@ namespace Tests\Feature;
 
 use App\Actions\Contributions\DeleteContribution;
 use App\Actions\Contributions\RecordContribution;
+use App\Actions\Contributions\RecordContributionPayment;
 use App\Actions\Dashboard\BuildDashboardSummary;
 use App\Actions\Reports\BuildCashFlowReport;
 use App\Models\Contribution;
@@ -52,6 +53,75 @@ class ContributionRulesTest extends TestCase
         ]);
     }
 
+    public function test_recording_a_payment_creates_one_paid_week_for_each_weekly_amount(): void
+    {
+        $member = Member::create([
+            'name' => 'Contributor',
+            'indigent' => false,
+        ]);
+
+        $contributions = app(RecordContributionPayment::class)->execute(
+            $member,
+            2026,
+            100,
+            'Advance payment',
+        );
+
+        $this->assertCount(10, $contributions);
+        $this->assertDatabaseHas('contributions', [
+            'member_id' => $member->id,
+            'week_start' => '2026-01-04',
+            'amount' => 10,
+            'remarks' => 'Advance payment',
+        ]);
+        $this->assertDatabaseHas('contributions', [
+            'member_id' => $member->id,
+            'week_start' => '2026-03-08',
+            'amount' => 10,
+            'remarks' => 'Advance payment',
+        ]);
+    }
+
+    public function test_later_payments_fill_the_earliest_unpaid_sundays_without_gaps(): void
+    {
+        $member = Member::create([
+            'name' => 'Contributor',
+            'indigent' => false,
+        ]);
+        foreach (['2026-01-04', '2026-01-11', '2026-01-18', '2026-01-25'] as $weekStart) {
+            Contribution::create([
+                'member_id' => $member->id,
+                'week_start' => $weekStart,
+                'amount' => 10,
+            ]);
+        }
+
+        $contributions = app(RecordContributionPayment::class)->execute($member, 2026, 40);
+
+        $this->assertCount(4, $contributions);
+        $this->assertSame('2026-02-01', $contributions->first()->week_start->toDateString());
+        $this->assertSame('2026-02-22', $contributions->last()->week_start->toDateString());
+        $this->assertDatabaseCount('contributions', 8);
+    }
+
+    public function test_recording_a_payment_cannot_exceed_the_remaining_year_balance(): void
+    {
+        $member = Member::create([
+            'name' => 'Contributor',
+            'indigent' => false,
+        ]);
+
+        $summary = app(RecordContributionPayment::class)->summary($member, 2026);
+        $overpayment = $summary['remaining_balance'] + 10;
+
+        $this->expectExceptionMessage(sprintf(
+            'The payment cannot exceed the remaining balance of PHP %.2f.',
+            $summary['remaining_balance'],
+        ));
+
+        app(RecordContributionPayment::class)->execute($member, 2026, $overpayment);
+    }
+
     public function test_delete_contribution_action_returns_deleted_amount(): void
     {
         $member = Member::create([
@@ -88,9 +158,9 @@ class ContributionRulesTest extends TestCase
         ]);
 
         $this->deleteJson('/contributions', [
-                'member_id' => $member->id,
-                'week_start' => '2026-06-07',
-            ])
+            'member_id' => $member->id,
+            'week_start' => '2026-06-07',
+        ])
             ->assertMethodNotAllowed();
     }
 

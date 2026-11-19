@@ -4,6 +4,7 @@ namespace Tests\Feature;
 
 use App\Enums\UserRole;
 use App\Filament\Pages\ContributionGrid;
+use App\Filament\Resources\Contributions\Pages\CreateContribution;
 use App\Models\Contribution;
 use App\Models\Member;
 use App\Models\User;
@@ -80,6 +81,41 @@ class FilamentContributionGridTest extends TestCase
         $this->assertDatabaseMissing('contributions', [
             'member_id' => $member->id,
             'week_start' => '2026-06-07',
+        ]);
+    }
+
+    public function test_treasurer_can_record_a_lump_sum_payment_as_consecutive_paid_weeks(): void
+    {
+        $member = Member::create([
+            'name' => 'Maria Santos',
+            'indigent' => false,
+        ]);
+        foreach (['2026-01-04', '2026-01-11', '2026-01-18', '2026-01-25'] as $weekStart) {
+            Contribution::create([
+                'member_id' => $member->id,
+                'week_start' => $weekStart,
+                'amount' => 10,
+            ]);
+        }
+
+        $this->actingAs($this->userWithRole(UserRole::Treasurer));
+
+        Livewire::test(CreateContribution::class)
+            ->fillForm([
+                'member_id' => $member->id,
+                'contribution_year' => 2026,
+                'payment_amount' => 100,
+                'remarks' => 'Advance payment',
+            ])
+            ->call('create')
+            ->assertHasNoFormErrors();
+
+        $this->assertDatabaseCount('contributions', 14);
+        $this->assertDatabaseHas('contributions', [
+            'member_id' => $member->id,
+            'week_start' => '2026-04-05',
+            'amount' => 10,
+            'remarks' => 'Advance payment',
         ]);
     }
 

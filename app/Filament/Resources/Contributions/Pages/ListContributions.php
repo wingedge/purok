@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Filament\Resources\Contributions\Pages;
 
 use App\Filament\Resources\Contributions\ContributionResource;
@@ -13,7 +15,8 @@ class ListContributions extends ListRecords
     protected function getHeaderActions(): array
     {
         return [
-            CreateAction::make(),
+            CreateAction::make()
+                ->label('Record Payment'),
         ];
     }
 }
